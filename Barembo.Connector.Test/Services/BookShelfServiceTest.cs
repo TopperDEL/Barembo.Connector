@@ -1,4 +1,6 @@
 using Barembo.Exceptions;
+using Barembo.Interfaces;
+using Barembo.Models;
 using Barembo.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -10,16 +12,20 @@ namespace Barembo.Connector.Test
     public class BookShelfServiceTest
     {
         BookShelfService _service;
+        Moq.Mock<IStoreService> _storeServiceMock;
 
         [TestInitialize]
         public void Init()
         {
-            _service = new BookShelfService();
+            _storeServiceMock = new Moq.Mock<IStoreService>();
+            _service = new BookShelfService(_storeServiceMock.Object);
         }
 
         [TestMethod]
-        public async Task Throws_NoBookShelfExists()
+        public async Task ThrowsException_If_NoBookShelfExists()
         {
+            _storeServiceMock.Setup(m => m.GetObjectInfoAsync(Moq.It.Is<StoreKey>(s=>s.StoreKeyType == StoreKeyTypes.BookShelf)))
+                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = false }));
             try
             {
                 await _service.LoadAsync();
@@ -29,6 +35,20 @@ namespace Barembo.Connector.Test
             {
                 Assert.IsInstanceOfType(ex, typeof(NoBookShelfExistsException));
             }
+        }
+
+        [TestMethod]
+        public async Task SearchesForBookShelfStoreKeyType()
+        {
+            _storeServiceMock.Setup(m => m.GetObjectInfoAsync(Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf)))
+                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = false })).Verifiable();
+
+            try
+            {
+                await _service.LoadAsync();
+            } catch { }
+
+            _storeServiceMock.Verify();
         }
     }
 }
