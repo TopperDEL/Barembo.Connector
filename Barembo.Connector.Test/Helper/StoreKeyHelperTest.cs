@@ -13,11 +13,21 @@ namespace Barembo.Connector.Test.Helper
         [TestMethod]
         public void Convert_BookShelf()
         {
-            StoreKey key = new StoreKey(StoreKeyTypes.BookShelf);
+            StoreKey key = StoreKey.BookShelf();
 
             var result = StoreKeyHelper.Convert(key);
 
             Assert.AreEqual("BookShelf.json", result);
+        }
+
+        [TestMethod]
+        public void Convert_Book()
+        {
+            StoreKey key = StoreKey.Book("myBookId");
+
+            var result = StoreKeyHelper.Convert(key);
+
+            Assert.AreEqual("myBookId/Book.json", result);
         }
     }
 }

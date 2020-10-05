@@ -13,7 +13,11 @@ namespace Barembo.Models
         /// <summary>
         /// The BookShelf of a user
         /// </summary>
-        BookShelf = 1
+        BookShelf = 1,
+        /// <summary>
+        /// A Book
+        /// </summary>
+        Book = 2
     }
 
     /// <summary>
@@ -50,6 +54,18 @@ namespace Barembo.Models
         public static StoreKey BookShelf()
         {
             return new StoreKey(StoreKeyTypes.BookShelf );
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for a Book
+        /// </summary>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey Book(string bookId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+
+            return new StoreKey(StoreKeyTypes.Book, properties);
         }
 
         /// <summary>
