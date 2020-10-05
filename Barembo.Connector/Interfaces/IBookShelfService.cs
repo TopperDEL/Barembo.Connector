@@ -14,14 +14,16 @@ namespace Barembo.Interfaces
         /// <summary>
         /// Loads the BookShelf of the user. If none exists, a NoBookShelfExistsException gets thrown.
         /// </summary>
+        /// <param name="access">The access to use</param>
         /// <returns>The BookShelf or a NoBookShelfExistsException</returns>
-        Task<BookShelf> LoadAsync();
+        Task<BookShelf> LoadAsync(StoreAccess access);
 
         /// <summary>
         /// Saves the BookShelf of the user.
         /// </summary>
+        /// <param name="access">The access to use</param>
         /// <param name="bookShelf">The BookShelf to save</param>
         /// <returns></returns>
-        Task<bool> SaveAsync(BookShelf bookShelf);
+        Task<bool> SaveAsync(StoreAccess access, BookShelf bookShelf);
     }
 }
