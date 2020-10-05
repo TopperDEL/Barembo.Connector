@@ -44,6 +44,15 @@ namespace Barembo.Models
         }
 
         /// <summary>
+        /// Returns the StoreKey for a BookShelf
+        /// </summary>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey BookShelf()
+        {
+            return new StoreKey(StoreKeyTypes.BookShelf );
+        }
+
+        /// <summary>
         /// Gets the StoreKey as a string using the StoreKeyHelper
         /// </summary>
         /// <returns>The StoreKey as a string</returns>
