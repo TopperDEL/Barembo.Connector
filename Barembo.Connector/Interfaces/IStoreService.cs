@@ -27,5 +27,15 @@ namespace Barembo.Interfaces
         /// <param name="storeKey">The StoreKey of that object</param>
         /// <returns>The object if the conversion threw no error and the object exists and is accessable</returns>
         Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey);
+
+        /// <summary>
+        /// Puts an object as Json to the given StoreKey in the store
+        /// </summary>
+        /// <typeparam name="T">The type of the object</typeparam>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of that object</param>
+        /// <param name="objectToPut">The object itself</param>
+        /// <returns>True, if the put was successfull - false if not</returns>
+        Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut);
     }
 }

@@ -57,5 +57,20 @@ namespace Barembo.Connector.Test
 
             Assert.AreEqual(bookShelf, result);
         }
+
+        [TestMethod]
+        public async Task SavesABookShelfToTheStore()
+        {
+            var bookShelf = new BookShelf();
+
+            _storeServiceMock.Setup(m => m.PutObjectAsJsonAsync<BookShelf>(_storeAccess, Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf), bookShelf))
+                             .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _service.SaveAsync(_storeAccess, bookShelf);
+
+            _storeServiceMock.Verify();
+
+            Assert.IsTrue(result);
+        }
     }
 }

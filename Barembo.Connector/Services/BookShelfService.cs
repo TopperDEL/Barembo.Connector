@@ -27,9 +27,9 @@ namespace Barembo.Services
             return await _storeService.GetObjectFromJsonAsync<BookShelf>(access, StoreKey.BookShelf());
         }
 
-        public Task<bool> SaveAsync(StoreAccess access, BookShelf bookShelf)
+        public async Task<bool> SaveAsync(StoreAccess access, BookShelf bookShelf)
         {
-            throw new NotImplementedException();
+            return await _storeService.PutObjectAsJsonAsync<BookShelf>(access, StoreKey.BookShelf(), bookShelf);
         }
     }
 }
