@@ -61,5 +61,27 @@ namespace Barembo.Connector.Test.Services
             Assert.IsFalse(result);
             _storeServiceMock.Verify();
         }
+
+        [TestMethod]
+        public async Task LoadBook_Loads_ExistingBook()
+        {
+            AccessRights accessRights = new AccessRights();
+            Book bookToLoad = new Book();
+            BookReference reference = new BookReference();
+            reference.BookId = bookToLoad.Id;
+            reference.AccessRights = accessRights;
+            reference.AccessGrant = "use this access";
+            reference.OwnerName = "Schiller";
+
+            _storeServiceMock.Setup(s => s.GetObjectInfoAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Book)))
+                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = true })).Verifiable();
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Book>(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Book)))
+                             .Returns(Task.FromResult(bookToLoad)).Verifiable();
+
+            var result = await _service.LoadAsync(reference);
+
+            Assert.AreEqual(bookToLoad, result);
+            _storeServiceMock.Verify();
+        }
     }
 }
