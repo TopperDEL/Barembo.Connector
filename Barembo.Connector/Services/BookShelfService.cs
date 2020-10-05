@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Barembo.Services
 {
@@ -15,6 +16,22 @@ namespace Barembo.Services
         public BookShelfService(IStoreService storeService)
         {
             _storeService = storeService;
+        }
+
+        public bool AddNewBook(BookShelf bookShelf, Book book, string ownerName, StoreAccess storeAccess, AccessRights accessRights)
+        {
+            BookReference reference = new BookReference();
+            reference.AccessGrant = storeAccess.AccessGrant;
+            reference.AccessRights = accessRights;
+            reference.BookId = book.Id;
+            reference.OwnerName = ownerName;
+
+            if (bookShelf.Content.Where(r => r.BookId == book.Id).Count() > 0)
+                return false;
+
+            bookShelf.Content.Add(reference);
+
+            return true;
         }
 
         public async Task<BookShelf> LoadAsync(StoreAccess access)

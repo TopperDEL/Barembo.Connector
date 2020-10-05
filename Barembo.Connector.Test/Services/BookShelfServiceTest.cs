@@ -72,5 +72,34 @@ namespace Barembo.Connector.Test
 
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void AddNewBook_Adds_OwnBook()
+        {
+            var bookShelf = new BookShelf();
+            var bookToAdd = new Book();
+            var accessRights = new AccessRights();
+
+            var result =  _service.AddNewBook(bookShelf, bookToAdd, "Goethe", _storeAccess, accessRights);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual("Goethe", bookShelf.Content[0].OwnerName);
+            Assert.AreEqual(bookToAdd.Id, bookShelf.Content[0].BookId);
+            Assert.AreEqual(accessRights, bookShelf.Content[0].AccessRights);
+            Assert.AreEqual(_storeAccess.AccessGrant, bookShelf.Content[0].AccessGrant);
+        }
+
+        [TestMethod]
+        public void AddNewBook_Fails_IfBookAlreadyExists()
+        {
+            var bookShelf = new BookShelf();
+            var bookToAdd = new Book();
+            var accessRights = new AccessRights();
+
+            _service.AddNewBook(bookShelf, bookToAdd, "Goethe", _storeAccess, accessRights);
+            var result = _service.AddNewBook(bookShelf, bookToAdd, "Goethe not again", _storeAccess, accessRights);
+
+            Assert.IsFalse(result);
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Barembo.Models
     public class BookReference
     {
         /// <summary>
-        /// The id of a book.
+        /// The ID of a book.
         /// </summary>
         public string BookId { get; set; }
 

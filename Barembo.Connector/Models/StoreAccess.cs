@@ -6,11 +6,11 @@ namespace Barembo.Models
 {
     public class StoreAccess
     {
-        private string _accessGrant;
+        public string AccessGrant { get; private set; }
 
         public StoreAccess(string accessGrant)
         {
-            _accessGrant = accessGrant;
+            AccessGrant = accessGrant;
         }
     }
 }

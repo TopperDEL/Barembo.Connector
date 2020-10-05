@@ -15,7 +15,7 @@ namespace Barembo.Models
         /// <summary>
         /// The ID of the book.
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// The Name of the book.
