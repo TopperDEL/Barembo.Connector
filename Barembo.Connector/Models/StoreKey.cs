@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barembo.Helper;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -43,12 +44,12 @@ namespace Barembo.Models
         }
 
         /// <summary>
-        /// Gets the StoreKey as a string
+        /// Gets the StoreKey as a string using the StoreKeyHelper
         /// </summary>
         /// <returns>The StoreKey as a string</returns>
         public override string ToString()
         {
-            return base.ToString(); //ToDo
+            return StoreKeyHelper.Convert(this);
         }
     }
 }
