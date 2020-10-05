@@ -17,14 +17,17 @@ namespace Barembo.Services
             _storeService = storeService;
         }
 
-        public async Task<BookShelf> LoadAsync()
+        public async Task<BookShelf> LoadAsync(StoreAccess access)
         {
-            var bookShelfInfo = await _storeService.GetObjectInfoAsync(new StoreKey(StoreKeyTypes.BookShelf));
+            var bookShelfInfo = await _storeService.GetObjectInfoAsync(access, StoreKey.BookShelf());
 
-            throw new NoBookShelfExistsException();
+            if (!bookShelfInfo.ObjectExists)
+                throw new NoBookShelfExistsException();
+
+            return await _storeService.GetObjectFromJsonAsync<BookShelf>(access, StoreKey.BookShelf());
         }
 
-        public Task<bool> SaveAsync(BookShelf bookShelf)
+        public Task<bool> SaveAsync(StoreAccess access, BookShelf bookShelf)
         {
             throw new NotImplementedException();
         }

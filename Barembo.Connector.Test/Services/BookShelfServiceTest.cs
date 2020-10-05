@@ -27,31 +27,35 @@ namespace Barembo.Connector.Test
         public async Task ThrowsException_If_NoBookShelfExists()
         {
 
-            _storeServiceMock.Setup(m => m.GetObjectInfoAsync(_storeAccess, Moq.It.Is<StoreKey>(s=>s.StoreKeyType == StoreKeyTypes.BookShelf)))
+            _storeServiceMock.Setup(m => m.GetObjectInfoAsync(_storeAccess, Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf)))
                              .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = false }));
             try
             {
                 await _service.LoadAsync(_storeAccess);
                 Assert.IsTrue(false, "No exception thrown");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsInstanceOfType(ex, typeof(NoBookShelfExistsException));
             }
         }
 
         [TestMethod]
-        public async Task SearchesForBookShelfStoreKeyType()
+        public async Task LoadsAnExistingBookShelfFromTheStore()
         {
-            _storeServiceMock.Setup(m => m.GetObjectInfoAsync(_storeAccess, Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf)))
-                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = false })).Verifiable();
+            var bookShelf = new BookShelf();
 
-            try
-            {
-                await _service.LoadAsync(_storeAccess);
-            } catch { }
+            _storeServiceMock.Setup(m => m.GetObjectInfoAsync(_storeAccess, Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf)))
+                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = true })).Verifiable();
+
+            _storeServiceMock.Setup(m => m.GetObjectFromJsonAsync<BookShelf>(_storeAccess, Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf)))
+                             .Returns(Task.FromResult(bookShelf)).Verifiable();
+
+            var result = await _service.LoadAsync(_storeAccess);
 
             _storeServiceMock.Verify();
+
+            Assert.AreEqual(bookShelf, result);
         }
     }
 }
