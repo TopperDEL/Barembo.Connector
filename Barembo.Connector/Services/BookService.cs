@@ -22,7 +22,7 @@ namespace Barembo.Services
             var bookShelfInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(bookReference.AccessGrant), StoreKey.Book(bookReference.BookId));
 
             if (!bookShelfInfo.ObjectExists)
-                throw new BookNotExistException();
+                throw new BookNotExistsException();
 
             return await _storeService.GetObjectFromJsonAsync<Book>(new StoreAccess(bookReference.AccessGrant), StoreKey.Book(bookReference.BookId));
         }

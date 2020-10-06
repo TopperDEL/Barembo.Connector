@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Barembo.Exceptions
 {
-    public class BookNotExistException : Exception
+    public class BookNotExistsException : Exception
     {
     }
 }
