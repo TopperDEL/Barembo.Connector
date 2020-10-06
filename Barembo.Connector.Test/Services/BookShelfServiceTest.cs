@@ -24,7 +24,7 @@ namespace Barembo.Connector.Test
         }
 
         [TestMethod]
-        public async Task ThrowsException_If_NoBookShelfExists()
+        public async Task Load_ThrowsException_IfNoBookShelfExists()
         {
 
             _storeServiceMock.Setup(m => m.GetObjectInfoAsync(_storeAccess, Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.BookShelf)))
@@ -41,7 +41,7 @@ namespace Barembo.Connector.Test
         }
 
         [TestMethod]
-        public async Task LoadsAnExistingBookShelfFromTheStore()
+        public async Task Load_LoadsABookShelf_IfItExists()
         {
             var bookShelf = new BookShelf();
 
@@ -59,7 +59,7 @@ namespace Barembo.Connector.Test
         }
 
         [TestMethod]
-        public async Task SavesABookShelfToTheStore()
+        public async Task Save_SavesABookShelf_ToTheStore()
         {
             var bookShelf = new BookShelf();
 
