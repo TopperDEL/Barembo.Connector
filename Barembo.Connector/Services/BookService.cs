@@ -19,9 +19,9 @@ namespace Barembo.Services
 
         public async Task<Book> LoadAsync(BookReference bookReference)
         {
-            var bookShelfInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(bookReference.AccessGrant), StoreKey.Book(bookReference.BookId));
+            var bookInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(bookReference.AccessGrant), StoreKey.Book(bookReference.BookId));
 
-            if (!bookShelfInfo.ObjectExists)
+            if (!bookInfo.ObjectExists)
                 throw new BookNotExistsException();
 
             return await _storeService.GetObjectFromJsonAsync<Book>(new StoreAccess(bookReference.AccessGrant), StoreKey.Book(bookReference.BookId));

@@ -17,7 +17,11 @@ namespace Barembo.Models
         /// <summary>
         /// A Book
         /// </summary>
-        Book = 2
+        Book = 2,
+        /// <summary>
+        /// An Entry
+        /// </summary>
+        Entry = 3
     }
 
     /// <summary>
@@ -66,6 +70,15 @@ namespace Barembo.Models
             properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
 
             return new StoreKey(StoreKeyTypes.Book, properties);
+        }
+
+        public static StoreKey Entry(string bookId, string entryId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+            properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
+
+            return new StoreKey(StoreKeyTypes.Entry, properties);
         }
 
         /// <summary>

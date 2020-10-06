@@ -13,7 +13,7 @@ namespace Barembo.Models
         /// <summary>
         /// The ID of an entry.
         /// </summary>
-        public string Id { get; set; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// The header of an entry.
@@ -33,7 +33,7 @@ namespace Barembo.Models
         /// <summary>
         /// The creation date of the entry.
         /// </summary>
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
 
         /// <summary>
         /// The base64-encoded string of the thumbnail for this entry.
@@ -44,13 +44,6 @@ namespace Barembo.Models
         /// A list of attachments of this entry. The order in that list defines the order
         /// of the attachments.
         /// </summary>
-        public List<string> Attachments { get; set; }
-
-        public Entry()
-        {
-            Id = Guid.NewGuid().ToString();
-            CreationDate = DateTime.Now;
-            Attachments = new List<string>();
-        }
+        public List<string> Attachments { get; set; } = new List<string>();
     }
 }
