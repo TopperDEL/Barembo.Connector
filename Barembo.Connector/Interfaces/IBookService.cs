@@ -15,7 +15,7 @@ namespace Barembo.Interfaces
         /// Loads a Book from a given BookReference.
         /// </summary>
         /// <param name="bookReference">The BookReference to a Book</param>
-        /// <returns>The Book if it exists, otherwise throws a BookNotExistException</returns>
+        /// <returns>The Book if it exists, otherwise throws a BookNotExistsException</returns>
         Task<Book> LoadAsync(BookReference bookReference);
 
         /// <summary>
