@@ -44,6 +44,6 @@ namespace Barembo.Models
         /// A list of attachments of this entry. The order in that list defines the order
         /// of the attachments.
         /// </summary>
-        public List<string> Attachments { get; set; } = new List<string>();
+        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
     }
 }
