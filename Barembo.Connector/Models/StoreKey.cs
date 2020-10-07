@@ -21,7 +21,11 @@ namespace Barembo.Models
         /// <summary>
         /// An Entry
         /// </summary>
-        Entry = 3
+        Entry = 3,
+        /// <summary>
+        /// A list of entries
+        /// </summary>
+        Entries = 4
     }
 
     /// <summary>
@@ -63,6 +67,7 @@ namespace Barembo.Models
         /// <summary>
         /// Returns the StoreKey for a Book
         /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
         /// <returns>The StoreKey</returns>
         public static StoreKey Book(string bookId)
         {
@@ -72,6 +77,12 @@ namespace Barembo.Models
             return new StoreKey(StoreKeyTypes.Book, properties);
         }
 
+        /// <summary>
+        /// Return the StoreKey for an Entry
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <param name="entryId">The Id of an Entry</param>
+        /// <returns>The StoreKey</returns>
         public static StoreKey Entry(string bookId, string entryId)
         {
             Dictionary<string, string> properties = new Dictionary<string, string>();
@@ -79,6 +90,19 @@ namespace Barembo.Models
             properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
 
             return new StoreKey(StoreKeyTypes.Entry, properties);
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for a List of Entries
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey Entries(string bookId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+
+            return new StoreKey(StoreKeyTypes.Entries, properties);
         }
 
         /// <summary>

@@ -25,5 +25,12 @@ namespace Barembo.Interfaces
         /// <param name="entryToSave">The Entry to save</param>
         /// <returns>true, if the Book could be saved</returns>
         Task<bool> SaveAsync(EntryReference entryRef, Entry entryToSave);
+
+        /// <summary>
+        /// Lists all Entries of a BookReference
+        /// </summary>
+        /// <param name="bookRef">The BookReference where the entries should be listed from</param>
+        /// <returns>The list of entries</returns>
+        Task<IEnumerable<EntryReference>> ListAsync(BookReference bookRef);
     }
 }

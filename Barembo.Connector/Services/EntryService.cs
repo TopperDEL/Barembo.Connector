@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Barembo.Services
 {
@@ -15,6 +16,13 @@ namespace Barembo.Services
         public EntryService(IStoreService storeService)
         {
             _storeService = storeService;
+        }
+
+        public async Task<IEnumerable<EntryReference>> ListAsync(BookReference bookRef)
+        {
+            var entries = await _storeService.ListObjectsAsync(new StoreAccess(bookRef.AccessGrant), StoreKey.Entries(bookRef.BookId));
+
+            return entries.Select(e => new EntryReference() { BookReference = bookRef, EntryKey = e.Key, EntryId = e.Id });
         }
 
         public async Task<Entry> LoadAsync(EntryReference entryRef)

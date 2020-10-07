@@ -19,6 +19,8 @@ namespace Barembo.Helper
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Book.json";
                 case StoreKeyTypes.Entry:
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Entries/"+ storeKey.Properties[PROPERTY_ENTRY_ID] + ".json";
+                case StoreKeyTypes.Entries:
+                    return storeKey.Properties[PROPERTY_BOOK_ID] + "/Entries/";
             }
             return "";
         }

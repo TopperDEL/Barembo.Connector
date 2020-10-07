@@ -39,5 +39,15 @@ namespace Barembo.Connector.Test.Helper
 
             Assert.AreEqual("myBookId/Entries/myEntryId.json", result);
         }
+
+        [TestMethod]
+        public void Convert_Entries()
+        {
+            StoreKey key = StoreKey.Entries("myBookId");
+
+            var result = StoreKeyHelper.Convert(key);
+
+            Assert.AreEqual("myBookId/Entries/", result);
+        }
     }
 }

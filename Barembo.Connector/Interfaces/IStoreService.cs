@@ -37,5 +37,13 @@ namespace Barembo.Interfaces
         /// <param name="objectToPut">The object itself</param>
         /// <returns>True, if the put was successfull - false if not</returns>
         Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut);
+
+        /// <summary>
+        /// Lists all available objects for a particular StoreKey
+        /// </summary>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of the objects</param>
+        /// <returns>An enumerable of StoreObjects</returns>
+        Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey);
     }
 }
