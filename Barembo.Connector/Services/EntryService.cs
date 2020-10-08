@@ -27,17 +27,17 @@ namespace Barembo.Services
 
         public async Task<Entry> LoadAsync(EntryReference entryRef)
         {
-            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId));
+            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId));
 
             if (!entryInfo.ObjectExists)
                 throw new EntryNotExistsException();
 
-            return await _storeService.GetObjectFromJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId));
+            return await _storeService.GetObjectFromJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId));
         }
 
         public async Task<bool> SaveAsync(EntryReference entryRef, Entry entryToSave)
         {
-            return await _storeService.PutObjectAsJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId), entryToSave);
+            return await _storeService.PutObjectAsJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId), entryToSave);
         }
     }
 }

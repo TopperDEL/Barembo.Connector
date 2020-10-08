@@ -33,11 +33,11 @@ namespace Barembo.Connector.Test.Helper
         [TestMethod]
         public void Convert_Entry()
         {
-            StoreKey key = StoreKey.Entry("myBookId", "myEntryId");
+            StoreKey key = StoreKey.Entry("myBookId", "myEntryId", "myContributorId");
 
             var result = StoreKeyHelper.Convert(key);
 
-            Assert.AreEqual("myBookId/Entries/myEntryId.json", result);
+            Assert.AreEqual("myBookId/Entries/myContributorId/myEntryId.json", result);
         }
 
         [TestMethod]

@@ -86,12 +86,14 @@ namespace Barembo.Models
         /// </summary>
         /// <param name="bookId">The Id of a Book</param>
         /// <param name="entryId">The Id of an Entry</param>
+        /// <param name="contributorId">The Id of a Contributor</param>
         /// <returns>The StoreKey</returns>
-        public static StoreKey Entry(string bookId, string entryId)
+        public static StoreKey Entry(string bookId, string entryId, string contributorId)
         {
             Dictionary<string, string> properties = new Dictionary<string, string>();
             properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
             properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
+            properties.Add(StoreKeyHelper.PROPERTY_CONTRIBUTOR_ID, contributorId);
 
             return new StoreKey(StoreKeyTypes.Entry, properties);
         }

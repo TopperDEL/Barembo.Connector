@@ -15,6 +15,11 @@ namespace Barembo.Models
         public string BookId { get; set; }
 
         /// <summary>
+        /// The ID of the contributor.
+        /// </summary>
+        public string ContributorId { get; set; }
+
+        /// <summary>
         /// The name of the owner of the book.
         /// </summary>
         public string OwnerName { get; set; }
