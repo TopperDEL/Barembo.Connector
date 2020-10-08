@@ -29,7 +29,15 @@ namespace Barembo.Models
         /// <summary>
         /// An attachment
         /// </summary>
-        Attachment = 5
+        Attachment = 5,
+        /// <summary>
+        /// A contributor
+        /// </summary>
+        Contributor = 6,
+        /// <summary>
+        /// A list of contributors
+        /// </summary>
+        Contributors = 6
     }
 
     /// <summary>
@@ -126,6 +134,34 @@ namespace Barembo.Models
             properties.Add(StoreKeyHelper.PROPERTY_ATTACHMENT_ID, attachmentId);
 
             return new StoreKey(StoreKeyTypes.Attachment, properties);
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for a Contributor
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <param name="contributorId">The Id of a Contributor</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey Contributor(string bookId, string contributorId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+            properties.Add(StoreKeyHelper.PROPERTY_CONTRIBUTOR_ID, contributorId);
+
+            return new StoreKey(StoreKeyTypes.Contributor, properties);
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for a list of Contributors
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey Contributors(string bookId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+
+            return new StoreKey(StoreKeyTypes.Contributors, properties);
         }
 
         /// <summary>
