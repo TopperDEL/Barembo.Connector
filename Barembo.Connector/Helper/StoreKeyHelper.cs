@@ -9,6 +9,7 @@ namespace Barembo.Helper
     {
         public const string PROPERTY_BOOK_ID = "BookId";
         public const string PROPERTY_ENTRY_ID = "EntryId";
+        public const string PROPERTY_ATTACHMENT_ID = "AttachmentId";
         public static string Convert(StoreKey storeKey)
         {
             switch (storeKey.StoreKeyType)
@@ -21,6 +22,8 @@ namespace Barembo.Helper
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Entries/"+ storeKey.Properties[PROPERTY_ENTRY_ID] + ".json";
                 case StoreKeyTypes.Entries:
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Entries/";
+                case StoreKeyTypes.Attachment:
+                    return storeKey.Properties[PROPERTY_BOOK_ID] + "/"+ storeKey.Properties[PROPERTY_ENTRY_ID] + "/" + storeKey.Properties[PROPERTY_ATTACHMENT_ID];
             }
             return "";
         }

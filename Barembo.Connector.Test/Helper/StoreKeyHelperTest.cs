@@ -49,5 +49,15 @@ namespace Barembo.Connector.Test.Helper
 
             Assert.AreEqual("myBookId/Entries/", result);
         }
+
+        [TestMethod]
+        public void Convert_Attachment()
+        {
+            StoreKey key = StoreKey.Attachment("myBookId", "myEntryId", "myAttachmentId");
+
+            var result = StoreKeyHelper.Convert(key);
+
+            Assert.AreEqual("myBookId/myEntryId/myAttachmentId", result);
+        }
     }
 }

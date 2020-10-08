@@ -1,6 +1,7 @@
 ﻿using Barembo.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,23 @@ namespace Barembo.Interfaces
         /// <param name="storeKey">The StoreKey of that object</param>
         /// <returns>The object if the conversion threw no error and the object exists and is accessable</returns>
         Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey);
+
+        /// <summary>
+        /// Returns the stream to an object of the given StoreKey. 
+        /// </summary>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of that object</param>
+        /// <returns>The stream to the object if the object exists and is accessable</returns>
+        Task<Stream> GetObjectAsStreamAsync(StoreAccess access, StoreKey storeKey);
+
+        /// <summary>
+        /// Puts an object from a stream to the given StoreKey in the store
+        /// </summary>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of that object</param>
+        /// <param name="objectToPut">The stream of the object</param>
+        /// <returns>True, if the put was successfull - false if not</returns>
+        Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut);
 
         /// <summary>
         /// Puts an object as Json to the given StoreKey in the store

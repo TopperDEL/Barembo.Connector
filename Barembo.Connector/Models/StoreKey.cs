@@ -25,7 +25,11 @@ namespace Barembo.Models
         /// <summary>
         /// A list of entries
         /// </summary>
-        Entries = 4
+        Entries = 4,
+        /// <summary>
+        /// An attachment
+        /// </summary>
+        Attachment = 5
     }
 
     /// <summary>
@@ -103,6 +107,23 @@ namespace Barembo.Models
             properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
 
             return new StoreKey(StoreKeyTypes.Entries, properties);
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for an Attachment
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <param name="entryId">The Id of an Entry</param>
+        /// <param name="attachmentId">The Id of an Attachment</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey Attachment(string bookId, string entryId, string attachmentId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+            properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
+            properties.Add(StoreKeyHelper.PROPERTY_ATTACHMENT_ID, attachmentId);
+
+            return new StoreKey(StoreKeyTypes.Attachment, properties);
         }
 
         /// <summary>
