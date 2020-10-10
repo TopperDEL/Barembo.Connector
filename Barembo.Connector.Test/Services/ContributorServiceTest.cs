@@ -14,14 +14,14 @@ namespace Barembo.Connector.Test.Services
     [TestClass]
     public class ContributorServiceTest
     {
-        ContributorService _service;
+        ContributorStoreService _service;
         Moq.Mock<IStoreService> _storeServiceMock;
 
         [TestInitialize]
         public void Init()
         {
             _storeServiceMock = new Moq.Mock<IStoreService>();
-            _service = new ContributorService(_storeServiceMock.Object);
+            _service = new ContributorStoreService(_storeServiceMock.Object);
         }
 
         [TestMethod]

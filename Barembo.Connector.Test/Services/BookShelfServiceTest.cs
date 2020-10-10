@@ -11,7 +11,7 @@ namespace Barembo.Connector.Test
     [TestClass]
     public class BookShelfServiceTest
     {
-        BookShelfService _service;
+        BookShelfStoreService _service;
         Moq.Mock<IStoreService> _storeServiceMock;
         StoreAccess _storeAccess;
 
@@ -20,7 +20,7 @@ namespace Barembo.Connector.Test
         {
             _storeAccess = new StoreAccess("NoRealAccess");
             _storeServiceMock = new Moq.Mock<IStoreService>();
-            _service = new BookShelfService(_storeServiceMock.Object);
+            _service = new BookShelfStoreService(_storeServiceMock.Object);
         }
 
         [TestMethod]

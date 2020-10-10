@@ -9,11 +9,11 @@ using System.Linq;
 
 namespace Barembo.Services
 {
-    public class EntryService : IEntryService
+    public class EntryStoreService : IEntryStoreService
     {
         private IStoreService _storeService;
 
-        public EntryService(IStoreService storeService)
+        public EntryStoreService(IStoreService storeService)
         {
             _storeService = storeService;
         }

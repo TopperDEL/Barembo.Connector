@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Barembo.Services
 {
-    public class AttachmentService : IAttachmentService
+    public class AttachmentStoreService : IAttachmentStoreService
     {
         private IStoreService _storeService;
 
-        public AttachmentService(IStoreService storeService)
+        public AttachmentStoreService(IStoreService storeService)
         {
             _storeService = storeService;
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Barembo.Interfaces
 {
-    public interface IContributorService
+    public interface IContributorStoreService
     {
         /// <summary>
         /// Saves a Contributor using a BookReference.

@@ -9,7 +9,7 @@ namespace Barembo.Interfaces
     /// <summary>
     /// An EntryService is responsible for loading and saving an Entry
     /// </summary>
-    public interface IEntryService
+    public interface IEntryStoreService
     {
         /// <summary>
         /// Loads an Entry.

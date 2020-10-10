@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace Barembo.Services
 {
-    public class ContributorService : IContributorService
+    public class ContributorStoreService : IContributorStoreService
     {
         private IStoreService _storeService;
 
-        public ContributorService(IStoreService storeService)
+        public ContributorStoreService(IStoreService storeService)
         {
             _storeService = storeService;
         }

@@ -9,7 +9,7 @@ namespace Barembo.Interfaces
     /// <summary>
     /// A BookService is responsible for loading and saving a Book.
     /// </summary>
-    public interface IBookService
+    public interface IBookStoreService
     {
         /// <summary>
         /// Loads a Book from a given BookReference.

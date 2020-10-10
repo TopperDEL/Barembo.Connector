@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Barembo.Services
 {
-    public class BookService : IBookService
+    public class BookStoreService : IBookStoreService
     {
         private IStoreService _storeService;
 
-        public BookService(IStoreService storeService)
+        public BookStoreService(IStoreService storeService)
         {
             _storeService = storeService;
         }

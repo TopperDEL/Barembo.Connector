@@ -9,7 +9,7 @@ namespace Barembo.Interfaces
     /// <summary>
     /// A BookShelfService is responsible for loading and saving a BookShelf and adding content to it.
     /// </summary>
-    public interface IBookShelfService
+    public interface IBookShelfStoreService
     {
         /// <summary>
         /// Loads the BookShelf of the user. If none exists, a NoBookShelfExistsException gets thrown.

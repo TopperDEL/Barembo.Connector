@@ -10,7 +10,7 @@ namespace Barembo.Interfaces
     /// <summary>
     /// An AttachmentService is responsible for loading and saving Attachments of an Entry.
     /// </summary>
-    public interface IAttachmentService
+    public interface IAttachmentStoreService
     {
         /// <summary>
         /// Loads an Attachment.
