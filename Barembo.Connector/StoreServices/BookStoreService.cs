@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Barembo.Services
+namespace Barembo.StoreServices
 {
     public class BookStoreService : IBookStoreService
     {

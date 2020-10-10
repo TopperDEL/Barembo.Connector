@@ -7,7 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Barembo.Services
+namespace Barembo.StoreServices
 {
     public class AttachmentStoreService : IAttachmentStoreService
     {

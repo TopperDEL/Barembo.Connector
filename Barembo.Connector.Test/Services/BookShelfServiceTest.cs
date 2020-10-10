@@ -1,7 +1,7 @@
 using Barembo.Exceptions;
 using Barembo.Interfaces;
 using Barembo.Models;
-using Barembo.Services;
+using Barembo.StoreServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
