@@ -19,16 +19,23 @@ namespace Barembo.Services
 
         public async Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book)
         {
-            var bookShelf = await _bookShelfStoreService.LoadAsync(access);
-
-            var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, book.Id, bookShelf.OwnerName, access, AccessRights.Full);
-
-            if (success)
+            try
             {
-                return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                var bookShelf = await _bookShelfStoreService.LoadAsync(access);
+
+                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, book.Id, bookShelf.OwnerName, access, AccessRights.Full);
+
+                if (success)
+                {
+                    return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                }
+                else
+                    return false;
             }
-            else
+            catch(NoBookShelfExistsException)
+            {
                 return false;
+            }
         }
 
         public Task<bool> AddSharedBookToBookShelfAndSaveAsync(StoreAccess access, BookShareInfo shareInfo)
