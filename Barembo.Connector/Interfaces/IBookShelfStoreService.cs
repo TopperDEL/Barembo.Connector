@@ -30,11 +30,11 @@ namespace Barembo.Interfaces
         /// Adds a Book to a BookShelf
         /// </summary>
         /// <param name="bookShelf">The BookShelf to add the Book to</param>
-        /// <param name="book">The Book to add</param>
+        /// <param name="bookId">The Id of the Book to add</param>
         /// <param name="ownerName">The name of the owner of that Book</param>
         /// <param name="storeAccess">The StoreAccess for this Book</param>
         /// <param name="accessRights">The AccessRights for this Book</param>
         /// <returns>True, if the BookShelf could be saved - false if not</returns>
-        bool AddNewBook(BookShelf bookShelf, Book book, string ownerName, StoreAccess storeAccess, AccessRights accessRights);
+        bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights);
     }
 }

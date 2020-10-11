@@ -80,7 +80,7 @@ namespace Barembo.Connector.Test
             var bookToAdd = new Book();
             var accessRights = new AccessRights();
 
-            var result =  _service.AddNewBook(bookShelf, bookToAdd, "Goethe", _storeAccess, accessRights);
+            var result =  _service.AddBookToBookShelf(bookShelf, bookToAdd, "Goethe", _storeAccess, accessRights);
 
             Assert.IsTrue(result);
             Assert.AreEqual("Goethe", bookShelf.Content[0].OwnerName);
@@ -96,8 +96,8 @@ namespace Barembo.Connector.Test
             var bookToAdd = new Book();
             var accessRights = new AccessRights();
 
-            _service.AddNewBook(bookShelf, bookToAdd, "Goethe", _storeAccess, accessRights);
-            var result = _service.AddNewBook(bookShelf, bookToAdd, "Goethe not again", _storeAccess, accessRights);
+            _service.AddBookToBookShelf(bookShelf, bookToAdd, "Goethe", _storeAccess, accessRights);
+            var result = _service.AddBookToBookShelf(bookShelf, bookToAdd, "Goethe not again", _storeAccess, accessRights);
 
             Assert.IsFalse(result);
         }
