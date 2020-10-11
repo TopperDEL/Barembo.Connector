@@ -9,19 +9,30 @@ namespace Barembo.Services
 {
     public class BookService : IBookService
     {
-        public Task<Book> CreateAndSaveBookAsync(string name, string description)
+        IBookStoreService _bookStoreService;
+
+        public BookService(IBookStoreService bookStoreService)
         {
-            throw new NotImplementedException();
+            _bookStoreService = bookStoreService;
         }
 
-        public Task<Book> LoadBookAsync(BookReference bookReference)
+        public async Task<Book> CreateBookAsync(string name, string description)
         {
-            throw new NotImplementedException();
+            Book newBook = new Book();
+            newBook.Name = name;
+            newBook.Description = description;
+
+            return newBook;
         }
 
-        public Task<bool> SaveBookAsync(Book book)
+        public async Task<Book> LoadBookAsync(BookReference bookReference)
         {
-            throw new NotImplementedException();
+            return await _bookStoreService.LoadAsync(bookReference);
+        }
+
+        public async Task<bool> SaveBookAsync(BookReference bookReference, Book book)
+        {
+            return await _bookStoreService.SaveAsync(bookReference, book);
         }
     }
 }

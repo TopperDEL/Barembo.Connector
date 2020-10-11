@@ -9,8 +9,8 @@ namespace Barembo.Interfaces
 {
     public interface IBookService
     {
-        Task<Book> CreateAndSaveBookAsync(string name, string description);
-        Task<bool> SaveBookAsync(Book book);
+        Task<Book> CreateBookAsync(string name, string description);
+        Task<bool> SaveBookAsync(BookReference bookReference, Book book);
         Task<Book> LoadBookAsync(BookReference bookReference);
     }
 }
