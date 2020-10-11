@@ -43,5 +43,22 @@ namespace Barembo.Models
         /// Can delete foreign entries
         /// </summary>
         public bool CanDeleteForeign { get; set; }
+
+        public static AccessRights Full
+        {
+            get
+            {
+                return new AccessRights()
+                {
+                    CanAdd = true,
+                    CanDeleteForeign = true,
+                    CanDeleteOwn = true,
+                    CanEditForeign = true,
+                    CanEditOwn = true,
+                    CanReadForeign = true,
+                    CanReadOwner = true
+                };
+            }
+        }
     }
 }
