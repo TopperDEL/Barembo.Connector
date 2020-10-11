@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Barembo.Connector.Test.Services
+namespace Barembo.Connector.Test.StoreServices
 {
     [TestClass]
     public class EntryStoreServiceTest

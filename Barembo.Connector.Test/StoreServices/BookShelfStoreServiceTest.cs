@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading.Tasks;
 
-namespace Barembo.Connector.Test
+namespace Barembo.Connector.Test.StoreServices
 {
     [TestClass]
     public class BookShelfStoreServiceTest

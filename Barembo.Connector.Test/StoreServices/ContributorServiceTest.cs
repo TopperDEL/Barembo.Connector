@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Barembo.Helper;
 
-namespace Barembo.Connector.Test.Services
+namespace Barembo.Connector.Test.StoreServices
 {
     [TestClass]
     public class ContributorServiceTest
