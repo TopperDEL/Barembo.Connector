@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Barembo.Interfaces
 {
     /// <summary>
-    /// An AttachmentService is responsible for loading and saving Attachments of an Entry.
+    /// An AttachmentStoreService is responsible for loading and saving Attachments of an Entry.
     /// </summary>
     public interface IAttachmentStoreService
     {

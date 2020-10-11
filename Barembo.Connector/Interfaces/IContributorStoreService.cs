@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Barembo.Interfaces
 {
+    /// <summary>
+    /// A ContributorStoreService is responsible for saving and loading Contributors
+    /// </summary>
     public interface IContributorStoreService
     {
         /// <summary>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Barembo.Interfaces
 {
     /// <summary>
-    /// An EntryService is responsible for loading and saving an Entry
+    /// An EntryStoreService is responsible for loading and saving an Entry
     /// </summary>
     public interface IEntryStoreService
     {

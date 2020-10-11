@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Barembo.Interfaces
 {
     /// <summary>
-    /// A BookService is responsible for loading and saving a Book.
+    /// A BookStoreService is responsible for loading and saving a Book.
     /// </summary>
     public interface IBookStoreService
     {
