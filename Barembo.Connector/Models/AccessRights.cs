@@ -10,9 +10,14 @@ namespace Barembo.Models
     public class AccessRights
     {
         /// <summary>
-        /// Can read book entries
+        /// Can read owner book entries
         /// </summary>
-        public bool CanRead { get; set; }
+        public bool CanReadOwner { get; set; }
+
+        /// <summary>
+        /// Can read foreign book entries
+        /// </summary>
+        public bool CanReadForeign { get; set; }
 
         /// <summary>
         /// Can add book entries

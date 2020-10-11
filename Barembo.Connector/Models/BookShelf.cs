@@ -10,6 +10,11 @@ namespace Barembo.Models
     public class BookShelf
     {
         /// <summary>
+        /// The name of the owner of this BookShelf
+        /// </summary>
+        public string OwnerName { get; set; }
+
+        /// <summary>
         /// The content of this bookshelf.
         /// </summary>
         public List<BookReference> Content { get; set; } = new List<BookReference>();

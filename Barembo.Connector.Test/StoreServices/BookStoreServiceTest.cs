@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Barembo.Connector.Test.Services
 {
     [TestClass]
-    public class BookServiceTest
+    public class BookStoreServiceTest
     {
         BookStoreService _service;
         Moq.Mock<IStoreService> _storeServiceMock;

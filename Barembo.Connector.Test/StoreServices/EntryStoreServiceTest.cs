@@ -11,7 +11,7 @@ using System.Linq;
 namespace Barembo.Connector.Test.Services
 {
     [TestClass]
-    public class EntryServiceTest
+    public class EntryStoreServiceTest
     {
         EntryStoreService _service;
         Moq.Mock<IStoreService> _storeServiceMock;

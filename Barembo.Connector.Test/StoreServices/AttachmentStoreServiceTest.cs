@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Barembo.Connector.Test.Services
 {
     [TestClass]
-    public class AttachmentServiceTest
+    public class AttachmentStoreServiceTest
     {
         AttachmentStoreService _service;
         Moq.Mock<IStoreService> _storeServiceMock;

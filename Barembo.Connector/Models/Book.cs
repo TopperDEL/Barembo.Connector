@@ -33,8 +33,8 @@ namespace Barembo.Models
         public string Version { get; set; } = VersionHelper.CURRENT_VERSION;
 
         /// <summary>
-        /// A list of keys to CoverImages.
+        /// The base64-encoded CoverImage for this book
         /// </summary>
-        public List<string> CoverImages { get; set; }
+        public string CoverImageBase64 { get; set; }
     }
 }
