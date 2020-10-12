@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Barembo.Models
+namespace Barembo.Exceptions
 {
-    public class BookShareInfo
+    public class BookShareNotFoundException : Exception
     {
-        //ToDo
     }
 }

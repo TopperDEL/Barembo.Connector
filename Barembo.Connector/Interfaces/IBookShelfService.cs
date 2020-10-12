@@ -29,7 +29,7 @@ namespace Barembo.Interfaces
         /// <summary>
         /// Adds an own Book to the BookShelf and saves the BookShelf
         /// </summary>
-        /// <param name="storeAccess">The StoreAccess to use</param>
+        /// <param name="storeAccess">The StoreAccess for the BookShelf to use</param>
         /// <param name="book">The Book to add</param>
         /// <returns>true, if the Book could be added; false if not</returns>
         Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book);
@@ -37,9 +37,9 @@ namespace Barembo.Interfaces
         /// <summary>
         /// Adds a shared Book to the BookShelf and saves the BookShelf
         /// </summary>
-        /// <param name="storeAccess">The StoreAccess to use</param>
-        /// <param name="shareInfo">The shared information about the Book</param>
+        /// <param name="storeAccess">The StoreAccess for the BookShelf to use</param>
+        /// <param name="bookShareReference">The reference to the shared information about the Book</param>
         /// <returns>true, if the Book could be added; false if not</returns>
-        Task<bool> AddSharedBookToBookShelfAndSaveAsync(StoreAccess access, BookShareInfo shareInfo);
+        Task<bool> AddSharedBookToBookShelfAndSaveAsync(StoreAccess access, BookShareReference bookShareReference);
     }
 }

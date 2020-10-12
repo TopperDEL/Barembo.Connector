@@ -11,10 +11,12 @@ namespace Barembo.Services
     public class BookShelfService : IBookShelfService
     {
         IBookShelfStoreService _bookShelfStoreService;
+        IBookShareStoreService _bookShareStoreService;
 
-        public BookShelfService(IBookShelfStoreService bookShelfStoreService)
+        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService)
         {
             _bookShelfStoreService = bookShelfStoreService;
+            _bookShareStoreService = bookShareStoreService;
         }
 
         public async Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book)
@@ -38,9 +40,31 @@ namespace Barembo.Services
             }
         }
 
-        public Task<bool> AddSharedBookToBookShelfAndSaveAsync(StoreAccess access, BookShareInfo shareInfo)
+        public async Task<bool> AddSharedBookToBookShelfAndSaveAsync(StoreAccess access, BookShareReference bookShareReference)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var bookShare = await _bookShareStoreService.LoadBookShareAsync(bookShareReference);
+
+                var bookShelf = await _bookShelfStoreService.LoadAsync(access);
+
+                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights);
+
+                if (success)
+                {
+                    return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                }
+                else
+                    return false;
+            }
+            catch (NoBookShelfExistsException)
+            {
+                return false;
+            }
+            catch (BookShareNotFoundException)
+            {
+                return false;
+            }
         }
 
         public async Task<BookShelf> CreateAndSaveBookShelfAsync(StoreAccess storeAccess, string ownerName)
@@ -56,9 +80,9 @@ namespace Barembo.Services
                 throw new BookShelfCouldNotBeSavedException();
         }
 
-        public Task<BookShelf> LoadBookShelfAsync(StoreAccess access)
+        public async Task<BookShelf> LoadBookShelfAsync(StoreAccess access)
         {
-            throw new NotImplementedException();
+            return await _bookShelfStoreService.LoadAsync(access);
         }
     }
 }

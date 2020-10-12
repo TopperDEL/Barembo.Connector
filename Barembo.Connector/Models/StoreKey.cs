@@ -37,7 +37,15 @@ namespace Barembo.Models
         /// <summary>
         /// A list of contributors
         /// </summary>
-        Contributors = 6
+        Contributors = 7,
+        /// <summary>
+        /// A BookShare
+        /// </summary>
+        BookShare = 8,
+        /// <summary>
+        /// A list of BookShares
+        /// </summary>
+        BookShares = 9
     }
 
     /// <summary>
