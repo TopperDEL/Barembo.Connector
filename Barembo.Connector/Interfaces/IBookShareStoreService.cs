@@ -30,10 +30,11 @@ namespace Barembo.Interfaces
         Task<BookShare> LoadBookShareAsync(BookShareReference bookShareReference);
 
         /// <summary>
-        /// Lists all current BookShares for a given StoreAccess
+        /// Lists all current BookShares for a given StoreAccess and a given Book
         /// </summary>
         /// <param name="storeAccess">The StoreAccess to use</param>
+        /// <param name="book">The Book to use</param>
         /// <returns>A list of all existing BookShares</returns>
-        Task<IEnumerable<BookShare>> ListBookSharesAsync(StoreAccess storeAccess);
+        Task<IEnumerable<BookShare>> ListBookSharesAsync(StoreAccess storeAccess, Book book);
     }
 }

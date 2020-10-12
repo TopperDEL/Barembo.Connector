@@ -173,6 +173,34 @@ namespace Barembo.Models
         }
 
         /// <summary>
+        /// Returns the StoreKey for a BookShare
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <param name="bookShareId">The Id of a BookShare</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey BookShare(string bookId, string bookShareId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_SHARE_ID, bookShareId);
+
+            return new StoreKey(StoreKeyTypes.BookShare, properties);
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for a list of BookShares
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey BookShares(string bookId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+
+            return new StoreKey(StoreKeyTypes.BookShares, properties);
+        }
+
+        /// <summary>
         /// Gets the StoreKey as a string using the StoreKeyHelper
         /// </summary>
         /// <returns>The StoreKey as a string</returns>
