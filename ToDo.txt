@@ -1,5 +1,4 @@
-- Implemetierung BookShareStoreService + Test
 - ggfs Deletes für BookShares/Books/Entries/Contributors etc.
 - EntryService
-- Implementierung StoreAccessService
-- 
+- Implementierung StoreAccessService => Anbindung uplink.Net
+- Implementierung StoreService => Anbindung uplink.Net
