@@ -12,11 +12,13 @@ namespace Barembo.Services
     {
         IBookShelfStoreService _bookShelfStoreService;
         IBookShareStoreService _bookShareStoreService;
+        IStoreAccessService  _storeAccessService;
 
-        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService)
+        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService, IStoreAccessService storeAccessService)
         {
             _bookShelfStoreService = bookShelfStoreService;
             _bookShareStoreService = bookShareStoreService;
+            _storeAccessService = storeAccessService;
         }
 
         public async Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book, Contributor contributor)
@@ -83,6 +85,22 @@ namespace Barembo.Services
         public async Task<BookShelf> LoadBookShelfAsync(StoreAccess access)
         {
             return await _bookShelfStoreService.LoadAsync(access);
+        }
+
+        public async Task<BookShareReference> ShareBookAsync(StoreAccess access, Book bookToShare, Contributor contributor, AccessRights accessRights)
+        {
+            var bookShelf = await _bookShelfStoreService.LoadAsync(access);
+
+            BookShare bookShare = new BookShare();
+            bookShare.Access = await _storeAccessService.ShareBookAccessAsync(access, bookToShare, contributor, accessRights);
+            bookShare.AccessRights = accessRights;
+            bookShare.BookId = bookToShare.Id;
+            bookShare.ContributorId = contributor.Id;
+            bookShare.OwnerName = bookShelf.OwnerName;
+
+            var reference = await _bookShareStoreService.SaveBookShareAsync(StoreKey.BookShare(bookToShare.Id, bookShare.Id), access, bookShare);
+
+            return reference;
         }
     }
 }

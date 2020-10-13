@@ -16,14 +16,16 @@ namespace Barembo.Connector.Test.Services
         BookShelfService _bookShelfService;
         Moq.Mock<IBookShelfStoreService> _bookShelfStoreServiceMock;
         Moq.Mock<IBookShareStoreService> _bookShareStoreServiceMock;
+        Moq.Mock<IStoreAccessService> _storeAccessService;
 
         [TestInitialize]
         public void Init()
         {
             _bookShelfStoreServiceMock = new Moq.Mock<IBookShelfStoreService>();
             _bookShareStoreServiceMock = new Moq.Mock<IBookShareStoreService>();
+            _storeAccessService = new Moq.Mock<IStoreAccessService>();
 
-            _bookShelfService = new BookShelfService(_bookShelfStoreServiceMock.Object, _bookShareStoreServiceMock.Object);
+            _bookShelfService = new BookShelfService(_bookShelfStoreServiceMock.Object, _bookShareStoreServiceMock.Object, _storeAccessService.Object);
         }
 
         [TestMethod]
@@ -162,6 +164,35 @@ namespace Barembo.Connector.Test.Services
             var result = await _bookShelfService.AddSharedBookToBookShelfAndSaveAsync(storeAccess, bookShareReference);
 
             Assert.IsTrue(result);
+            _bookShelfStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task ShareBook_Creates_BookShareAndBookShareReference()
+        {
+            Book sharedBook = new Book();
+            Contributor contributor = new Contributor();
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            BookShelf bookShelf = new BookShelf();
+            bookShelf.OwnerName = "it's me";
+            BookShareReference bookShareReference = new BookShareReference();
+            AccessRights accessRights = new AccessRights();
+            StoreAccess sharedStoreAccess = new StoreAccess("use this restricted access");
+
+
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
+            _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, sharedBook, contributor, accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
+            _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare),
+                                                                     storeAccess,
+                                                                     Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
+                                                                                             b.ContributorId == contributor.Id &&
+                                                                                             b.OwnerName == bookShelf.OwnerName &&
+                                                                                             b.AccessRights == accessRights))).Returns(Task.FromResult(bookShareReference)).Verifiable();
+            var result = await _bookShelfService.ShareBookAsync(storeAccess, sharedBook, contributor, accessRights);
+
+            Assert.AreEqual(bookShareReference, result);
+            _storeAccessService.Verify();
+            _bookShareStoreServiceMock.Verify();
             _bookShelfStoreServiceMock.Verify();
         }
     }

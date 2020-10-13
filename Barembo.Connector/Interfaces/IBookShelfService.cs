@@ -42,5 +42,15 @@ namespace Barembo.Interfaces
         /// <param name="bookShareReference">The reference to the shared information about the Book</param>
         /// <returns>true, if the Book could be added; false if not</returns>
         Task<bool> AddSharedBookToBookShelfAndSaveAsync(StoreAccess access, BookShareReference bookShareReference);
+
+        /// <summary>
+        /// Shares the given Book for the given Contributor with the given AccessRights.
+        /// </summary>
+        /// <param name="access">The StoreAccess for the BookShelf</param>
+        /// <param name="bookToShare">The Book to share</param>
+        /// <param name="contributor">The Contributor who receives the shared Book</param>
+        /// <param name="accessRights">The AccessRights for the Contributor</param>
+        /// <returns>The BookShareReference to the BookShare</returns>
+        Task<BookShareReference> ShareBookAsync(StoreAccess access, Book bookToShare, Contributor contributor, AccessRights accessRights);
     }
 }
