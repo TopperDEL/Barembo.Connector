@@ -34,5 +34,10 @@ namespace Barembo.Models
         /// The AccessRights for this Book
         /// </summary>
         public AccessRights AccessRights { get; set; }
+
+        /// <summary>
+        /// The Id of the Contributor
+        /// </summary>
+        public string ContributorId { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Barembo.StoreServices
             _storeService = storeService;
         }
 
-        public bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights)
+        public bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId)
         {
             if (bookShelf.Content.Where(r => r.BookId == bookId).Count() > 0)
                 return false;
@@ -28,6 +28,7 @@ namespace Barembo.StoreServices
             reference.AccessRights = accessRights;
             reference.BookId = bookId;
             reference.OwnerName = ownerName;
+            reference.ContributorId = contributorId;
 
             bookShelf.Content.Add(reference);
 

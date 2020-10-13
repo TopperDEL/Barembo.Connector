@@ -79,14 +79,16 @@ namespace Barembo.Connector.Test.StoreServices
             var bookShelf = new BookShelf();
             var bookToAdd = new Book();
             var accessRights = new AccessRights();
+            var contributor = new Contributor();
 
-            var result =  _service.AddBookToBookShelf(bookShelf, bookToAdd.Id, "Goethe", _storeAccess, accessRights);
+            var result =  _service.AddBookToBookShelf(bookShelf, bookToAdd.Id, "Goethe", _storeAccess, accessRights, contributor.Id);
 
             Assert.IsTrue(result);
             Assert.AreEqual("Goethe", bookShelf.Content[0].OwnerName);
             Assert.AreEqual(bookToAdd.Id, bookShelf.Content[0].BookId);
             Assert.AreEqual(accessRights, bookShelf.Content[0].AccessRights);
             Assert.AreEqual(_storeAccess.AccessGrant, bookShelf.Content[0].AccessGrant);
+            Assert.AreEqual(contributor.Id, bookShelf.Content[0].ContributorId);
         }
 
         [TestMethod]
@@ -95,9 +97,10 @@ namespace Barembo.Connector.Test.StoreServices
             var bookShelf = new BookShelf();
             var bookToAdd = new Book();
             var accessRights = new AccessRights();
+            var contributor = new Contributor();
 
-            _service.AddBookToBookShelf(bookShelf, bookToAdd.Id, "Goethe", _storeAccess, accessRights);
-            var result = _service.AddBookToBookShelf(bookShelf, bookToAdd.Id, "Goethe not again", _storeAccess, accessRights);
+            _service.AddBookToBookShelf(bookShelf, bookToAdd.Id, "Goethe", _storeAccess, accessRights, contributor.Id);
+            var result = _service.AddBookToBookShelf(bookShelf, bookToAdd.Id, "Goethe not again", _storeAccess, accessRights, contributor.Id);
 
             Assert.IsFalse(result);
         }

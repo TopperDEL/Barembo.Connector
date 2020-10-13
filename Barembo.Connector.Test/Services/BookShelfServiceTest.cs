@@ -66,11 +66,12 @@ namespace Barembo.Connector.Test.Services
             StoreAccess storeAccess = new StoreAccess("use this access");
             Book bookToAdd = new Book();
             BookShelf bookShelf = new BookShelf();
+            Contributor contributor = new Contributor();
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>())).Returns(true).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>(), contributor.Id)).Returns(true).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.SaveAsync(storeAccess, bookShelf)).Returns(Task.FromResult(true)).Verifiable();
-            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd);
+            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsTrue(result);
             _bookShelfStoreServiceMock.Verify();
@@ -82,9 +83,10 @@ namespace Barembo.Connector.Test.Services
             StoreAccess storeAccess = new StoreAccess("use this access");
             Book bookToAdd = new Book();
             BookShelf bookShelf = new BookShelf();
+            Contributor contributor = new Contributor();
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException()).Verifiable();
-            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd);
+            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsFalse(result);
             _bookShelfStoreServiceMock.Verify();
@@ -96,10 +98,11 @@ namespace Barembo.Connector.Test.Services
             StoreAccess storeAccess = new StoreAccess("use this access");
             Book bookToAdd = new Book();
             BookShelf bookShelf = new BookShelf();
+            Contributor contributor = new Contributor();
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>())).Returns(false).Verifiable();
-            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd);
+            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>(), contributor.Id)).Returns(false).Verifiable();
+            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsFalse(result);
             _bookShelfStoreServiceMock.Verify();
@@ -111,11 +114,12 @@ namespace Barembo.Connector.Test.Services
             StoreAccess storeAccess = new StoreAccess("use this access");
             Book bookToAdd = new Book();
             BookShelf bookShelf = new BookShelf();
+            Contributor contributor = new Contributor();
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>())).Returns(true).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>(), contributor.Id)).Returns(true).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.SaveAsync(storeAccess, bookShelf)).Returns(Task.FromResult(false)).Verifiable();
-            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd);
+            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsFalse(result);
             _bookShelfStoreServiceMock.Verify();
@@ -138,19 +142,21 @@ namespace Barembo.Connector.Test.Services
         public async Task AddSharedBookAndSave_FetchesInfoAndAddsBookAndSaves()
         {
             Book sharedBook = new Book();
+            Contributor contributor = new Contributor();
             BookShareReference bookShareReference = new BookShareReference();
             BookShare bookShare = new BookShare();
             bookShare.BookId = sharedBook.Id;
             bookShare.OwnerName = "foreign owner";
             bookShare.Access = new StoreAccess("foreign access");
             bookShare.AccessRights = AccessRights.Full;
+            bookShare.ContributorId = contributor.Id;
 
             StoreAccess storeAccess = new StoreAccess("use this access");
             BookShelf bookShelf = new BookShelf();
 
             _bookShareStoreServiceMock.Setup(s => s.LoadBookShareAsync(bookShareReference)).Returns(Task.FromResult(bookShare)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights)).Returns(true).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights, bookShare.ContributorId)).Returns(true).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.SaveAsync(storeAccess, bookShelf)).Returns(Task.FromResult(true)).Verifiable();
 
             var result = await _bookShelfService.AddSharedBookToBookShelfAndSaveAsync(storeAccess, bookShareReference);

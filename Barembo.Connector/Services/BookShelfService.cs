@@ -19,13 +19,13 @@ namespace Barembo.Services
             _bookShareStoreService = bookShareStoreService;
         }
 
-        public async Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book)
+        public async Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book, Contributor contributor)
         {
             try
             {
                 var bookShelf = await _bookShelfStoreService.LoadAsync(access);
 
-                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, book.Id, bookShelf.OwnerName, access, AccessRights.Full);
+                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, book.Id, bookShelf.OwnerName, access, AccessRights.Full, contributor.Id);
 
                 if (success)
                 {
@@ -48,7 +48,7 @@ namespace Barembo.Services
 
                 var bookShelf = await _bookShelfStoreService.LoadAsync(access);
 
-                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights);
+                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights, bookShare.ContributorId);
 
                 if (success)
                 {
