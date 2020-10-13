@@ -16,11 +16,10 @@ namespace Barembo.Interfaces
         /// Saves a BookShare to the given StoreKey with the given StoreAccess and returns
         /// a BookShareReference. The latte can be shared e.g. by a QR-code.
         /// </summary>
-        /// <param name="storeKey">The StoreKey to use</param>
         /// <param name="storeAccess">The StoreAccess to use</param>
         /// <param name="bookShare">The BookShare</param>
         /// <returns>The BookShareReference</returns>
-        Task<BookShareReference> SaveBookShareAsync(StoreKey storeKey, StoreAccess storeAccess, BookShare bookShare);
+        Task<BookShareReference> SaveBookShareAsync(StoreAccess storeAccess, BookShare bookShare);
 
         /// <summary>
         /// Loads a BookShare from a given BookShareReference
@@ -34,7 +33,7 @@ namespace Barembo.Interfaces
         /// </summary>
         /// <param name="storeAccess">The StoreAccess to use</param>
         /// <param name="book">The Book to use</param>
-        /// <returns>A list of all existing BookShares</returns>
-        Task<IEnumerable<BookShare>> ListBookSharesAsync(StoreAccess storeAccess, Book book);
+        /// <returns>A list of all existing BookShareReferences</returns>
+        Task<IEnumerable<BookShareReference>> ListBookSharesAsync(StoreAccess storeAccess, Book book);
     }
 }

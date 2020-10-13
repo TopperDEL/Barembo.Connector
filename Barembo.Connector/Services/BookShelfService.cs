@@ -98,7 +98,7 @@ namespace Barembo.Services
             bookShare.ContributorId = contributor.Id;
             bookShare.OwnerName = bookShelf.OwnerName;
 
-            var reference = await _bookShareStoreService.SaveBookShareAsync(StoreKey.BookShare(bookToShare.Id, bookShare.Id), access, bookShare);
+            var reference = await _bookShareStoreService.SaveBookShareAsync(access, bookShare);
 
             return reference;
         }

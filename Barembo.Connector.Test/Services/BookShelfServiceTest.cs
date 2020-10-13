@@ -182,12 +182,11 @@ namespace Barembo.Connector.Test.Services
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
             _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, sharedBook, contributor, accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
-            _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare),
-                                                                     storeAccess,
-                                                                     Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
-                                                                                             b.ContributorId == contributor.Id &&
-                                                                                             b.OwnerName == bookShelf.OwnerName &&
-                                                                                             b.AccessRights == accessRights))).Returns(Task.FromResult(bookShareReference)).Verifiable();
+            _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
+                                                                       Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
+                                                                                            b.ContributorId == contributor.Id &&
+                                                                                            b.OwnerName == bookShelf.OwnerName &&
+                                                                                            b.AccessRights == accessRights))).Returns(Task.FromResult(bookShareReference)).Verifiable();
             var result = await _bookShelfService.ShareBookAsync(storeAccess, sharedBook, contributor, accessRights);
 
             Assert.AreEqual(bookShareReference, result);
