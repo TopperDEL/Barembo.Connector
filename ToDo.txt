@@ -1,0 +1,4 @@
+- "Share" im BookShelf => Contributor noch in BookShare mit rein?
+- Implemetierung BookShareStoreService + Test
+- ggfs Deletes für BookShares/Books/Entries/Contributors etc.
+- EntryService
