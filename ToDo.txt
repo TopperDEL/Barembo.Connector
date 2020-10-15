@@ -1,6 +1,7 @@
-- ggfs Deletes für BookShares/Books/Entries/Contributors etc.
-- EntryService
+- Store-Services internal machen
+- Konstruktoren ggfs internal machen
 - ContributorService bzw. Einbindung prüfen
 - Implementierung StoreAccessService => Anbindung uplink.Net
 - Implementierung StoreService => Anbindung uplink.Net
 - Full-Stack-Test bauen
+- Deletes für BookShares/Books/Entries/Contributors etc.
