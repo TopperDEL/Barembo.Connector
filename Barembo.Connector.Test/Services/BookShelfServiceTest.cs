@@ -56,7 +56,7 @@ namespace Barembo.Connector.Test.Services
                 var result = await _bookShelfService.CreateAndSaveBookShelfAsync(storeAccess, "i_am_the_owner");
                 Assert.IsTrue(false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsInstanceOfType(ex, typeof(BookShelfCouldNotBeSavedException));
             }
@@ -185,7 +185,7 @@ namespace Barembo.Connector.Test.Services
             bookReference.BookId = sharedBook.Id;
             bookReference.OwnerName = bookShelf.OwnerName;
 
-            _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c=>c.Name == contributor.Name))).Returns(Task.FromResult(true)).Verifiable();
+            _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name))).Returns(Task.FromResult(true)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
             _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
             _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
@@ -195,6 +195,115 @@ namespace Barembo.Connector.Test.Services
             var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
 
             Assert.AreEqual(bookShareReference, result);
+            _storeAccessService.Verify();
+            _bookShareStoreServiceMock.Verify();
+            _bookShelfStoreServiceMock.Verify();
+            _contributorStoreService.Verify();
+        }
+
+        [TestMethod]
+        public async Task ShareBook_RaisesError_IfBookShelfNotExists()
+        {
+            Book sharedBook = new Book();
+            Contributor contributor = new Contributor();
+            contributor.Name = "my significant other";
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            BookShelf bookShelf = new BookShelf();
+            bookShelf.OwnerName = "it's me";
+            BookShareReference bookShareReference = new BookShareReference();
+            AccessRights accessRights = new AccessRights();
+            StoreAccess sharedStoreAccess = new StoreAccess("use this restricted access");
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = sharedBook.Id;
+            bookReference.OwnerName = bookShelf.OwnerName;
+
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException()).Verifiable();
+            try
+            {
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(CouldNotShareBookException));
+                Assert.AreEqual(CouldNotShareBookReason.BookShelfNotFound, ((CouldNotShareBookException)ex).Reason);
+            }
+
+            _storeAccessService.Verify();
+            _bookShareStoreServiceMock.Verify();
+            _bookShelfStoreServiceMock.Verify();
+            _contributorStoreService.Verify();
+        }
+
+        [TestMethod]
+        public async Task ShareBook_RaisesError_IfContributorCouldNotBeSaved()
+        {
+            Book sharedBook = new Book();
+            Contributor contributor = new Contributor();
+            contributor.Name = "my significant other";
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            BookShelf bookShelf = new BookShelf();
+            bookShelf.OwnerName = "it's me";
+            BookShareReference bookShareReference = new BookShareReference();
+            AccessRights accessRights = new AccessRights();
+            StoreAccess sharedStoreAccess = new StoreAccess("use this restricted access");
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = sharedBook.Id;
+            bookReference.OwnerName = bookShelf.OwnerName;
+
+            _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name))).Returns(Task.FromResult(false)).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
+            try
+            {
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(CouldNotShareBookException));
+                Assert.AreEqual(CouldNotShareBookReason.CouldNotSaveContributor, ((CouldNotShareBookException)ex).Reason);
+            }
+
+            _storeAccessService.Verify();
+            _bookShareStoreServiceMock.Verify();
+            _bookShelfStoreServiceMock.Verify();
+            _contributorStoreService.Verify();
+        }
+
+        [TestMethod]
+        public async Task ShareBook_RaisesError_IfBookShareCouldNotBeSaved()
+        {
+            Book sharedBook = new Book();
+            Contributor contributor = new Contributor();
+            contributor.Name = "my significant other";
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            BookShelf bookShelf = new BookShelf();
+            bookShelf.OwnerName = "it's me";
+            BookShareReference bookShareReference = new BookShareReference();
+            AccessRights accessRights = new AccessRights();
+            StoreAccess sharedStoreAccess = new StoreAccess("use this restricted access");
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = sharedBook.Id;
+            bookReference.OwnerName = bookShelf.OwnerName;
+
+            _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name))).Returns(Task.FromResult(true)).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
+            _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
+            _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
+                                                                       Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
+                                                                                            b.OwnerName == bookShelf.OwnerName &&
+                                                                                            b.AccessRights == accessRights))).Throws(new BookShareCouldNotBeSavedException()).Verifiable();
+            try
+            {
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(CouldNotShareBookException));
+                Assert.AreEqual(CouldNotShareBookReason.BookShareCouldNotBeSaved, ((CouldNotShareBookException)ex).Reason);
+            }
+
             _storeAccessService.Verify();
             _bookShareStoreServiceMock.Verify();
             _bookShelfStoreServiceMock.Verify();

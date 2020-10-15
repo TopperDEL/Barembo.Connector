@@ -50,7 +50,7 @@ namespace Barembo.Interfaces
         /// <param name="bookReferenceToShare">The BookReference to the Book to share</param>
         /// <param name="contributorName">The name of the contributor who receives the shared Book</param>
         /// <param name="accessRights">The AccessRights for the Contributor</param>
-        /// <returns>The BookShareReference to the BookShare</returns>
+        /// <returns>The BookShareReference to the BookShare or a CouldNotShareBookException</returns>
         Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights);
     }
 }
