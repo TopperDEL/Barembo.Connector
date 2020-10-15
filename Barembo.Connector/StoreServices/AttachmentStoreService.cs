@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Barembo.StoreServices
 {
-    public class AttachmentStoreService : IAttachmentStoreService
+    internal class AttachmentStoreService : IAttachmentStoreService
     {
         private IStoreService _storeService;
 

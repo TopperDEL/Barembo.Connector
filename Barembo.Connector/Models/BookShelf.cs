@@ -18,5 +18,7 @@ namespace Barembo.Models
         /// The content of this bookshelf.
         /// </summary>
         public List<BookReference> Content { get; set; } = new List<BookReference>();
+
+        internal BookShelf() { }
     }
 }

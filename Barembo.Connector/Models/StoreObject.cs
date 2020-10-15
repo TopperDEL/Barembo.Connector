@@ -19,7 +19,7 @@ namespace Barembo.Models
         /// </summary>
         public string Id { get; set; }
 
-        public StoreObject(string key, string id)
+        internal StoreObject(string key, string id)
         {
             Key = key;
             Id = id;

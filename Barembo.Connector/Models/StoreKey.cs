@@ -208,5 +208,7 @@ namespace Barembo.Models
         {
             return StoreKeyHelper.Convert(this);
         }
+
+        private StoreKey() { }
     }
 }

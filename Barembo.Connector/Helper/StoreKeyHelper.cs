@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Barembo.Helper
 {
-    public static class StoreKeyHelper
+    internal static class StoreKeyHelper
     {
         public const string PROPERTY_BOOK_ID = "BookId";
         public const string PROPERTY_ENTRY_ID = "EntryId";

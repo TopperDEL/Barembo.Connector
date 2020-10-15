@@ -45,5 +45,7 @@ namespace Barembo.Models
         /// of the attachments.
         /// </summary>
         public List<Attachment> Attachments { get; set; } = new List<Attachment>();
+
+        internal Entry() { }
     }
 }

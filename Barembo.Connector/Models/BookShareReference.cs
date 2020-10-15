@@ -22,5 +22,7 @@ namespace Barembo.Models
         /// The key to the BookShare
         /// </summary>
         public StoreKey StoreKey { get; set; }
+
+        internal BookShareReference() { }
     }
 }

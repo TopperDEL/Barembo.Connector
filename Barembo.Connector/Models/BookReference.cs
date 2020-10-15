@@ -33,5 +33,7 @@ namespace Barembo.Models
         /// The access rights to access that book.
         /// </summary>
         public AccessRights AccessRights { get; set; }
+
+        internal BookReference() { }
     }
 }

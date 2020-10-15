@@ -39,5 +39,7 @@ namespace Barembo.Models
         /// The Id of the Contributor
         /// </summary>
         public string ContributorId { get; set; }
+
+        internal BookShare() { }
     }
 }

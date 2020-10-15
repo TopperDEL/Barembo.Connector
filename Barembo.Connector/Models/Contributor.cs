@@ -28,5 +28,7 @@ namespace Barembo.Models
         /// The serialised Access to the Book for this Contributor
         /// </summary>
         public string AccessGrant { get; set; }
+
+        internal Contributor() { }
     }
 }

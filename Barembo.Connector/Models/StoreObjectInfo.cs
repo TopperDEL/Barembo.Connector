@@ -7,7 +7,7 @@ namespace Barembo.Models
     /// <summary>
     /// Contains information about a StoreObject
     /// </summary>
-    public class StoreObjectInfo
+    public struct StoreObjectInfo
     {
         /// <summary>
         /// True, if the object exists on the store (and is accessable). False if not.

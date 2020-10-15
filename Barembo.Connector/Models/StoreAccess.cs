@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Barembo.Models
 {
-    public class StoreAccess
+    public struct StoreAccess
     {
         public string AccessGrant { get; private set; }
 

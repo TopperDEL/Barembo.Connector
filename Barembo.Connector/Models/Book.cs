@@ -36,5 +36,7 @@ namespace Barembo.Models
         /// The base64-encoded CoverImage for this book
         /// </summary>
         public string CoverImageBase64 { get; set; }
+
+        internal Book() { }
     }
 }

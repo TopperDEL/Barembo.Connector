@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Barembo.StoreServices
 {
-    public class ContributorStoreService : IContributorStoreService
+    internal class ContributorStoreService : IContributorStoreService
     {
         private IStoreService _storeService;
 
