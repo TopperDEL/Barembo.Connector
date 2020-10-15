@@ -16,7 +16,7 @@ namespace Barembo.Connector.Test.Services
         BookShelfService _bookShelfService;
         Moq.Mock<IBookShelfStoreService> _bookShelfStoreServiceMock;
         Moq.Mock<IBookShareStoreService> _bookShareStoreServiceMock;
-        Moq.Mock<IStoreAccessService> _storeAccessService; //ToDo: Warum?
+        Moq.Mock<IStoreAccessService> _storeAccessService;
         Moq.Mock<IContributorStoreService> _contributorStoreService;
 
         [TestInitialize]
