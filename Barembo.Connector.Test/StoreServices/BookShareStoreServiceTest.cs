@@ -110,6 +110,8 @@ namespace Barembo.Connector.Test.StoreServices
         {
             StoreAccess access = new StoreAccess("use this access");
             Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
             var bookSharesToLoad = new List<StoreObject>();
             var share1 = new StoreObject(book.Id + "/Shares/share1.json", "share1");
             bookSharesToLoad.Add(share1);
@@ -121,12 +123,9 @@ namespace Barembo.Connector.Test.StoreServices
             _storeServiceMock.Setup(s => s.ListObjectsAsync(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShares)))
             .Returns(Task.FromResult(bookSharesToLoad as IEnumerable<StoreObject>)).Verifiable();
 
-            var entries = (await _service.ListBookSharesAsync(access, book)).ToList();
+            var entries = (await _service.ListBookSharesAsync(access, bookReference)).ToList();
 
             Assert.AreEqual(3, entries.Count());
-            //Assert.AreEqual(share1.Id, entries[0].);
-            //Assert.AreEqual(share2, entries[1]);
-            //Assert.AreEqual(share3, entries[2]);
 
             _storeServiceMock.Verify();
         }

@@ -309,5 +309,20 @@ namespace Barembo.Connector.Test.Services
             _bookShelfStoreServiceMock.Verify();
             _contributorStoreService.Verify();
         }
+
+        [TestMethod]
+        public async Task ListBookShares_Lists_BookShareReferences()
+        {
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            BookReference bookReference = new BookReference();
+            List<BookShareReference> list = new List<BookShareReference>();
+
+            _bookShareStoreServiceMock.Setup(s => s.ListBookSharesAsync(storeAccess, bookReference)).Returns(Task.FromResult(list as IEnumerable<BookShareReference>)).Verifiable();
+            var result = await _bookShelfService.ListBookSharesAsync(storeAccess, bookReference);
+
+            Assert.AreEqual(list, result);
+
+            _bookShelfStoreServiceMock.Verify();
+        }
     }
 }

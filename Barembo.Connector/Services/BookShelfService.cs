@@ -84,6 +84,11 @@ namespace Barembo.Services
                 throw new BookShelfCouldNotBeSavedException();
         }
 
+        public async Task<IEnumerable<BookShareReference>> ListBookSharesAsync(StoreAccess access, BookReference bookReference)
+        {
+            return await _bookShareStoreService.ListBookSharesAsync(access, bookReference);
+        }
+
         public async Task<BookShelf> LoadBookShelfAsync(StoreAccess access)
         {
             return await _bookShelfStoreService.LoadAsync(access);
