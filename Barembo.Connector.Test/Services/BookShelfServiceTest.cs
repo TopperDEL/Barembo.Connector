@@ -16,16 +16,18 @@ namespace Barembo.Connector.Test.Services
         BookShelfService _bookShelfService;
         Moq.Mock<IBookShelfStoreService> _bookShelfStoreServiceMock;
         Moq.Mock<IBookShareStoreService> _bookShareStoreServiceMock;
-        Moq.Mock<IStoreAccessService> _storeAccessService;
+        Moq.Mock<IStoreAccessService> _storeAccessService; //ToDo: Warum?
+        Moq.Mock<IContributorStoreService> _contributorStoreService;
 
         [TestInitialize]
         public void Init()
         {
             _bookShelfStoreServiceMock = new Moq.Mock<IBookShelfStoreService>();
             _bookShareStoreServiceMock = new Moq.Mock<IBookShareStoreService>();
+            _contributorStoreService = new Moq.Mock<IContributorStoreService>();
             _storeAccessService = new Moq.Mock<IStoreAccessService>();
 
-            _bookShelfService = new BookShelfService(_bookShelfStoreServiceMock.Object, _bookShareStoreServiceMock.Object, _storeAccessService.Object);
+            _bookShelfService = new BookShelfService(_bookShelfStoreServiceMock.Object, _bookShareStoreServiceMock.Object, _storeAccessService.Object, _contributorStoreService.Object);
         }
 
         [TestMethod]
@@ -168,31 +170,35 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public async Task ShareBook_Creates_BookShareAndBookShareReference()
+        public async Task ShareBook_Creates_ContributorAndBookShareAndBookShareReference()
         {
             Book sharedBook = new Book();
             Contributor contributor = new Contributor();
+            contributor.Name = "my significant other";
             StoreAccess storeAccess = new StoreAccess("use this access");
             BookShelf bookShelf = new BookShelf();
             bookShelf.OwnerName = "it's me";
             BookShareReference bookShareReference = new BookShareReference();
             AccessRights accessRights = new AccessRights();
             StoreAccess sharedStoreAccess = new StoreAccess("use this restricted access");
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = sharedBook.Id;
+            bookReference.OwnerName = bookShelf.OwnerName;
 
-
+            _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c=>c.Name == contributor.Name))).Returns(Task.FromResult(true)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, sharedBook, contributor, accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
+            _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
             _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
                                                                        Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
-                                                                                            b.ContributorId == contributor.Id &&
                                                                                             b.OwnerName == bookShelf.OwnerName &&
                                                                                             b.AccessRights == accessRights))).Returns(Task.FromResult(bookShareReference)).Verifiable();
-            var result = await _bookShelfService.ShareBookAsync(storeAccess, sharedBook, contributor, accessRights);
+            var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
 
             Assert.AreEqual(bookShareReference, result);
             _storeAccessService.Verify();
             _bookShareStoreServiceMock.Verify();
             _bookShelfStoreServiceMock.Verify();
+            _contributorStoreService.Verify();
         }
     }
 }

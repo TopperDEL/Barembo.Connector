@@ -8,7 +8,7 @@ namespace Barembo.Interfaces
 {
     public interface IStoreAccessService
     {
-        Task<StoreAccess> ShareBookAccessAsync(StoreAccess baseAccess, Book bookToShare, Contributor contributor, AccessRights accessRights);
+        Task<StoreAccess> ShareBookAccessAsync(StoreAccess baseAccess, BookReference bookReferenceToShare, Contributor contributor, AccessRights accessRights);
 
         Task<StoreAccess> ShareBookShareAccessAsync(StoreAccess baseAccess, StoreKey storeKey);
     }

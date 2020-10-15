@@ -24,11 +24,6 @@ namespace Barembo.Models
         /// </summary>
         public AccessRights AccessRights { get; set; }
 
-        /// <summary>
-        /// The serialised Access to the Book for this Contributor
-        /// </summary>
-        public string AccessGrant { get; set; }
-
         internal Contributor() { }
     }
 }

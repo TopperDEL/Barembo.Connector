@@ -12,12 +12,14 @@ namespace Barembo.Services
     {
         IBookShelfStoreService _bookShelfStoreService;
         IBookShareStoreService _bookShareStoreService;
+        IContributorStoreService _contributorStoreService;
         IStoreAccessService  _storeAccessService;
 
-        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService, IStoreAccessService storeAccessService)
+        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService, IStoreAccessService storeAccessService, IContributorStoreService contributorStoreService)
         {
             _bookShelfStoreService = bookShelfStoreService;
             _bookShareStoreService = bookShareStoreService;
+            _contributorStoreService = contributorStoreService;
             _storeAccessService = storeAccessService;
         }
 
@@ -87,14 +89,19 @@ namespace Barembo.Services
             return await _bookShelfStoreService.LoadAsync(access);
         }
 
-        public async Task<BookShareReference> ShareBookAsync(StoreAccess access, Book bookToShare, Contributor contributor, AccessRights accessRights)
+        public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights)
         {
             var bookShelf = await _bookShelfStoreService.LoadAsync(access);
 
+            Contributor contributor = new Contributor();
+            contributor.AccessRights = accessRights;
+            contributor.Name = contributorName;
+            var contributorSaved = await _contributorStoreService.SaveAsync(bookReferenceToShare, contributor);
+
             BookShare bookShare = new BookShare();
-            bookShare.Access = await _storeAccessService.ShareBookAccessAsync(access, bookToShare, contributor, accessRights);
+            bookShare.Access = await _storeAccessService.ShareBookAccessAsync(access, bookReferenceToShare, contributor, accessRights);
             bookShare.AccessRights = accessRights;
-            bookShare.BookId = bookToShare.Id;
+            bookShare.BookId = bookReferenceToShare.BookId;
             bookShare.ContributorId = contributor.Id;
             bookShare.OwnerName = bookShelf.OwnerName;
 

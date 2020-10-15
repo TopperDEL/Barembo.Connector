@@ -1,4 +1,5 @@
 - ContributorService bzw. Einbindung prüfen
+- Contributor-Rechte immer neu lesen, damit Rechte entzogen werden können
 - Implementierung StoreAccessService => Anbindung uplink.Net
 - Implementierung StoreService => Anbindung uplink.Net
 - Full-Stack-Test bauen
