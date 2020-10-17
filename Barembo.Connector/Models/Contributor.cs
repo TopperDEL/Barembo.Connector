@@ -19,11 +19,6 @@ namespace Barembo.Models
         /// </summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// The AccessRights of that Contributor
-        /// </summary>
-        public AccessRights AccessRights { get; set; }
-
         internal Contributor() { }
     }
 }

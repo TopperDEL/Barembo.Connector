@@ -111,7 +111,6 @@ namespace Barembo.Services
                 var bookShelf = await _bookShelfStoreService.LoadAsync(access);
 
                 Contributor contributor = new Contributor();
-                contributor.AccessRights = accessRights;
                 contributor.Name = contributorName;
                 var contributorSaved = await _contributorStoreService.SaveAsync(bookReferenceToShare, contributor);
                 if (!contributorSaved)
