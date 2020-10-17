@@ -324,5 +324,27 @@ namespace Barembo.Connector.Test.Services
 
             _bookShelfStoreServiceMock.Verify();
         }
+
+        [TestMethod]
+        public async Task RefreshBook_RefreshesBookAccess_ForForeignBook()
+        {
+            StoreAccess newAccess = new StoreAccess("new Access");
+            AccessRights newAccessRights = new AccessRights();
+            BookShelf bookShelf = new BookShelf();
+            BookShareReference bookShareReference = new BookShareReference();
+            BookReference bookReference = new BookReference();
+            bookReference.BookShareReference = bookShareReference;
+            BookShare bookShare = new BookShare();
+            bookShare.Access = newAccess;
+            bookShare.AccessRights = newAccessRights;
+
+            _bookShareStoreServiceMock.Setup(s => s.LoadBookShareAsync(bookShareReference)).Returns(Task.FromResult(bookShare)).Verifiable();          
+            await _bookShelfService.RefreshBookAccessAsync(bookReference);
+
+            Assert.AreEqual(newAccess.AccessGrant, bookReference.AccessGrant);
+            Assert.AreEqual(newAccessRights, bookReference.AccessRights);
+            _bookShelfStoreServiceMock.Verify();
+            _bookShareStoreServiceMock.Verify();
+        }
     }
 }

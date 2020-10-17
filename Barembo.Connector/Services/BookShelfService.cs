@@ -94,6 +94,16 @@ namespace Barembo.Services
             return await _bookShelfStoreService.LoadAsync(access);
         }
 
+        public async Task RefreshBookAccessAsync(BookReference bookReference)
+        {
+            if(bookReference.BookShareReference != null)
+            {
+                BookShare bookShare = await _bookShareStoreService.LoadBookShareAsync(bookReference.BookShareReference);
+                bookReference.AccessGrant = bookShare.Access.AccessGrant;
+                bookReference.AccessRights = bookShare.AccessRights;
+            }
+        }
+
         public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights)
         {
             try

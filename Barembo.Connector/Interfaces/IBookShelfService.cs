@@ -60,5 +60,13 @@ namespace Barembo.Interfaces
         /// <param name="bookReference">The BookReference to fetch the BookShareReferences from</param>
         /// <returns>A list of BookShareReferences</returns>
         Task<IEnumerable<BookShareReference>> ListBookSharesAsync(StoreAccess access, BookReference bookReference);
+
+        /// <summary>
+        /// If the BookReference is for a foreign Book, the Access and AccessRights
+        /// get refreshed.
+        /// </summary>
+        /// <param name="bookReference">The BookReference to the foreign Book</param>
+        /// <returns>The Task</returns>
+        Task RefreshBookAccessAsync(BookReference bookReference);
     }
 }

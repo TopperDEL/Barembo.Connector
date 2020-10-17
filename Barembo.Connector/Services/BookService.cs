@@ -10,12 +10,10 @@ namespace Barembo.Services
     public class BookService : IBookService
     {
         IBookStoreService _bookStoreService;
-        IBookShareStoreService _bookShareStoreService;
 
-        public BookService(IBookStoreService bookStoreService, IBookShareStoreService bookShareStoreService)
+        public BookService(IBookStoreService bookStoreService)
         {
             _bookStoreService = bookStoreService;
-            _bookShareStoreService = bookShareStoreService;
         }
 
         public async Task<Book> CreateBookAsync(string name, string description)
@@ -29,13 +27,6 @@ namespace Barembo.Services
 
         public async Task<Book> LoadBookAsync(BookReference bookReference)
         {
-            if(bookReference.BookShareReference != null)
-            {
-                var bookShare = await _bookShareStoreService.LoadBookShareAsync(bookReference.BookShareReference);
-                bookReference.AccessGrant = bookShare.Access.AccessGrant;
-                bookReference.AccessRights = bookShare.AccessRights;
-            }
-
             return await _bookStoreService.LoadAsync(bookReference);
         }
 
