@@ -1,6 +1,4 @@
-- Get ContributorInfo from BookShareReference
-- Refresh ContributorRights
-- Contributor-Rechte immer neu lesen, damit Rechte entzogen werden können
+- Berücksichtige AccessRights an relevanten Stellen
 - Implementierung StoreAccessService => Anbindung uplink.Net
 - Implementierung StoreService => Anbindung uplink.Net
 - Full-Stack-Test bauen
