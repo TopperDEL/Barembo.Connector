@@ -34,6 +34,12 @@ namespace Barembo.Models
         /// </summary>
         public AccessRights AccessRights { get; set; }
 
+        /// <summary>
+        /// If the Book is a foreign Book the BookShareReference holds the reference
+        /// to the BookShare to use for this Book. It gets refreshed before every access.
+        /// </summary>
+        public BookShareReference BookShareReference { get; set; }
+
         internal BookReference() { }
     }
 }

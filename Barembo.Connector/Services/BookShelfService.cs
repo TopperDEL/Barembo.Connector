@@ -52,7 +52,7 @@ namespace Barembo.Services
 
                 var bookShelf = await _bookShelfStoreService.LoadAsync(access);
 
-                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights, bookShare.ContributorId);
+                var success = _bookShelfStoreService.AddBookToBookShelf(bookShelf, bookShare.BookId, bookShare.OwnerName, bookShare.Access, bookShare.AccessRights, bookShare.ContributorId, bookShareReference);
 
                 if (success)
                 {
