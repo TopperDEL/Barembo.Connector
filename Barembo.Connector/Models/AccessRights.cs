@@ -10,39 +10,49 @@ namespace Barembo.Models
     public class AccessRights
     {
         /// <summary>
-        /// Can read owner book entries
+        /// Can read all book entries
         /// </summary>
-        public bool CanReadOwner { get; set; }
+        public bool CanReadEntries { get; set; }
 
         /// <summary>
-        /// Can read foreign book entries
+        /// Can read foreign book entries - if false, means only own entries can be read
         /// </summary>
-        public bool CanReadForeign { get; set; }
+        public bool CanReadForeignEntries { get; set; }
 
         /// <summary>
         /// Can add book entries
         /// </summary>
-        public bool CanAdd { get; set; }
+        public bool CanAddEntries { get; set; }
 
         /// <summary>
         /// Can edit foreign entries
         /// </summary>
-        public bool CanEditForeign { get; set; }
+        public bool CanEditForeignEntries { get; set; }
 
         /// <summary>
         /// Can edit own entries
         /// </summary>
-        public bool CanEditOwn { get; set; }
+        public bool CanEditOwnEntries { get; set; }
 
         /// <summary>
-        /// Can delete own entries
+        /// Can delete all entries
         /// </summary>
-        public bool CanDeleteOwn { get; set; }
+        public bool CanDeleteEntries { get; set; }
 
         /// <summary>
         /// Can delete foreign entries
         /// </summary>
-        public bool CanDeleteForeign { get; set; }
+        public bool CanDeleteForeignEntries { get; set; }
+
+        /// <summary>
+        /// Can share the Book with others
+        /// </summary>
+        public bool CanShareBook { get; set; }
+
+        /// <summary>
+        /// Can edit the Book
+        /// </summary>
+        public bool CanEditBook { get; set; }
 
         public static AccessRights Full
         {
@@ -50,13 +60,15 @@ namespace Barembo.Models
             {
                 return new AccessRights()
                 {
-                    CanAdd = true,
-                    CanDeleteForeign = true,
-                    CanDeleteOwn = true,
-                    CanEditForeign = true,
-                    CanEditOwn = true,
-                    CanReadForeign = true,
-                    CanReadOwner = true
+                    CanAddEntries = true,
+                    CanDeleteForeignEntries = true,
+                    CanDeleteEntries = true,
+                    CanEditForeignEntries = true,
+                    CanEditOwnEntries = true,
+                    CanReadForeignEntries = true,
+                    CanReadEntries = true,
+                    CanShareBook = true,
+                    CanEditBook = true
                 };
             }
         }

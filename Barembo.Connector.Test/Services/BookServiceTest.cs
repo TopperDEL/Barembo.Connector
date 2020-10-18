@@ -28,6 +28,7 @@ namespace Barembo.Connector.Test.Services
         public async Task SaveBook_Saves_Book()
         {
             BookReference bookReference = new BookReference();
+            bookReference.AccessRights.CanEditBook = true;
             Book book = new Book();
 
             _bookStoreServiceMock.Setup(s => s.SaveAsync(bookReference, book)).Returns(Task.FromResult(true)).Verifiable();
@@ -35,6 +36,25 @@ namespace Barembo.Connector.Test.Services
             var result = await _bookService.SaveBookAsync(bookReference, book);
 
             Assert.IsTrue(result);
+            _bookStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task SaveBook_RaisesError_IfHasNoEditRights()
+        {
+            BookReference bookReference = new BookReference();
+            bookReference.AccessRights.CanEditBook = false;
+            Book book = new Book();
+
+            try
+            {
+                var result = await _bookService.SaveBookAsync(bookReference, book);
+                Assert.IsTrue(false);
+            }catch(Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
             _bookStoreServiceMock.Verify();
         }
 

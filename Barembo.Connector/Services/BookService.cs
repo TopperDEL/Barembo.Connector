@@ -1,4 +1,5 @@
-﻿using Barembo.Interfaces;
+﻿using Barembo.Exceptions;
+using Barembo.Interfaces;
 using Barembo.Models;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,9 @@ namespace Barembo.Services
 
         public async Task<bool> SaveBookAsync(BookReference bookReference, Book book)
         {
+            if (!bookReference.AccessRights.CanEditBook)
+                throw new ActionNotAllowedException();
+
             return await _bookStoreService.SaveAsync(bookReference, book);
         }
     }

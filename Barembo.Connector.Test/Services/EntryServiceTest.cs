@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Barembo.Connector.Test.Services
 {
@@ -94,10 +95,35 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task AddEntryToBook_ThrowsError_IfActionNotAllowed()
+        {
+            Entry entry = await _entryService.CreateEntryAsync("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            bookReference.AccessRights.CanAddEntries = false;
+
+            try
+            {
+                var result = await _entryService.AddEntryToBookAsync(bookReference, entry);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
         public async Task SaveEntry_Saves_Entry()
         {
             Entry entry = await _entryService.CreateEntryAsync("test");
             EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
 
             _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, entry))
                                   .Returns(Task.FromResult(true)).Verifiable();
@@ -114,6 +140,7 @@ namespace Barembo.Connector.Test.Services
         {
             Entry entry = await _entryService.CreateEntryAsync("test");
             EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
 
             _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, entry))
                                   .Returns(Task.FromResult(false)).Verifiable();
@@ -126,10 +153,54 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task SaveEntry_RaisesError_IfEditOwnIsNotAllowed()
+        {
+            Entry entry = await _entryService.CreateEntryAsync("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+            entryReference.BookReference.AccessRights.CanEditOwnEntries = false;
+
+            try
+            {
+                await _entryService.SaveEntryAsync(entryReference, entry);
+                Assert.IsTrue(false);
+            }
+            catch(Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task SaveEntry_RaisesError_IfEditForeignIsNotAllowed()
+        {
+            Entry entry = await _entryService.CreateEntryAsync("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+            entryReference.BookReference.BookShareReference = new BookShareReference();
+            entryReference.BookReference.AccessRights.CanEditForeignEntries = false;
+
+            try
+            {
+                await _entryService.SaveEntryAsync(entryReference, entry);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
         public async Task LoadEntry_Loads_Entry()
         {
             Entry entry = await _entryService.CreateEntryAsync("test");
             EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
 
             _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
                                   .Returns(Task.FromResult(entry)).Verifiable();
@@ -146,6 +217,7 @@ namespace Barembo.Connector.Test.Services
         {
             Entry entry = await _entryService.CreateEntryAsync("test");
             EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
 
             _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
                                   .Throws(new EntryNotExistsException()).Verifiable();
@@ -164,6 +236,52 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task LoadEntry_RaisesError_IfNotAllowedToReadForeign()
+        {
+            Entry entry = await _entryService.CreateEntryAsync("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+            entryReference.BookReference.AccessRights.CanReadForeignEntries = false;
+            entryReference.BookReference.ContributorId = Guid.NewGuid().ToString();
+            entryReference.BookReference.BookShareReference = new BookShareReference();
+
+            try
+            {
+                var result = await _entryService.LoadEntryAsync(entryReference);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task LoadEntry_RaisesError_IfNotAllowedToEntries()
+        {
+            Entry entry = await _entryService.CreateEntryAsync("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+            entryReference.BookReference.AccessRights.CanReadEntries = false;
+            entryReference.BookReference.ContributorId = Guid.NewGuid().ToString();
+            entryReference.BookReference.BookShareReference = new BookShareReference();
+
+            try
+            {
+                var result = await _entryService.LoadEntryAsync(entryReference);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
         public async Task ListEntries_List_AllEntries()
         {
             BookReference bookReference = new BookReference();
@@ -174,6 +292,52 @@ namespace Barembo.Connector.Test.Services
             var result = await _entryService.ListEntriesAsync(bookReference);
 
             Assert.AreEqual(entries, result);
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task ListEntries_ListOnlyOwnEntries_IfOthersAreNotAllowed()
+        {
+            BookReference bookReference = new BookReference();
+            bookReference.AccessRights.CanReadForeignEntries = false;
+            bookReference.BookShareReference = new BookShareReference();
+            bookReference.ContributorId = Guid.NewGuid().ToString();
+            List<EntryReference> entries = new List<EntryReference>();
+            entries.Add(new EntryReference() { EntryId = "notMine" });
+            entries.Add(new EntryReference() { EntryId = bookReference.ContributorId });
+
+            _entryStoreServiceMock.Setup(s => s.ListAsync(bookReference)).Returns(Task.FromResult(entries as IEnumerable<EntryReference>)).Verifiable();
+
+            var result = await _entryService.ListEntriesAsync(bookReference);
+
+            Assert.AreEqual(1, result.Count());
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task ListEntries_RaisesError_IfActionNotAllowed()
+        {
+            BookReference bookReference = new BookReference();
+            bookReference.AccessRights.CanReadEntries = false;
+            bookReference.BookShareReference = new BookShareReference();
+            bookReference.ContributorId = Guid.NewGuid().ToString();
+            List<EntryReference> entries = new List<EntryReference>();
+            entries.Add(new EntryReference() { EntryId = "notMine" });
+            entries.Add(new EntryReference() { EntryId = bookReference.ContributorId });
+
+            _entryStoreServiceMock.Setup(s => s.ListAsync(bookReference)).Returns(Task.FromResult(entries as IEnumerable<EntryReference>)).Verifiable();
+
+            try
+            {
+                await _entryService.ListEntriesAsync(bookReference);
+                Assert.IsTrue(false);
+            }
+            catch(Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
 
             _entryStoreServiceMock.Verify();
         }

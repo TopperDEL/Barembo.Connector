@@ -311,6 +311,39 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task ShareBook_RaisesError_IfActionNotAllowed()
+        {
+            Book sharedBook = new Book();
+            Contributor contributor = new Contributor();
+            contributor.Name = "my significant other";
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            BookShelf bookShelf = new BookShelf();
+            bookShelf.OwnerName = "it's me";
+            BookShareReference bookShareReference = new BookShareReference();
+            AccessRights accessRights = new AccessRights();
+            StoreAccess sharedStoreAccess = new StoreAccess("use this restricted access");
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = sharedBook.Id;
+            bookReference.OwnerName = bookShelf.OwnerName;
+            bookReference.AccessRights.CanShareBook = false;
+
+            try
+            {
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
+            }
+
+            _storeAccessService.Verify();
+            _bookShareStoreServiceMock.Verify();
+            _bookShelfStoreServiceMock.Verify();
+            _contributorStoreService.Verify();
+        }
+
+        [TestMethod]
         public async Task ListBookShares_Lists_BookShareReferences()
         {
             StoreAccess storeAccess = new StoreAccess("use this access");

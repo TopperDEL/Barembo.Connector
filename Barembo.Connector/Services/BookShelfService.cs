@@ -106,6 +106,9 @@ namespace Barembo.Services
 
         public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights)
         {
+            if (!bookReferenceToShare.AccessRights.CanShareBook)
+                throw new ActionNotAllowedException();
+
             try
             {
                 var bookShelf = await _bookShelfStoreService.LoadAsync(access);

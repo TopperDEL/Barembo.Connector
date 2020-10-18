@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Barembo.Services
 {
@@ -41,6 +42,9 @@ namespace Barembo.Services
 
         public async Task<EntryReference> AddEntryToBookAsync(BookReference bookReference, Entry entry)
         {
+            if (!bookReference.AccessRights.CanAddEntries)
+                throw new ActionNotAllowedException();
+
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = bookReference;
             entryReference.EntryId = entry.Id;
@@ -70,7 +74,15 @@ namespace Barembo.Services
 
         public async Task<IEnumerable<EntryReference>> ListEntriesAsync(BookReference bookReference)
         {
-            return await _entryStoreService.ListAsync(bookReference);
+            var list = await _entryStoreService.ListAsync(bookReference);
+
+            if (!bookReference.IsOwnBook() && !bookReference.AccessRights.CanReadEntries)
+                throw new ActionNotAllowedException();
+
+            if (!bookReference.IsOwnBook() && !bookReference.AccessRights.CanReadForeignEntries)
+                list = list.Where(e => e.EntryId.Contains(bookReference.ContributorId));
+
+            return list;
         }
 
         public async Task<Stream> LoadAttachmentAsync(EntryReference entryReference, Attachment attachment)
@@ -80,11 +92,21 @@ namespace Barembo.Services
 
         public async Task<Entry> LoadEntryAsync(EntryReference entryReference)
         {
+            if (!entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanReadEntries)
+                throw new ActionNotAllowedException();
+            if (!entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanReadForeignEntries)
+                throw new ActionNotAllowedException();
+
             return await _entryStoreService.LoadAsync(entryReference);
         }
 
         public async Task<bool> SaveEntryAsync(EntryReference entryReference, Entry entry)
         {
+            if (entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanEditOwnEntries)
+                throw new ActionNotAllowedException();
+            if (!entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanEditForeignEntries)
+                throw new ActionNotAllowedException();
+
             return await _entryStoreService.SaveAsync(entryReference, entry);
         }
     }
