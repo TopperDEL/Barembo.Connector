@@ -1,4 +1,3 @@
-- Buffer-Implementation
 - Implementierung StoreAccessService => Anbindung uplink.Net
 - Implementierung StoreService => Anbindung uplink.Net
 - Full-Stack-Test bauen

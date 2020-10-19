@@ -5,4 +5,9 @@
     <RootNamespace>Barembo</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
+  </ItemGroup>
+
 </Project>
