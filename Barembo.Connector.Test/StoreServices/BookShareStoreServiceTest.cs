@@ -34,7 +34,7 @@ namespace Barembo.Connector.Test.StoreServices
             BookShare bookShare = new BookShare();
 
             _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare), bookShare)).Returns(Task.FromResult(true)).Verifiable();
-            _storeAccessServiceMock.Setup(s => s.ShareBookShareAccessAsync(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare))).Returns(Task.FromResult(sharedAccess)).Verifiable();
+            _storeAccessServiceMock.Setup(s => s.ShareBookShareAccess(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare))).Returns(sharedAccess).Verifiable();
 
             var result = await _service.SaveBookShareAsync(access, bookShare);
 

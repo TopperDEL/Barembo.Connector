@@ -47,7 +47,7 @@ namespace Barembo.StoreServices
             {
                 BookShareReference reference = new BookShareReference();
                 reference.StoreKey = storeKey;
-                reference.StoreAccess = await _storeAccessService.ShareBookShareAccessAsync(storeAccess, storeKey);
+                reference.StoreAccess = _storeAccessService.ShareBookShareAccess(storeAccess, storeKey);
 
                 return reference;
             }

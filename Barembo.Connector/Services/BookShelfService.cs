@@ -120,7 +120,7 @@ namespace Barembo.Services
                     throw new CouldNotShareBookException(CouldNotShareBookReason.CouldNotSaveContributor);
 
                 BookShare bookShare = new BookShare();
-                bookShare.Access = await _storeAccessService.ShareBookAccessAsync(access, bookReferenceToShare, contributor, accessRights);
+                bookShare.Access = _storeAccessService.ShareBookAccess(access, bookReferenceToShare, contributor, accessRights);
                 bookShare.AccessRights = accessRights;
                 bookShare.BookId = bookReferenceToShare.BookId;
                 bookShare.ContributorId = contributor.Id;

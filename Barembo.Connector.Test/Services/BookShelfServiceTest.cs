@@ -187,7 +187,7 @@ namespace Barembo.Connector.Test.Services
 
             _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name))).Returns(Task.FromResult(true)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
+            _storeAccessService.Setup(s => s.ShareBookAccess(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(sharedStoreAccess).Verifiable();
             _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
                                                                        Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
                                                                                             b.OwnerName == bookShelf.OwnerName &&
@@ -288,7 +288,7 @@ namespace Barembo.Connector.Test.Services
 
             _contributorStoreService.Setup(s => s.SaveAsync(bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name))).Returns(Task.FromResult(true)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
-            _storeAccessService.Setup(s => s.ShareBookAccessAsync(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(Task.FromResult(sharedStoreAccess)).Verifiable();
+            _storeAccessService.Setup(s => s.ShareBookAccess(storeAccess, bookReference, Moq.It.Is<Contributor>(c => c.Name == contributor.Name), accessRights)).Returns(sharedStoreAccess).Verifiable();
             _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
                                                                        Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
                                                                                             b.OwnerName == bookShelf.OwnerName &&
