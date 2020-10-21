@@ -1,4 +1,4 @@
-name: Publish as NuGet
+name: Publish
 
 on:
   push:
