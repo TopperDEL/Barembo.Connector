@@ -1,4 +1,3 @@
-- Sicherstellen, dass bei ListObjects die IDs korrekt kommen (Entries liefert noch contrib-ID mit)
 - Implementierung StoreAccessService => Anbindung uplink.Net
 - Full-Stack-Test bauen
 - Deletes für BookShares/Books/Entries/Contributors etc. + Berechtigungsprüfung

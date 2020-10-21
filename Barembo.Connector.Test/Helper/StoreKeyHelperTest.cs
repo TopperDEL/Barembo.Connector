@@ -31,6 +31,16 @@ namespace Barembo.Connector.Test.Helper
         }
 
         [TestMethod]
+        public void GetId_Book()
+        {
+            StoreKey key = StoreKey.Book("myBookId");
+
+            var result = StoreKeyHelper.GetStoreObjectId(key);
+
+            Assert.AreEqual("Book", result);
+        }
+
+        [TestMethod]
         public void Convert_Entry()
         {
             StoreKey key = StoreKey.Entry("myBookId", "myEntryId", "myContributorId");
@@ -38,6 +48,16 @@ namespace Barembo.Connector.Test.Helper
             var result = StoreKeyHelper.Convert(key);
 
             Assert.AreEqual("myBookId/Entries/myContributorId/myEntryId.json", result);
+        }
+
+        [TestMethod]
+        public void GetId_Entry()
+        {
+            StoreKey key = StoreKey.Entry("myBookId", "myEntryId", "myContributorId");
+
+            var result = StoreKeyHelper.GetStoreObjectId(key);
+
+            Assert.AreEqual("myEntryId", result);
         }
 
         [TestMethod]
@@ -61,6 +81,16 @@ namespace Barembo.Connector.Test.Helper
         }
 
         [TestMethod]
+        public void GetId_Attachment()
+        {
+            StoreKey key = StoreKey.Attachment("myBookId", "myEntryId", "myAttachmentId");
+
+            var result = StoreKeyHelper.GetStoreObjectId(key);
+
+            Assert.AreEqual("myAttachmentId", result);
+        }
+
+        [TestMethod]
         public void Convert_Contributor()
         {
             StoreKey key = StoreKey.Contributor("myBookId", "myContributorId");
@@ -68,6 +98,16 @@ namespace Barembo.Connector.Test.Helper
             var result = StoreKeyHelper.Convert(key);
 
             Assert.AreEqual("myBookId/Contributors/myContributorId.json", result);
+        }
+
+        [TestMethod]
+        public void GetId_Contributor()
+        {
+            StoreKey key = StoreKey.Contributor("myBookId", "myContributorId");
+
+            var result = StoreKeyHelper.GetStoreObjectId(key);
+
+            Assert.AreEqual("myContributorId", result);
         }
 
         [TestMethod]
@@ -88,6 +128,16 @@ namespace Barembo.Connector.Test.Helper
             var result = StoreKeyHelper.Convert(key);
 
             Assert.AreEqual("myBookId/Shares/myBookShareId.json", result);
+        }
+
+        [TestMethod]
+        public void GetId_BookShare()
+        {
+            StoreKey key = StoreKey.BookShare("myBookId", "myBookShareId");
+
+            var result = StoreKeyHelper.GetStoreObjectId(key);
+
+            Assert.AreEqual("myBookShareId", result);
         }
 
         [TestMethod]

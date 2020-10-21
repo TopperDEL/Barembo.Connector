@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace Barembo.Helper
 {
@@ -36,6 +37,23 @@ namespace Barembo.Helper
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Shares/";
             }
             return "";
+        }
+
+        public static string GetStoreObjectId(StoreKey storeKey)
+        {
+            var key = storeKey.ToString();
+
+            return GetStoreObjectId(key);
+        }
+
+        public static string GetStoreObjectId(string key)
+        {
+            var localKey = key;
+
+            localKey = localKey.Replace(".json", "");
+            localKey = localKey.Split('/').Last();
+
+            return localKey;
         }
     }
 }

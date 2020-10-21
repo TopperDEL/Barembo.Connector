@@ -9,6 +9,7 @@ using uplink.NET.Interfaces;
 using uplink.NET.Models;
 using uplink.NET.Services;
 using System.Linq;
+using Barembo.Helper;
 
 namespace Barembo.Services
 {
@@ -81,7 +82,7 @@ namespace Barembo.Services
 
             var objects = await objectService.ListObjectsAsync(bucket, listObjectsOption);
 
-            return objects.Items.Select(i => new StoreObject(i.Key, i.Key.Replace(listObjectsOption.Prefix, "")));
+            return objects.Items.Select(i => new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key)));
         }
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)

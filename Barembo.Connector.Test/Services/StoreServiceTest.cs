@@ -61,12 +61,14 @@ namespace Barembo.Connector.Test.Services
             Entry entry1 = new Entry();
             Entry entry2 = new Entry();
 
-            await _storeService.PutObjectAsJsonAsync<Entry>(_storeAccess, StoreKey.Entry(book.Id, "entry1","contrib1"), entry1);
-            await _storeService.PutObjectAsJsonAsync<Entry>(_storeAccess, StoreKey.Entry(book.Id, "entry2", "contrib2"), entry2);
+            await _storeService.PutObjectAsJsonAsync<Entry>(_storeAccess, StoreKey.Entry(book.Id, entry1.Id, "contrib1"), entry1);
+            await _storeService.PutObjectAsJsonAsync<Entry>(_storeAccess, StoreKey.Entry(book.Id, entry2.Id, "contrib2"), entry2);
 
             var list = await _storeService.ListObjectsAsync(_storeAccess, StoreKey.Entries(book.Id));
 
             Assert.AreEqual(2, list.Count());
+            Assert.AreEqual(entry1.Id, list.Last().Id); //List is inverse
+            Assert.AreEqual(entry2.Id, list.First().Id);
         }
 
         [TestMethod]
