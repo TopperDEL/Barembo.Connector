@@ -3,12 +3,30 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Barembo</RootNamespace>
+    <Authors>Tim Parth</Authors>
+    <Company>hTim Parth</Company>
+    <Description>This package is the connector to Barembo.</Description>
+    <Copyright>MIT</Copyright>
+    <PackageProjectUrl>https://github.com/TopperDEL/Barembo.Connector</PackageProjectUrl>
+    <PackageIcon>BaremboLogo.png</PackageIcon>
+    <RepositoryUrl>https://github.com/TopperDEL/Barembo.Connector</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>barembo storj tardigrade eternity diary</PackageTags>
+    <PackageReleaseNotes>First version</PackageReleaseNotes>
+    <Version>0.9.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="uplink.NET" Version="2.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\BaremboLogo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
