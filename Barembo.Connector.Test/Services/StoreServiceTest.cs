@@ -67,8 +67,6 @@ namespace Barembo.Connector.Test.Services
             var list = await _storeService.ListObjectsAsync(_storeAccess, StoreKey.Entries(book.Id));
 
             Assert.AreEqual(2, list.Count());
-            Assert.AreEqual(entry1.Id, list.Last().Id); //List is inverse
-            Assert.AreEqual(entry2.Id, list.First().Id);
         }
 
         [TestMethod]

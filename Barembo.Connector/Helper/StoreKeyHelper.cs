@@ -49,9 +49,15 @@ namespace Barembo.Helper
         public static string GetStoreObjectId(string key)
         {
             var localKey = key;
-
-            localKey = localKey.Replace(".json", "");
-            localKey = localKey.Split('/').Last();
+            if(key.Contains("Book.json"))
+            {
+                localKey = localKey.Split('/').First();
+            }
+            else
+            {
+                localKey = localKey.Replace(".json", "");
+                localKey = localKey.Split('/').Last();
+            }
 
             return localKey;
         }

@@ -37,7 +37,7 @@ namespace Barembo.Connector.Test.Helper
 
             var result = StoreKeyHelper.GetStoreObjectId(key);
 
-            Assert.AreEqual("Book", result);
+            Assert.AreEqual("myBookId", result);
         }
 
         [TestMethod]
