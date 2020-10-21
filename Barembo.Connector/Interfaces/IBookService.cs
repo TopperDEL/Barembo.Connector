@@ -18,7 +18,7 @@ namespace Barembo.Interfaces
         /// <param name="name">The name of the Book</param>
         /// <param name="description">The description of the Book</param>
         /// <returns>The new Book</returns>
-        Task<Book> CreateBookAsync(string name, string description);
+        Book CreateBook(string name, string description);
 
         /// <summary>
         /// Saves a Book via the given BookReference

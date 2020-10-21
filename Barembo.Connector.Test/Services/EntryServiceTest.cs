@@ -29,18 +29,18 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public async Task CreateEntry_Creates_Entry()
+        public void CreateEntry_Creates_Entry()
         {
-            var result = await _entryService.CreateEntryAsync("header", "body");
+            var result = _entryService.CreateEntry("header", "body");
 
             Assert.AreEqual("header", result.Header);
             Assert.AreEqual("body", result.Body);
         }
 
         [TestMethod]
-        public async Task CreateEntryWithEmptyBody_Creates_EntryWithEmptyBody()
+        public void CreateEntryWithEmptyBody_Creates_EntryWithEmptyBody()
         {
-            var result = await _entryService.CreateEntryAsync("header");
+            var result = _entryService.CreateEntry("header");
 
             Assert.AreEqual("header", result.Header);
             Assert.AreEqual("", result.Body);
@@ -49,7 +49,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task AddEntryToBook_AddsAndSaves_EntryInBook()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -71,7 +71,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task AddEntryToBook_ThrowsError_IfEntryCouldNotBeSaved()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -97,7 +97,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task AddEntryToBook_ThrowsError_IfActionNotAllowed()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -121,7 +121,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task SaveEntry_Saves_Entry()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
 
@@ -138,7 +138,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task SaveEntry_RaisesError_IfEntryCouldNotBeSaved()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
 
@@ -155,7 +155,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task SaveEntry_RaisesError_IfEditOwnIsNotAllowed()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
             entryReference.BookReference.AccessRights.CanEditOwnEntries = false;
@@ -176,7 +176,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task SaveEntry_RaisesError_IfEditForeignIsNotAllowed()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
             entryReference.BookReference.BookShareReference = new BookShareReference();
@@ -198,7 +198,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task LoadEntry_Loads_Entry()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
 
@@ -215,7 +215,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task LoadEntry_RaisesError_IfEntryCouldNotBeFound()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
 
@@ -238,7 +238,6 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task LoadEntry_RaisesError_IfNotAllowedToReadForeign()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
             entryReference.BookReference.AccessRights.CanReadForeignEntries = false;
@@ -261,7 +260,6 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task LoadEntry_RaisesError_IfNotAllowedToEntries()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
             EntryReference entryReference = new EntryReference();
             entryReference.BookReference = new BookReference();
             entryReference.BookReference.AccessRights.CanReadEntries = false;
@@ -345,7 +343,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task AddAttachment_AddsAndSaves_AttachmentToEntry()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -373,7 +371,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task AddAttachment_ReturnsFalse_IfAttachmentCouldNotBeSaved()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -399,7 +397,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task AddAttachment_ReturnsFalse_IfEntryCouldNotBeSaved()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -427,7 +425,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task LoadAttachment_Loads_Attachment()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();
@@ -452,7 +450,7 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task LoadAttachment_RaisesError_IfAttachmentDoesNotExist()
         {
-            Entry entry = await _entryService.CreateEntryAsync("test");
+            Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
             Book book = new Book();
             BookReference bookReference = new BookReference();

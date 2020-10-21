@@ -17,7 +17,7 @@ namespace Barembo.Services
             _bookStoreService = bookStoreService;
         }
 
-        public async Task<Book> CreateBookAsync(string name, string description)
+        public Book CreateBook(string name, string description)
         {
             Book newBook = new Book();
             newBook.Name = name;

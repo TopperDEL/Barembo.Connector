@@ -58,12 +58,12 @@ namespace Barembo.Services
                 throw new EntryCouldNotBeSavedException();
         }
 
-        public async Task<Entry> CreateEntryAsync(string header)
+        public Entry CreateEntry(string header)
         {
-            return await CreateEntryAsync(header, "");
+            return CreateEntry(header, "");
         }
 
-        public async Task<Entry> CreateEntryAsync(string header, string body)
+        public Entry CreateEntry(string header, string body)
         {
             Entry entry = new Entry();
             entry.Header = header;

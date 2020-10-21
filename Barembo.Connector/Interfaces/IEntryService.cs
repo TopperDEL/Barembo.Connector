@@ -9,9 +9,9 @@ namespace Barembo.Interfaces
 {
     public interface IEntryService
     {
-        Task<Entry> CreateEntryAsync(string header);
+        Entry CreateEntry(string header);
 
-        Task<Entry> CreateEntryAsync(string header, string body);
+        Entry CreateEntry(string header, string body);
 
         Task<EntryReference> AddEntryToBookAsync(BookReference bookReference, Entry entry);
 

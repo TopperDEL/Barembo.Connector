@@ -110,9 +110,9 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public async Task CreateBook_Creates_Book()
+        public void CreateBook_Creates_Book()
         {
-            var result = await _bookService.CreateBookAsync("bookName", "bookDescription");
+            var result = _bookService.CreateBook("bookName", "bookDescription");
 
             Assert.AreEqual("bookName", result.Name);
             Assert.AreEqual("bookDescription", result.Description);
