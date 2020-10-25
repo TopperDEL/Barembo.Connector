@@ -13,7 +13,7 @@ namespace Barembo.Interfaces
         /// </summary>
         /// <param name="loginData">The LoginData to use</param>
         /// <returns>A StoreAccess</returns>
-        StoreAccess GenerateAccesFromLogin(LoginData loginData);
+        StoreAccess GenerateAccessFromLogin(LoginData loginData);
 
         StoreAccess ShareBookAccess(StoreAccess baseAccess, BookReference bookReferenceToShare, Contributor contributor, AccessRights accessRights);
 
