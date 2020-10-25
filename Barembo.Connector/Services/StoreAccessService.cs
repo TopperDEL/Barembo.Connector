@@ -10,6 +10,13 @@ namespace Barembo.Services
 {
     public class StoreAccessService : IStoreAccessService
     {
+        public StoreAccess GenerateAccesFromLogin(LoginData loginData)
+        {
+            var access = new Access(loginData.SatelliteAddress, loginData.ApiKey, loginData.Secret);
+
+            return new StoreAccess(access.Serialize());
+        }
+
         public StoreAccess ShareBookAccess(StoreAccess baseAccess, BookReference bookReferenceToShare, Contributor contributor, AccessRights accessRights)
         {
             var access = new Access(baseAccess.AccessGrant);
