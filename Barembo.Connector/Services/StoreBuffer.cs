@@ -66,7 +66,7 @@ namespace Barembo.Services
 
         public async Task PutObjectFromStreamToBufferAsync(StoreAccess access, StoreKey keyToCheck, Stream objectToAdd)
         {
-            await InitAsync();
+            await InitAsync().ConfigureAwait(false);
 
             try
             {
@@ -87,7 +87,7 @@ namespace Barembo.Services
 
         public async Task PutObjectToBufferAsync<T>(StoreAccess access, StoreKey keyToCheck, T objectToAdd)
         {
-            await InitAsync();
+            await InitAsync().ConfigureAwait(false);
 
             try
             {

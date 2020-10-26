@@ -42,7 +42,7 @@ namespace Barembo.Services
         public async Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access);
+            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
 
             var download = await objectService.DownloadObjectAsync(bucket, storeKey.ToString(), new DownloadOptions(), false);
             await download.StartDownloadAsync();
@@ -74,7 +74,7 @@ namespace Barembo.Services
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access);
+            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
 
             var listObjectsOption = new ListObjectsOptions();
             listObjectsOption.Prefix = storeKey.ToString();
@@ -88,7 +88,7 @@ namespace Barembo.Services
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access);
+            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
 
             var JSONBytes = SerializeToJSON(objectToPut);
 
@@ -101,7 +101,7 @@ namespace Barembo.Services
         public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access);
+            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), objectToPut, false);
             await upload.StartUploadAsync(); //ToDo: Place Stream in UploadQueue
