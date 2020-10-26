@@ -10,7 +10,7 @@ namespace Barembo.StoreServices
 {
     internal class ContributorStoreService : IContributorStoreService
     {
-        private IStoreService _storeService;
+        readonly IStoreService _storeService;
 
         public ContributorStoreService(IStoreService storeService)
         {

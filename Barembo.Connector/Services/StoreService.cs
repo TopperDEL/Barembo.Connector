@@ -19,16 +19,20 @@ namespace Barembo.Services
         private static Dictionary<string, IObjectService> _objectServiceInstances = new Dictionary<string, IObjectService>();
         private static Dictionary<string, Bucket> _BucketInstances = new Dictionary<string, Bucket>();
 
-        private static string _bucketName;
+        readonly string _bucketName;
 
-        public StoreService(string bucketName = "barembo")
+        public StoreService() : this("barembo")
+        {
+        }
+
+        public StoreService(string bucketName)
         {
             _bucketName = bucketName;
         }
 
         public async Task<Stream> GetObjectAsStreamAsync(StoreAccess access, StoreKey storeKey)
         {
-            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var objectInfo = await GetObjectInfoAsync(access, storeKey).ConfigureAwait(false);
             if (objectInfo.ObjectExists)
@@ -42,7 +46,7 @@ namespace Barembo.Services
         public async Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var download = await objectService.DownloadObjectAsync(bucket, storeKey.ToString(), new DownloadOptions(), false);
             await download.StartDownloadAsync();
@@ -58,14 +62,14 @@ namespace Barembo.Services
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             try
             {
                 var objectInfo = await objectService.GetObjectAsync(bucket, storeKey.ToString());
                 return new StoreObjectInfo { ObjectExists = true, Size = objectInfo.SystemMetaData.ContentLength };
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return new StoreObjectInfo { ObjectExists = false };
             }
@@ -74,7 +78,7 @@ namespace Barembo.Services
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var listObjectsOption = new ListObjectsOptions();
             listObjectsOption.Prefix = storeKey.ToString();
@@ -88,7 +92,7 @@ namespace Barembo.Services
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var JSONBytes = SerializeToJSON(objectToPut);
 
@@ -101,7 +105,7 @@ namespace Barembo.Services
         public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), objectToPut, false);
             await upload.StartUploadAsync(); //ToDo: Place Stream in UploadQueue
@@ -133,13 +137,13 @@ namespace Barembo.Services
             return objectService;
         }
 
-        private static async Task<Bucket> GetBucketAsync(StoreAccess access)
+        private static async Task<Bucket> GetBucketAsync(string bucketName, StoreAccess access)
         {
             if (_BucketInstances.ContainsKey(access.AccessGrant))
                 return _BucketInstances[access.AccessGrant];
 
             var bucketService = GetBucketService(access);
-            var bucket = await bucketService.EnsureBucketAsync(_bucketName);
+            var bucket = await bucketService.EnsureBucketAsync(bucketName);
             _BucketInstances.Add(access.AccessGrant, bucket);
 
             return bucket;

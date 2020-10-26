@@ -11,7 +11,7 @@ namespace Barembo.StoreServices
 {
     internal class BookShelfStoreService : IBookShelfStoreService
     {
-        private IStoreService _storeService;
+        readonly IStoreService _storeService;
 
         public BookShelfStoreService(IStoreService storeService)
         {

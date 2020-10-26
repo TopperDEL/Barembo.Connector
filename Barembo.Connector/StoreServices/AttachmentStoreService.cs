@@ -11,7 +11,7 @@ namespace Barembo.StoreServices
 {
     internal class AttachmentStoreService : IAttachmentStoreService
     {
-        private IStoreService _storeService;
+        readonly IStoreService _storeService;
 
         public AttachmentStoreService(IStoreService storeService)
         {
