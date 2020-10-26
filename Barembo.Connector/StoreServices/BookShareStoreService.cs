@@ -24,7 +24,7 @@ namespace Barembo.StoreServices
         {
             var shares = await _storeService.ListObjectsAsync(storeAccess, StoreKey.BookShares(bookReference.BookId));
 
-            return shares.Select(e => new BookShareReference() { StoreAccess = storeAccess, StoreKey = StoreKey.BookShare(bookReference.BookId, e.Id) });
+            return shares.Select(e => new BookShareReference { StoreAccess = storeAccess, StoreKey = StoreKey.BookShare(bookReference.BookId, e.Id) });
         }
 
         public async Task<BookShare> LoadBookShareAsync(BookShareReference bookShareReference)

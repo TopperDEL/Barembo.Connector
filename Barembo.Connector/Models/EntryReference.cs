@@ -7,7 +7,7 @@ namespace Barembo.Models
     /// <summary>
     /// An EntryReference holds information about an Entry, where it belongs to and where it can be found
     /// </summary>
-    public struct EntryReference
+    public struct EntryReference : IEquatable<EntryReference>
     {
         /// <summary>
         /// Too BookReference to the Book this Entry belongs to
@@ -23,5 +23,10 @@ namespace Barembo.Models
         /// The Id of the Entry referenced
         /// </summary>
         public string EntryId { get; set; }
+
+        public bool Equals(EntryReference other)
+        {
+            return BookReference.BookId == other.BookReference.BookId && EntryId == other.EntryId;
+        }
     }
 }

@@ -35,8 +35,9 @@ namespace Barembo.Helper
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Shares/" + storeKey.Properties[PROPERTY_BOOK_SHARE_ID] + ".json";
                 case StoreKeyTypes.BookShares:
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Shares/";
+                default:
+                    throw new ArgumentException("Unknonwn StoreKeyType:"+ storeKey.StoreKeyType.ToString());
             }
-            return "";
         }
 
         public static string GetStoreObjectId(StoreKey storeKey)

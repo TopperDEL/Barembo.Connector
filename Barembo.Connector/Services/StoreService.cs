@@ -28,9 +28,9 @@ namespace Barembo.Services
 
         public async Task<Stream> GetObjectAsStreamAsync(StoreAccess access, StoreKey storeKey)
         {
-            var bucket = await GetBucketAsync(access);
+            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
 
-            var objectInfo = await GetObjectInfoAsync(access, storeKey);
+            var objectInfo = await GetObjectInfoAsync(access, storeKey).ConfigureAwait(false);
             if (objectInfo.ObjectExists)
             {
                 return new DownloadStream(bucket, (int)objectInfo.Size, storeKey.ToString());
@@ -63,11 +63,11 @@ namespace Barembo.Services
             try
             {
                 var objectInfo = await objectService.GetObjectAsync(bucket, storeKey.ToString());
-                return new StoreObjectInfo() { ObjectExists = true, Size = objectInfo.SystemMetaData.ContentLength };
+                return new StoreObjectInfo { ObjectExists = true, Size = objectInfo.SystemMetaData.ContentLength };
             }
             catch(Exception)
             {
-                return new StoreObjectInfo() { ObjectExists = false };
+                return new StoreObjectInfo { ObjectExists = false };
             }
         }
 

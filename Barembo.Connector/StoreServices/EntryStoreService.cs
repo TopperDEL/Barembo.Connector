@@ -22,7 +22,7 @@ namespace Barembo.StoreServices
         {
             var entries = await _storeService.ListObjectsAsync(new StoreAccess(bookRef.AccessGrant), StoreKey.Entries(bookRef.BookId));
 
-            return entries.Select(e => new EntryReference() { BookReference = bookRef, EntryKey = e.Key, EntryId = e.Id });
+            return entries.Select(e => new EntryReference { BookReference = bookRef, EntryKey = e.Key, EntryId = e.Id });
         }
 
         public async Task<Entry> LoadAsync(EntryReference entryRef)

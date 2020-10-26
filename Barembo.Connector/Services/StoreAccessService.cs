@@ -43,7 +43,7 @@ namespace Barembo.Services
             permission.AllowUpload = false;
 
             List<SharePrefix> prefixes = new List<SharePrefix>();
-            prefixes.Add(new SharePrefix() { Bucket = "", Prefix = "" });
+            prefixes.Add(new SharePrefix { Bucket = "", Prefix = "" });
 
             var sharedAccess = access.Share(permission, prefixes);
 

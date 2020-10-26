@@ -58,7 +58,7 @@ namespace Barembo.Models
         {
             get
             {
-                return new AccessRights()
+                return new AccessRights
                 {
                     CanAddEntries = true,
                     CanDeleteForeignEntries = true,

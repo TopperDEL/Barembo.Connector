@@ -13,7 +13,7 @@ namespace Barembo.Services
 {
     internal class StoreBuffer : IStoreBuffer
     {
-        private static bool IsInitialized = false;
+        private static bool IsInitialized;
         private static SQLiteAsyncConnection _dataBase;
         private static async Task InitAsync()
         {
@@ -52,7 +52,7 @@ namespace Barembo.Services
 
             try
             {
-                var result = await _dataBase.GetAsync<BufferEntry>(keyToCheck.ToString());
+                await _dataBase.GetAsync<BufferEntry>(keyToCheck.ToString());
                 return true;
             }
             catch
@@ -78,6 +78,7 @@ namespace Barembo.Services
             }
             catch
             {
+                //If the object could not be buffered, that's ok
             }
         }
 
@@ -101,12 +102,13 @@ namespace Barembo.Services
             }
             catch
             {
+                //If the object could not be buffered, that's ok
             }
         }
 
         internal async Task RemoveDatabaseAsync()
         {
-            await InitAsync();
+            await InitAsync().ConfigureAwait(false);
             await _dataBase.DeleteAllAsync<BufferEntry>();
         }
     }

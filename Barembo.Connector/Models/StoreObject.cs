@@ -7,7 +7,7 @@ namespace Barembo.Models
     /// <summary>
     /// A StoreObject holds the key and the id of an object in the store.
     /// </summary>
-    public struct StoreObject
+    public struct StoreObject : IEquatable<StoreObject>
     {
         /// <summary>
         /// The Key ist the "full-path" to an object in the store.
@@ -23,6 +23,11 @@ namespace Barembo.Models
         {
             Key = key;
             Id = id;
+        }
+
+        public bool Equals(StoreObject other)
+        {
+            return Id == other.Id;
         }
     }
 }

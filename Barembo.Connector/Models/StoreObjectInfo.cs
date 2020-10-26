@@ -7,7 +7,7 @@ namespace Barembo.Models
     /// <summary>
     /// Contains information about a StoreObject
     /// </summary>
-    public struct StoreObjectInfo
+    public struct StoreObjectInfo : IEquatable<StoreObjectInfo>
     {
         /// <summary>
         /// True, if the object exists on the store (and is accessable). False if not.
@@ -18,5 +18,10 @@ namespace Barembo.Models
         /// The size of the object if it exists (and is accessable).
         /// </summary>
         public long Size { get; set; }
+
+        public bool Equals(StoreObjectInfo other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
