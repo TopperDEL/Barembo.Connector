@@ -13,11 +13,12 @@ namespace Barembo.Services
 {
     internal class StoreBuffer : IStoreBuffer
     {
-        private static bool IsInitialized;
+        private static bool _isInitialized;
         private static SQLiteAsyncConnection _dataBase;
+
         private static async Task InitAsync()
         {
-            if (IsInitialized)
+            if (_isInitialized)
                 return;
 
             var databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BaremboBuffer.db");
@@ -25,6 +26,8 @@ namespace Barembo.Services
             _dataBase = new SQLiteAsyncConnection(databasePath);
 
             await _dataBase.CreateTableAsync<BufferEntry>();
+
+            _isInitialized = true;
         }
 
         public async Task<Stream> GetObjectAsStreamFromBufferAsync(StoreAccess access, StoreKey keyToCheck)
