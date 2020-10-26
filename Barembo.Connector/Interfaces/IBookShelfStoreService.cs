@@ -35,8 +35,20 @@ namespace Barembo.Interfaces
         /// <param name="storeAccess">The StoreAccess for this Book</param>
         /// <param name="accessRights">The AccessRights for this Book</param>
         /// <param name="contributorId">The Id of the Contributor for this Book</param>
+        /// <returns>True, if the BookShelf could be saved - false if not</returns>
+        bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId);
+
+        /// <summary>
+        /// Adds a Book to a BookShelf for a shared Book
+        /// </summary>
+        /// <param name="bookShelf">The BookShelf to add the Book to</param>
+        /// <param name="bookId">The Id of the Book to add</param>
+        /// <param name="ownerName">The name of the owner of that Book</param>
+        /// <param name="storeAccess">The StoreAccess for this Book</param>
+        /// <param name="accessRights">The AccessRights for this Book</param>
+        /// <param name="contributorId">The Id of the Contributor for this Book</param>
         /// <param name="bookShareReference">The BookShareReference if the Book is a foreign Book</param>
         /// <returns>True, if the BookShelf could be saved - false if not</returns>
-        bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId, BookShareReference bookShareReference = null);
+        bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId, BookShareReference bookShareReference);
     }
 }

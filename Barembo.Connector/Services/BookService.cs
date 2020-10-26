@@ -10,7 +10,7 @@ namespace Barembo.Services
 {
     public class BookService : IBookService
     {
-        IBookStoreService _bookStoreService;
+        readonly IBookStoreService _bookStoreService;
 
         public BookService(IBookStoreService bookStoreService)
         {

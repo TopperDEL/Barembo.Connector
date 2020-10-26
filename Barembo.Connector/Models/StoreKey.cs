@@ -68,11 +68,20 @@ namespace Barembo.Models
         /// Creates a StoreKey
         /// </summary>
         /// <param name="storeKeyType">The type of this StoreKey</param>
-        /// <param name="properties">The parameters - if necessary - to further define this StoreKey</param>
+        /// <param name="properties">The parameters to further define this StoreKey</param>
         public StoreKey(StoreKeyTypes storeKeyType, Dictionary<string, string> properties = null)
         {
             StoreKeyType = storeKeyType;
             Properties = properties;
+        }
+
+        /// <summary>
+        /// Creates a StoreKey
+        /// </summary>
+        /// <param name="storeKeyType">The type of this StoreKey</param>
+        public StoreKey(StoreKeyTypes storeKeyType)
+        {
+            StoreKeyType = storeKeyType;
         }
 
         /// <summary>

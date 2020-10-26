@@ -58,7 +58,7 @@ namespace Barembo.Services
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)
         {
             var objectService = GetObjectService(access);
-            var bucket = await GetBucketAsync(access);
+            var bucket = await GetBucketAsync(access).ConfigureAwait(false);
 
             try
             {

@@ -9,6 +9,11 @@ namespace Barembo.Helper
         /// <summary>
         /// The current version of the app. Can be used to migrate in case of future adjustments.
         /// </summary>
-        public static string CURRENT_VERSION = "1";
+        public readonly static string CURRENT_VERSION = "1";
+
+        protected VersionHelper()
+        {
+
+        }
     }
 }

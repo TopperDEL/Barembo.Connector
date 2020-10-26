@@ -18,10 +18,17 @@ namespace Barembo.StoreServices
             _storeService = storeService;
         }
 
-        public bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId, BookShareReference bookShareReference = null)
+        public bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId)
+        {
+            return AddBookToBookShelf(bookShelf, bookId, ownerName, storeAccess, accessRights, contributorId, null);
+        }
+
+        public bool AddBookToBookShelf(BookShelf bookShelf, string bookId, string ownerName, StoreAccess storeAccess, AccessRights accessRights, string contributorId, BookShareReference bookShareReference)
         {
             if (bookShelf.Content.Where(r => r.BookId == bookId).Count() > 0)
+            {
                 return false;
+            }
 
             BookReference reference = new BookReference();
             reference.AccessGrant = storeAccess.AccessGrant;
@@ -41,7 +48,9 @@ namespace Barembo.StoreServices
             var bookShelfInfo = await _storeService.GetObjectInfoAsync(access, StoreKey.BookShelf());
 
             if (!bookShelfInfo.ObjectExists)
+            {
                 throw new NoBookShelfExistsException();
+            }
 
             return await _storeService.GetObjectFromJsonAsync<BookShelf>(access, StoreKey.BookShelf());
         }

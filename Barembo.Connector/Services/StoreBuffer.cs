@@ -48,7 +48,7 @@ namespace Barembo.Services
 
         public async Task<bool> IsBufferedAsync(StoreAccess access, StoreKey keyToCheck)
         {
-            await InitAsync();
+            await InitAsync().ConfigureAwait(false);
 
             try
             {

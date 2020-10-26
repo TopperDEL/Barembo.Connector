@@ -10,8 +10,8 @@ namespace Barembo.Services
 {
     public class BufferedStoreService : IStoreService
     {
-        private IStoreBuffer _storeBuffer;
-        private IStoreService _storeService;
+        readonly IStoreBuffer _storeBuffer;
+        readonly IStoreService _storeService;
 
         public BufferedStoreService(IStoreBuffer storeBuffer, IStoreService storeService)
         {

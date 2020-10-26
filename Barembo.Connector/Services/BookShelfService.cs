@@ -10,10 +10,10 @@ namespace Barembo.Services
 {
     public class BookShelfService : IBookShelfService
     {
-        IBookShelfStoreService _bookShelfStoreService;
-        IBookShareStoreService _bookShareStoreService;
-        IContributorStoreService _contributorStoreService;
-        IStoreAccessService  _storeAccessService;
+        readonly IBookShelfStoreService _bookShelfStoreService;
+        readonly IBookShareStoreService _bookShareStoreService;
+        readonly IContributorStoreService _contributorStoreService;
+        readonly IStoreAccessService _storeAccessService;
 
         public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService, IStoreAccessService storeAccessService, IContributorStoreService contributorStoreService)
         {
