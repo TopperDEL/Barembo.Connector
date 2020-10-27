@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Barembo.StoreServices
 {
-    internal class EntryStoreService : IEntryStoreService
+    public class EntryStoreService : IEntryStoreService
     {
         readonly IStoreService _storeService;
 

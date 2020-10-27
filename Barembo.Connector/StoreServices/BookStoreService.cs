@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Barembo.StoreServices
 {
-    internal class BookStoreService : IBookStoreService
+    public class BookStoreService : IBookStoreService
     {
         readonly IStoreService _storeService;
 
