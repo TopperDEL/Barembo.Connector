@@ -4,3 +4,4 @@ using System.Text;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Barembo.Connector.Test")]
+[assembly: InternalsVisibleTo("Barembo.App.Core.Test")]
