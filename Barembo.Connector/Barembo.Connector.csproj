@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Barembo</RootNamespace>
     <Authors>Tim Parth</Authors>
-    <Company>hTim Parth</Company>
+    <Company>Tim Parth</Company>
     <Description>This package is the connector to Barembo.</Description>
-    <Copyright>MIT</Copyright>
+    <Copyright>Tim Parth</Copyright>
     <PackageProjectUrl>https://github.com/TopperDEL/Barembo.Connector</PackageProjectUrl>
     <PackageIcon>BaremboLogo.png</PackageIcon>
     <RepositoryUrl>https://github.com/TopperDEL/Barembo.Connector</RepositoryUrl>
