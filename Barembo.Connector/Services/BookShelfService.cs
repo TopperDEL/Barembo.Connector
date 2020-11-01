@@ -40,19 +40,21 @@ namespace Barembo.Services
                 {
                     var bookReference = bookShelf.Content.Where(r => r.BookId == book.Id).FirstOrDefault();
                     if (bookReference == null)
-                    {
                         return false;
-                    }
                     else
                     {
                         var bookSaved = await _bookStoreService.SaveAsync(bookReference, book);
                         if (!bookSaved)
-                        {
                             return false;
-                        }
                         else
                         {
-                            return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                            var contributorSaved = await _contributorStoreService.SaveAsync(bookReference, contributor); ;
+                            if (!contributorSaved)
+                                return false;
+                            else
+                            {
+                                return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                            }
                         }
                     }
                 }
