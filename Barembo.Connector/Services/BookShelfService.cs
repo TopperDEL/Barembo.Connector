@@ -5,19 +5,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Barembo.Services
 {
     public class BookShelfService : IBookShelfService
     {
         readonly IBookShelfStoreService _bookShelfStoreService;
+        readonly IBookStoreService _bookStoreService;
         readonly IBookShareStoreService _bookShareStoreService;
         readonly IContributorStoreService _contributorStoreService;
         readonly IStoreAccessService _storeAccessService;
 
-        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookShareStoreService bookShareStoreService, IStoreAccessService storeAccessService, IContributorStoreService contributorStoreService)
+        public BookShelfService(IBookShelfStoreService bookShelfStoreService, IBookStoreService bookStoreService, IBookShareStoreService bookShareStoreService, IStoreAccessService storeAccessService, IContributorStoreService contributorStoreService)
         {
             _bookShelfStoreService = bookShelfStoreService;
+            _bookStoreService = bookStoreService;
             _bookShareStoreService = bookShareStoreService;
             _contributorStoreService = contributorStoreService;
             _storeAccessService = storeAccessService;
@@ -25,6 +28,8 @@ namespace Barembo.Services
 
         public async Task<bool> AddOwnBookToBookShelfAndSaveAsync(StoreAccess access, Book book, Contributor contributor)
         {
+            //First: load the BookShelf and add the new Book. Then we have a BookReference
+            //we can use to save the book itself. If everything went ok, save the BookShelf.
             try
             {
                 var bookShelf = await _bookShelfStoreService.LoadAsync(access);
@@ -33,12 +38,28 @@ namespace Barembo.Services
 
                 if (success)
                 {
-                    return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                    var bookReference = bookShelf.Content.Where(r => r.BookId == book.Id).FirstOrDefault();
+                    if (bookReference == null)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        var bookSaved = await _bookStoreService.SaveAsync(bookReference, book);
+                        if (!bookSaved)
+                        {
+                            return false;
+                        }
+                        else
+                        {
+                            return await _bookShelfStoreService.SaveAsync(access, bookShelf);
+                        }
+                    }
                 }
                 else
                     return false;
             }
-            catch(NoBookShelfExistsException)
+            catch (NoBookShelfExistsException)
             {
                 return false;
             }
@@ -96,7 +117,7 @@ namespace Barembo.Services
 
         public async Task RefreshBookAccessAsync(BookReference bookReference)
         {
-            if(bookReference.BookShareReference != null)
+            if (bookReference.BookShareReference != null)
             {
                 BookShare bookShare = await _bookShareStoreService.LoadBookShareAsync(bookReference.BookShareReference);
                 bookReference.AccessGrant = bookShare.Access.AccessGrant;
@@ -130,7 +151,7 @@ namespace Barembo.Services
 
                 return reference;
             }
-            catch(NoBookShelfExistsException)
+            catch (NoBookShelfExistsException)
             {
                 throw new CouldNotShareBookException(CouldNotShareBookReason.BookShelfNotFound);
             }

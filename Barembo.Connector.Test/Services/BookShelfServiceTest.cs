@@ -14,6 +14,7 @@ namespace Barembo.Connector.Test.Services
     public class BookShelfServiceTest
     {
         BookShelfService _bookShelfService;
+        Moq.Mock<IBookStoreService> _bookStoreServiceMock;
         Moq.Mock<IBookShelfStoreService> _bookShelfStoreServiceMock;
         Moq.Mock<IBookShareStoreService> _bookShareStoreServiceMock;
         Moq.Mock<IStoreAccessService> _storeAccessService;
@@ -22,12 +23,13 @@ namespace Barembo.Connector.Test.Services
         [TestInitialize]
         public void Init()
         {
+            _bookStoreServiceMock = new Moq.Mock<IBookStoreService>();
             _bookShelfStoreServiceMock = new Moq.Mock<IBookShelfStoreService>();
             _bookShareStoreServiceMock = new Moq.Mock<IBookShareStoreService>();
             _contributorStoreService = new Moq.Mock<IContributorStoreService>();
             _storeAccessService = new Moq.Mock<IStoreAccessService>();
 
-            _bookShelfService = new BookShelfService(_bookShelfStoreServiceMock.Object, _bookShareStoreServiceMock.Object, _storeAccessService.Object, _contributorStoreService.Object);
+            _bookShelfService = new BookShelfService(_bookShelfStoreServiceMock.Object, _bookStoreServiceMock.Object, _bookShareStoreServiceMock.Object, _storeAccessService.Object, _contributorStoreService.Object);
         }
 
         [TestMethod]
@@ -69,16 +71,21 @@ namespace Barembo.Connector.Test.Services
         {
             StoreAccess storeAccess = new StoreAccess("use this access");
             Book bookToAdd = new Book();
+            BookReference createdBookReference = new BookReference();
+            createdBookReference.BookId = bookToAdd.Id;
             BookShelf bookShelf = new BookShelf();
+            bookShelf.Content.Add(createdBookReference);
             Contributor contributor = new Contributor();
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
+            _bookStoreServiceMock.Setup(s => s.SaveAsync(createdBookReference, bookToAdd)).Returns(Task.FromResult(true)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>(), contributor.Id)).Returns(true).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.SaveAsync(storeAccess, bookShelf)).Returns(Task.FromResult(true)).Verifiable();
             var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsTrue(result);
             _bookShelfStoreServiceMock.Verify();
+            _bookStoreServiceMock.Verify();
         }
 
         [TestMethod]
@@ -94,6 +101,7 @@ namespace Barembo.Connector.Test.Services
 
             Assert.IsFalse(result);
             _bookShelfStoreServiceMock.Verify();
+            _bookStoreServiceMock.Verify();
         }
 
         [TestMethod]
@@ -110,6 +118,28 @@ namespace Barembo.Connector.Test.Services
 
             Assert.IsFalse(result);
             _bookShelfStoreServiceMock.Verify();
+            _bookStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task AddOwnBookAndSave_ReturnsFalse_IfBookCouldNotBeSaved()
+        {
+            StoreAccess storeAccess = new StoreAccess("use this access");
+            Book bookToAdd = new Book();
+            BookReference createdBookReference = new BookReference();
+            createdBookReference.BookId = bookToAdd.Id;
+            BookShelf bookShelf = new BookShelf();
+            bookShelf.Content.Add(createdBookReference);
+            Contributor contributor = new Contributor();
+
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
+            _bookStoreServiceMock.Setup(s => s.SaveAsync(createdBookReference, bookToAdd)).Returns(Task.FromResult(false)).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>(), contributor.Id)).Returns(true).Verifiable();
+            var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
+
+            Assert.IsFalse(result);
+            _bookShelfStoreServiceMock.Verify();
+            _bookStoreServiceMock.Verify();
         }
 
         [TestMethod]
@@ -117,16 +147,21 @@ namespace Barembo.Connector.Test.Services
         {
             StoreAccess storeAccess = new StoreAccess("use this access");
             Book bookToAdd = new Book();
+            BookReference createdBookReference = new BookReference();
+            createdBookReference.BookId = bookToAdd.Id;
             BookShelf bookShelf = new BookShelf();
+            bookShelf.Content.Add(createdBookReference);
             Contributor contributor = new Contributor();
 
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
+            _bookStoreServiceMock.Setup(s => s.SaveAsync(createdBookReference, bookToAdd)).Returns(Task.FromResult(true)).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.AddBookToBookShelf(bookShelf, bookToAdd.Id, bookShelf.OwnerName, storeAccess, Moq.It.IsAny<AccessRights>(), contributor.Id)).Returns(true).Verifiable();
             _bookShelfStoreServiceMock.Setup(s => s.SaveAsync(storeAccess, bookShelf)).Returns(Task.FromResult(false)).Verifiable();
             var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsFalse(result);
             _bookShelfStoreServiceMock.Verify();
+            _bookStoreServiceMock.Verify();
         }
 
         [TestMethod]
