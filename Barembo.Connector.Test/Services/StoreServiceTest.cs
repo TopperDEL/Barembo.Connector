@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using Barembo.Exceptions;
 
 namespace Barembo.Connector.Test.Services
 {
@@ -88,6 +89,48 @@ namespace Barembo.Connector.Test.Services
             var downloadedString = Encoding.UTF8.GetString(downloadStream.ToArray());
 
             Assert.AreEqual(stringToStream, downloadedString);
+        }
+
+        [TestMethod]
+        public void GetObjectService_DoesNotCrash_IfStoreAccessIsEmpty()
+        {
+            try
+            {
+                StoreService.GetObjectService(new StoreAccess());
+                Assert.IsTrue(false);
+            }
+            catch(Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(StoreAccessInvalidException));
+            }
+        }
+
+        [TestMethod]
+        public void GetBucketService_DoesNotCrash_IfStoreAccessIsEmpty()
+        {
+            try
+            {
+                StoreService.GetBucketService(new StoreAccess());
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(StoreAccessInvalidException));
+            }
+        }
+
+        [TestMethod]
+        public async Task GetBucket_DoesNotCrash_IfStoreAccessIsEmpty()
+        {
+            try
+            {
+                await StoreService.GetBucketAsync("bucketName", new StoreAccess());
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(StoreAccessInvalidException));
+            }
         }
     }
 }

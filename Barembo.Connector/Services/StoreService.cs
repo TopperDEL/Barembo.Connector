@@ -10,6 +10,7 @@ using uplink.NET.Models;
 using uplink.NET.Services;
 using System.Linq;
 using Barembo.Helper;
+using Barembo.Exceptions;
 
 namespace Barembo.Services
 {
@@ -113,8 +114,11 @@ namespace Barembo.Services
             return upload.Completed;
         }
 
-        private static IBucketService GetBucketService(StoreAccess access)
+        internal static IBucketService GetBucketService(StoreAccess access)
         {
+            if (string.IsNullOrEmpty(access.AccessGrant))
+                throw new StoreAccessInvalidException();
+
             if (_bucketServiceInstances.ContainsKey(access.AccessGrant))
                 return _bucketServiceInstances[access.AccessGrant];
 
@@ -125,8 +129,11 @@ namespace Barembo.Services
             return bucketService;
         }
 
-        private static IObjectService GetObjectService(StoreAccess access)
+        internal static IObjectService GetObjectService(StoreAccess access)
         {
+            if (string.IsNullOrEmpty(access.AccessGrant))
+                throw new StoreAccessInvalidException();
+
             if (_objectServiceInstances.ContainsKey(access.AccessGrant))
                 return _objectServiceInstances[access.AccessGrant];
 
@@ -137,8 +144,11 @@ namespace Barembo.Services
             return objectService;
         }
 
-        private static async Task<Bucket> GetBucketAsync(string bucketName, StoreAccess access)
+        internal static async Task<Bucket> GetBucketAsync(string bucketName, StoreAccess access)
         {
+            if (string.IsNullOrEmpty(access.AccessGrant))
+                throw new StoreAccessInvalidException();
+
             if (_BucketInstances.ContainsKey(access.AccessGrant))
                 return _BucketInstances[access.AccessGrant];
 
