@@ -18,7 +18,5 @@ namespace Barembo.Models
         /// The name of that Contributor
         /// </summary>
         public string Name { get; set; }
-
-        public Contributor() { }
     }
 }

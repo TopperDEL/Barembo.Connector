@@ -48,7 +48,7 @@ namespace Barembo.Services
                             return false;
                         else
                         {
-                            var contributorSaved = await _contributorStoreService.SaveAsync(bookReference, contributor); ;
+                            var contributorSaved = await _contributorStoreService.SaveAsync(bookReference, contributor);
                             if (!contributorSaved)
                                 return false;
                             else
