@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Barembo.Services
 {
-    public class QueuedPriorityLoaderService<T> : IQueuedPriorityLoaderService<T>
+    public class QueuedPriorityLoaderService<T> : IQueuedPriorityLoaderService<T>, IDisposable
     {
         ConcurrentStack<LoadingQueueEntry<T>> _stack;
         Task _loadingTask;
@@ -92,7 +92,7 @@ namespace Barembo.Services
         {
             _stack.Clear();
             if (disposeAfterwards)
-                Dispose();
+                Dispose(true);
         }
     }
 }

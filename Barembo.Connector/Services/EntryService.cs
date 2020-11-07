@@ -139,6 +139,12 @@ namespace Barembo.Services
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
             _queuedLoaderService.StopAllLoading(true);
         }
     }
