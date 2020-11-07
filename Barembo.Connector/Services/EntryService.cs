@@ -10,15 +10,17 @@ using System.Linq;
 
 namespace Barembo.Services
 {
-    public class EntryService : IEntryService
+    public class EntryService : IEntryService, IDisposable
     {
         readonly IEntryStoreService _entryStoreService;
         readonly IAttachmentStoreService _attachmentStoreService;
+        readonly IQueuedPriorityLoaderService<Entry> _queuedLoaderService;
 
         public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService)
         {
             _entryStoreService = entryStoreService;
             _attachmentStoreService = attachmentStoreService;
+            _queuedLoaderService = new QueuedPriorityLoaderService<Entry>();
         }
 
         public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, bool setAsThumbnail)
@@ -116,6 +118,11 @@ namespace Barembo.Services
             return await _entryStoreService.LoadAsync(entryReference);
         }
 
+        public void LoadEntryAsSoonAsPossible(EntryReference entryReference, ElementLoadedDelegate<Entry> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued)
+        {
+            _queuedLoaderService.LoadWithHighPriority(async ()=> await _entryStoreService.LoadAsync(entryReference), elementLoaded, loadingDequeued);
+        }
+
         public async Task<bool> SaveEntryAsync(EntryReference entryReference, Entry entry)
         {
             if (entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanEditOwnEntries)
@@ -128,6 +135,11 @@ namespace Barembo.Services
             }
 
             return await _entryStoreService.SaveAsync(entryReference, entry);
+        }
+
+        public void Dispose()
+        {
+            _queuedLoaderService.StopAllLoading(true);
         }
     }
 }

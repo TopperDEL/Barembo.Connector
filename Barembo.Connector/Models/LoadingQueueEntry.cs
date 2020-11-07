@@ -5,11 +5,15 @@ using System.Text;
 
 namespace Barembo.Models
 {
-    internal struct LoadingQueueEntry<T>
+    internal struct LoadingQueueEntry<T> : IEquatable<LoadingQueueEntry<T>>
     {
-        public StoreAccess StoreAccess{ get; set; }
-        public StoreKey StoreKey { get; set; }
+        public LoadElementAsyncDelegate<T> LoadElementAsync { get; set; }
         public ElementLoadedDelegate<T> ElementLoaded { get; set; }
         public ElementLoadingDequeuedDelegate ElementLoadingDequeued { get; set; }
+
+        public bool Equals(LoadingQueueEntry<T> other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

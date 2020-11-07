@@ -28,6 +28,12 @@ namespace Barembo.Connector.Test.Services
             _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object);
         }
 
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _entryService.Dispose();
+        }
+
         [TestMethod]
         public void CreateEntry_Creates_Entry()
         {
@@ -191,6 +197,31 @@ namespace Barembo.Connector.Test.Services
             {
                 Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
             }
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task LoadEntryASAP_Loads_EntryFromQueue()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+
+            bool loaded = false;
+            bool loadingFailed = false;
+            Entry loadedEntry = null;
+            _entryService.LoadEntryAsSoonAsPossible(entryReference, (entry) => { loaded = true; loadedEntry = entry; }, () => loadingFailed = true);
+
+            await Task.Delay(300); //Might need more time on slower machines. We need to wait for the underlying Stack-Processing-Task to
+                                   //fetch the work to do.
+
+            Assert.IsTrue(loaded);
+            Assert.IsFalse(loadingFailed);
+            Assert.AreEqual(entry, loadedEntry);
 
             _entryStoreServiceMock.Verify();
         }

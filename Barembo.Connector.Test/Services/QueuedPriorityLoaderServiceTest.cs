@@ -13,13 +13,11 @@ namespace Barembo.Connector.Test.Services
     public class QueuedPriorityLoaderServiceTest
     {
         QueuedPriorityLoaderService<Entry> _service;
-        Moq.Mock<IStoreService> _storeServiceMock;
 
         [TestInitialize]
         public void Init()
         {
-            _storeServiceMock = new Moq.Mock<IStoreService>();
-            _service = new QueuedPriorityLoaderService<Entry>(_storeServiceMock.Object);
+            _service = new QueuedPriorityLoaderService<Entry>();
         }
 
         [TestMethod]
@@ -29,10 +27,9 @@ namespace Barembo.Connector.Test.Services
             StoreKey key1 = StoreKey.Entry("book1", "entry1", "contributor1");
             Entry entry1 = new Entry();
 
-            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(access1, key1)).Returns(Task.FromResult(entry1)).Verifiable();
             bool elementLoaded = false;
 
-            _service.LoadWithHighPriority(access1, key1,
+            _service.LoadWithHighPriority(async () => await Task.FromResult(entry1),
                 (entry) => { elementLoaded = true; },
                 () => { Assert.IsTrue(false, "One Element could not be loaded"); });
 
@@ -52,16 +49,13 @@ namespace Barembo.Connector.Test.Services
             StoreKey key2 = StoreKey.Entry("book2", "entry2", "contributor2");
             Entry entry2 = new Entry();
 
-            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(access1, key1)).Returns(Task.FromResult(entry1)).Verifiable();
-            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(access2, key2)).Returns(Task.FromResult(entry2)).Verifiable();
-           
             bool firstElementLoaded = false;
             bool secondElementLoaded = false;
 
-            _service.LoadWithHighPriority(access2, key2,
+            _service.LoadWithHighPriority(async () => await Task.FromResult(entry1),
                 (entry) => { firstElementLoaded = true; },
                 () => { Assert.IsTrue(false, "First Element could not be loaded"); });
-            _service.LoadWithHighPriority(access2, key2,
+            _service.LoadWithHighPriority(async () => await Task.FromResult(entry2),
                 (entry) => { secondElementLoaded = true; },
                 () => { Assert.IsTrue(false, "Second Element could not be loaded"); });
 
@@ -83,16 +77,13 @@ namespace Barembo.Connector.Test.Services
             StoreKey key2 = StoreKey.Entry("book2", "entry2", "contributor2");
             Entry entry2 = new Entry();
 
-            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(access1, key1)).Throws(new Exception()).Verifiable();
-            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(access2, key2)).Returns(Task.FromResult(entry2)).Verifiable();
-
             bool firstElementNotLoaded = false;
             bool secondElementLoaded = false;
 
-            _service.LoadWithHighPriority(access2, key2,
+            _service.LoadWithHighPriority(() => throw new Exception(),
                 (entry) => { Assert.IsTrue(false, "First element should fail"); },
                 () => { firstElementNotLoaded = true; });
-            _service.LoadWithHighPriority(access2, key2,
+            _service.LoadWithHighPriority(async () => await Task.FromResult(entry2),
                 (entry) => { secondElementLoaded = true; },
                 () => { Assert.IsTrue(false, "Second Element could not be loaded"); });
 

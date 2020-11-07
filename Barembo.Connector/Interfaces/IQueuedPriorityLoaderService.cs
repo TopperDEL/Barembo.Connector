@@ -2,13 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Barembo.Interfaces
 {
-    public delegate void ElementLoadedDelegate<T>(T loadedElement);
+    public delegate Task<T> LoadElementAsyncDelegate<T>();
+    public delegate void ElementLoadedDelegate<in T>(T loadedElement);
     public delegate void ElementLoadingDequeuedDelegate();
     public interface IQueuedPriorityLoaderService<T>
     {
-        void LoadWithHighPriority(StoreAccess access, StoreKey storeKey, ElementLoadedDelegate<T> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued);
+        void LoadWithHighPriority(LoadElementAsyncDelegate<T> loadElementAsync, ElementLoadedDelegate<T> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued);
+        void StopAllLoading(bool disposeAfterwards);
+        bool HasEntriesToLoad { get; }
     }
 }

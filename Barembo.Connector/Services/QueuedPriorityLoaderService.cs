@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 
 namespace Barembo.Services
 {
-    public class QueuedPriorityLoaderService<T> : IQueuedPriorityLoaderService<T>, IDisposable
+    public class QueuedPriorityLoaderService<T> : IQueuedPriorityLoaderService<T>
     {
         ConcurrentStack<LoadingQueueEntry<T>> _stack;
         Task _loadingTask;
         CancellationTokenSource _source;
-        IStoreService _storeService;
 
         public bool HasEntriesToLoad
         {
@@ -24,19 +23,17 @@ namespace Barembo.Services
             }
         }
 
-        public QueuedPriorityLoaderService(IStoreService storeService)
+        public QueuedPriorityLoaderService()
         {
-            _storeService = storeService;
-
             _stack = new ConcurrentStack<LoadingQueueEntry<T>>();
 
             _source = new CancellationTokenSource();
-            _loadingTask = Task.Factory.StartNew(async () => await LoadFromStackAsync(_source.Token), _source.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            _loadingTask = Task.Factory.StartNew(async () => await LoadFromStackAsync(_source.Token).ConfigureAwait(false), _source.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
         }
 
-        public void LoadWithHighPriority(StoreAccess access, StoreKey storeKey, ElementLoadedDelegate<T> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued)
+        public void LoadWithHighPriority(LoadElementAsyncDelegate<T> loadElementAsync, ElementLoadedDelegate<T> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued)
         {
-            LoadingQueueEntry<T> entry = new LoadingQueueEntry<T> { StoreAccess = access, StoreKey = storeKey, ElementLoaded = elementLoaded, ElementLoadingDequeued = loadingDequeued };
+            LoadingQueueEntry<T> entry = new LoadingQueueEntry<T> { LoadElementAsync = loadElementAsync, ElementLoaded = elementLoaded, ElementLoadingDequeued = loadingDequeued };
             _stack.Push(entry);
         }
 
@@ -52,7 +49,7 @@ namespace Barembo.Services
                         {
                             try
                             {
-                                var loadedObject = await _storeService.GetObjectFromJsonAsync<T>(toDo.StoreAccess, toDo.StoreKey);
+                                var loadedObject = await toDo.LoadElementAsync();
                                 toDo.ElementLoaded(loadedObject);
                             }
                             catch (Exception)
@@ -67,22 +64,35 @@ namespace Barembo.Services
                     }
                     else
                     {
-                        await Task.Delay(100);
+                        await Task.Delay(100).ConfigureAwait(false);
                     }
                 }
                 else
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(100).ConfigureAwait(false);
                 }
             }
         }
-
         public void Dispose()
         {
-            _source.Cancel();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_source != null)
+                _source.Cancel();
             _loadingTask = null;
             _stack = null;
             _source = null;
+        }
+
+        public void StopAllLoading(bool disposeAfterwards)
+        {
+            _stack.Clear();
+            if (disposeAfterwards)
+                Dispose();
         }
     }
 }
