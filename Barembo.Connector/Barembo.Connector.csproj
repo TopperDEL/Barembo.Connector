@@ -13,8 +13,13 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>barembo storj tardigrade eternity diary</PackageTags>
     <PackageReleaseNotes>First version - still WIP</PackageReleaseNotes>
-    <Version>0.9.8</Version>
+    <Version>0.9.9</Version>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
