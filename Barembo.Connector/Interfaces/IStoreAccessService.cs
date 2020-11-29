@@ -18,5 +18,7 @@ namespace Barembo.Interfaces
         StoreAccess ShareBookAccess(StoreAccess baseAccess, BookReference bookReferenceToShare, Contributor contributor, AccessRights accessRights);
 
         StoreAccess ShareBookShareAccess(StoreAccess baseAccess, StoreKey storeKey);
+
+        string GetVersionInfo();
     }
 }

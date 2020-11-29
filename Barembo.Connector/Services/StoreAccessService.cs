@@ -49,5 +49,10 @@ namespace Barembo.Services
 
             return new StoreAccess(sharedAccess.Serialize());
         }
+
+        public string GetVersionInfo()
+        {
+            return Access.GetStorjVersion();
+        }
     }
 }
