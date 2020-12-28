@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Barembo.Connector\Barembo.Connector.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestImage.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

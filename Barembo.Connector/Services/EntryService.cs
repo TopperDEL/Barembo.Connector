@@ -15,20 +15,24 @@ namespace Barembo.Services
         readonly IEntryStoreService _entryStoreService;
         readonly IAttachmentStoreService _attachmentStoreService;
         readonly IQueuedPriorityLoaderService<Entry> _queuedLoaderService;
+        readonly IThumbnailGeneratorService _thumbnailGeneratorService;
 
-        public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService)
+        public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService, IThumbnailGeneratorService thumbnailGeneratorService)
         {
             _entryStoreService = entryStoreService;
             _attachmentStoreService = attachmentStoreService;
+            _thumbnailGeneratorService = thumbnailGeneratorService;
+
             _queuedLoaderService = new QueuedPriorityLoaderService<Entry>();
         }
 
-        public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, bool setAsThumbnail)
+        public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary)
         {
             var success = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary);
             if (success)
             {
                 entry.Attachments.Add(attachment);
+
                 var successEntry = await _entryStoreService.SaveAsync(entryReference, entry);
                 if (successEntry)
                 {
@@ -146,6 +150,27 @@ namespace Barembo.Services
         protected virtual void Dispose(bool disposing)
         {
             _queuedLoaderService.StopAllLoading(true);
+        }
+
+        public async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Stream attachmentBinary)
+        {
+            var bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(attachmentBinary);
+            if (!string.IsNullOrEmpty(bytesBase64))
+            {
+                entry.ThumbnailBase64 = bytesBase64;
+
+                var successEntry = await _entryStoreService.SaveAsync(entryReference, entry);
+                if (successEntry)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
         }
     }
 }

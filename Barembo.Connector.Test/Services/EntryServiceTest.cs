@@ -17,6 +17,7 @@ namespace Barembo.Connector.Test.Services
     {
         EntryService _entryService;
         Moq.Mock<IEntryStoreService> _entryStoreServiceMock;
+        Moq.Mock<IThumbnailGeneratorService> _thumbnailGeneratorService;
         Moq.Mock<IAttachmentStoreService> _attachmentStoreServiceMock;
 
         [TestInitialize]
@@ -24,8 +25,9 @@ namespace Barembo.Connector.Test.Services
         {
             _entryStoreServiceMock = new Moq.Mock<IEntryStoreService>();
             _attachmentStoreServiceMock = new Moq.Mock<IAttachmentStoreService>();
+            _thumbnailGeneratorService = new Moq.Mock<IThumbnailGeneratorService>();
 
-            _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object);
+            _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object, _thumbnailGeneratorService.Object);
         }
 
         [TestCleanup]
@@ -390,10 +392,39 @@ namespace Barembo.Connector.Test.Services
                                   .Returns(Task.FromResult(true)).Verifiable();
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, true);
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream);
 
             Assert.IsTrue(result);
             Assert.AreEqual(entry.Attachments[0], attachment);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task SetThumbnail_SetsThumbnail_AndSavesEntry()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            MemoryStream stream = new MemoryStream();
+            string thumbnail = "ABCDE";
+
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.ThumbnailBase64 == thumbnail)))
+                                  .Returns(Task.FromResult(true)).Verifiable();
+            _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromImageAsync(stream)).Returns(Task.FromResult(thumbnail));
+
+            var result = await _entryService.SetThumbnailAsync(entryReference, entry, stream);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(thumbnail, entry.ThumbnailBase64);
 
             _entryStoreServiceMock.Verify();
             _attachmentStoreServiceMock.Verify();
@@ -416,7 +447,7 @@ namespace Barembo.Connector.Test.Services
 
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(false)).Verifiable();
 
-            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, true);
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream);
 
             Assert.IsFalse(result);
             Assert.AreEqual(0, entry.Attachments.Count);
@@ -444,7 +475,7 @@ namespace Barembo.Connector.Test.Services
                                   .Returns(Task.FromResult(false)).Verifiable();
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, true);
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream);
 
             Assert.IsFalse(result);
             Assert.AreEqual(0, entry.Attachments.Count);
