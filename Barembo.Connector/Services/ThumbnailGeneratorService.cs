@@ -14,6 +14,7 @@ namespace Barembo.Services
     {
         public async Task<string> GenerateThumbnailBase64FromImageAsync(Stream imageStream)
         {
+            imageStream.Position = 0;
             using (var image = await SixLabors.ImageSharp.Image.LoadAsync(imageStream))
             {
                 image.Mutate(x => x.Resize(600, 0, KnownResamplers.Lanczos3));

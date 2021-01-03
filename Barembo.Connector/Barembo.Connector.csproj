@@ -13,7 +13,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>barembo storj tardigrade eternity diary</PackageTags>
     <PackageReleaseNotes>First version - still WIP</PackageReleaseNotes>
-    <Version>0.9.14</Version>
+    <Version>0.9.15</Version>
   </PropertyGroup>
   
   <PropertyGroup>

@@ -29,12 +29,34 @@ namespace Barembo.Connector.Test.Services
             }
             catch { }
 
-            FileStream image = new FileStream("TestImage.jpg", FileMode.Open);
-            var result = await _service.GenerateThumbnailBase64FromImageAsync(image);
-            var resultBytes = Convert.FromBase64String(result);
-            await File.WriteAllBytesAsync("TestImageThumbnail.jpg", resultBytes);
+            using (FileStream image = new FileStream("TestImage.jpg", FileMode.Open))
+            {
+                var result = await _service.GenerateThumbnailBase64FromImageAsync(image);
+                var resultBytes = Convert.FromBase64String(result);
+                await File.WriteAllBytesAsync("TestImageThumbnail.jpg", resultBytes);
 
-            Assert.IsTrue(File.Exists("TestImageThumbnail.jpg"));
+                Assert.IsTrue(File.Exists("TestImageThumbnail.jpg"));
+            }
+        }
+
+        [TestMethod]
+        public async Task Thumbnail_Gets_GeneratedEvenIfStreamIsNotAtPositionZero()
+        {
+            try
+            {
+                File.Delete("TestImageThumbnail2.jpg");
+            }
+            catch { }
+
+            using (FileStream image = new FileStream("TestImage.jpg", FileMode.Open))
+            {
+                image.Position = 10;
+                var result = await _service.GenerateThumbnailBase64FromImageAsync(image);
+                var resultBytes = Convert.FromBase64String(result);
+                await File.WriteAllBytesAsync("TestImageThumbnail2.jpg", resultBytes);
+
+                Assert.IsTrue(File.Exists("TestImageThumbnail2.jpg"));
+            }
         }
     }
 }
