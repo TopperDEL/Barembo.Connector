@@ -1,4 +1,2 @@
-- Implementierung StoreAccessService => Anbindung uplink.Net
 - Full-Stack-Test bauen
 - Deletes für BookShares/Books/Entries/Contributors etc. + Berechtigungsprüfung
-- Automatische NuGet-Generierung
