@@ -21,7 +21,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public async Task Thumbnail_Gets_Generated()
+        public async Task ThumbnailFromImgae_Gets_Generated()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public async Task Thumbnail_Gets_GeneratedEvenIfStreamIsNotAtPositionZero()
+        public async Task ThumbnailFromImage_Gets_GeneratedEvenIfStreamIsNotAtPositionZero()
         {
             try
             {
@@ -57,6 +57,21 @@ namespace Barembo.Connector.Test.Services
 
                 Assert.IsTrue(File.Exists("TestImageThumbnail2.jpg"));
             }
+        }
+
+        [TestMethod]
+        public async Task ThumbnailFromVideo_Gets_Generated()
+        {
+            bool gotCalled = false;
+            ThumbnailGeneratorService.VideoThumbnailCallback = (stream, position) =>
+            {
+                gotCalled = true;
+                return Task.FromResult("");
+            };
+
+            var result = await _service.GenerateThumbnailBase64FromVideoAsync(new MemoryStream(), 0);
+
+            Assert.IsTrue(gotCalled);
         }
     }
 }

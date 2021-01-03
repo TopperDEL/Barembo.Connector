@@ -12,6 +12,8 @@ namespace Barembo.Services
 {
     public class ThumbnailGeneratorService : IThumbnailGeneratorService
     {
+        public static Func<Stream, long, Task<string>> VideoThumbnailCallback { get; set; }
+
         public async Task<string> GenerateThumbnailBase64FromImageAsync(Stream imageStream)
         {
             imageStream.Position = 0;
@@ -24,6 +26,16 @@ namespace Barembo.Services
                     return Convert.ToBase64String(mstream.ToArray());
                 }
             }
+        }
+
+        public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, long position)
+        {
+            videoStream.Position = 0;
+
+            if (VideoThumbnailCallback != null)
+                return await VideoThumbnailCallback(videoStream, position);
+
+            return null;
         }
     }
 }
