@@ -163,6 +163,11 @@ namespace Barembo.Services
             {
                 bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0f);
             }
+            else
+            {
+                return false;
+            }
+
             if (!string.IsNullOrEmpty(bytesBase64))
             {
                 entry.ThumbnailBase64 = bytesBase64;

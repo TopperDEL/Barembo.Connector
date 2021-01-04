@@ -72,14 +72,21 @@ namespace Barembo.Services
                 mediaPlayer.Play();
                 mediaPlayer.Position = positionPercent;
 
-                await tcs.Task;
+                await tcs.Task.ConfigureAwait(false);
             }
 
             using (FileStream fstream = new FileStream(tempFile, FileMode.Open))
             {
                 var bytes = new byte[fstream.Length];
-                await fstream.ReadAsync(bytes, 0, (int)fstream.Length);
-                return Convert.ToBase64String(bytes);
+                var readLength = await fstream.ReadAsync(bytes, 0, (int)fstream.Length).ConfigureAwait(false);
+                if (readLength == fstream.Length)
+                {
+                    return Convert.ToBase64String(bytes);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
     }
