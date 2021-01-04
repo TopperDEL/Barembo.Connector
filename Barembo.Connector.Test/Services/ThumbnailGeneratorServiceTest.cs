@@ -62,95 +62,52 @@ namespace Barembo.Connector.Test.Services
         [TestMethod]
         public async Task ThumbnailFromVideo_Gets_Generated()
         {
-            try
-            {
-                File.Delete("TestVideoThumbnail1.jpg");
-            }
-            catch { }
+            await GenerateAndTestVideo("TestVideoThumbnail_0prz.jpg", 0f);
 
-            using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
-            {
-                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, 0f);
-                var resultBytes = Convert.FromBase64String(result);
-                await File.WriteAllBytesAsync("TestVideoThumbnail1.jpg", resultBytes);
-
-                Assert.IsTrue(File.Exists("TestVideoThumbnail1.jpg"));
-            }
         }
 
         [TestMethod]
         public async Task ThumbnailFromVideo_Gets_GeneratedForAfter25Percent()
         {
-            try
-            {
-                File.Delete("TestVideoThumbnail2.jpg");
-            }
-            catch { }
+            await GenerateAndTestVideo("TestVideoThumbnail_25prz.jpg", 0.25f);
 
-            using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
-            {
-                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, 0.25f);
-                var resultBytes = Convert.FromBase64String(result);
-                await File.WriteAllBytesAsync("TestVideoThumbnail2.jpg", resultBytes);
-
-                Assert.IsTrue(File.Exists("TestVideoThumbnail2.jpg"));
-            }
         }
 
         [TestMethod]
         public async Task ThumbnailFromVideo_Gets_GeneratedForAfter50Percent()
         {
-            try
-            {
-                File.Delete("TestVideoThumbnail3.jpg");
-            }
-            catch { }
+            await GenerateAndTestVideo("TestVideoThumbnail_50prz.jpg", 0.50f);
 
-            using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
-            {
-                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, 0.25f);
-                var resultBytes = Convert.FromBase64String(result);
-                await File.WriteAllBytesAsync("TestVideoThumbnail3.jpg", resultBytes);
-
-                Assert.IsTrue(File.Exists("TestVideoThumbnail3.jpg"));
-            }
         }
 
         [TestMethod]
         public async Task ThumbnailFromVideo_Gets_GeneratedForAfter75Percent()
         {
-            try
-            {
-                File.Delete("TestVideoThumbnail4.jpg");
-            }
-            catch { }
+            await GenerateAndTestVideo("TestVideoThumbnail_75prz.jpg", 0.75f);
 
-            using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
-            {
-                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, 0.75f);
-                var resultBytes = Convert.FromBase64String(result);
-                await File.WriteAllBytesAsync("TestVideoThumbnail4.jpg", resultBytes);
-
-                Assert.IsTrue(File.Exists("TestVideoThumbnail4.jpg"));
-            }
         }
 
         [TestMethod]
         public async Task ThumbnailFromVideo_Gets_GeneratedForAfter99Percent()
         {
+            await GenerateAndTestVideo("TestVideoThumbnail_99prz.jpg", 0.99f);
+        }
+
+        private async Task GenerateAndTestVideo(string filename, float position)
+        {
             try
             {
-                File.Delete("TestVideoThumbnail5.jpg");
+                File.Delete(filename);
             }
             catch { }
 
             using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
             {
-                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, 0.99f);
+                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, position);
                 var resultBytes = Convert.FromBase64String(result);
-                await File.WriteAllBytesAsync("TestVideoThumbnail5.jpg", resultBytes);
+                await File.WriteAllBytesAsync(filename, resultBytes);
 
-                Assert.IsTrue(File.Exists("TestVideoThumbnail5.jpg"));
+                Assert.IsTrue(File.Exists(filename));
             }
         }
     }
