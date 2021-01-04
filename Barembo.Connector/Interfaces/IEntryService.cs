@@ -16,7 +16,7 @@ namespace Barembo.Interfaces
         Task<EntryReference> AddEntryToBookAsync(BookReference bookReference, Entry entry);
 
         Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary);
-        Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Stream attachmentBinary);
+        Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary);
 
         Task<bool> SaveEntryAsync(EntryReference entryReference, Entry entry);
 

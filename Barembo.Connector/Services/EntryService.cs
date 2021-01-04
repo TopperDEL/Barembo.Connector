@@ -152,9 +152,17 @@ namespace Barembo.Services
             _queuedLoaderService.StopAllLoading(true);
         }
 
-        public async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Stream attachmentBinary)
+        public async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary)
         {
-            var bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(attachmentBinary);
+            string bytesBase64 = string.Empty;
+            if (attachment.Type == AttachmentType.Image)
+            {
+                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(attachmentBinary);
+            }
+            else if (attachment.Type == AttachmentType.Video)
+            {
+                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0f);
+            }
             if (!string.IsNullOrEmpty(bytesBase64))
             {
                 entry.ThumbnailBase64 = bytesBase64;

@@ -402,7 +402,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public async Task SetThumbnail_SetsThumbnail_AndSavesEntry()
+        public async Task SetThumbnail_SetsThumbnailForImage_AndSavesEntry()
         {
             Entry entry = _entryService.CreateEntry("test");
             Contributor contributor = new Contributor();
@@ -414,6 +414,7 @@ namespace Barembo.Connector.Test.Services
             entryReference.BookReference = bookReference;
             entryReference.EntryId = entry.Id;
             Attachment attachment = new Attachment();
+            attachment.Type = AttachmentType.Image;
             MemoryStream stream = new MemoryStream();
             string thumbnail = "ABCDE";
 
@@ -421,7 +422,37 @@ namespace Barembo.Connector.Test.Services
                                   .Returns(Task.FromResult(true)).Verifiable();
             _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromImageAsync(stream)).Returns(Task.FromResult(thumbnail));
 
-            var result = await _entryService.SetThumbnailAsync(entryReference, entry, stream);
+            var result = await _entryService.SetThumbnailAsync(entryReference, entry, attachment, stream);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(thumbnail, entry.ThumbnailBase64);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task SetThumbnail_SetsThumbnailForVideo_AndSavesEntry()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            attachment.Type = AttachmentType.Video;
+            MemoryStream stream = new MemoryStream();
+            string thumbnail = "ABCDE";
+
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.ThumbnailBase64 == thumbnail)))
+                                  .Returns(Task.FromResult(true)).Verifiable();
+            _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(stream, 0f)).Returns(Task.FromResult(thumbnail));
+
+            var result = await _entryService.SetThumbnailAsync(entryReference, entry, attachment, stream);
 
             Assert.IsTrue(result);
             Assert.AreEqual(thumbnail, entry.ThumbnailBase64);
