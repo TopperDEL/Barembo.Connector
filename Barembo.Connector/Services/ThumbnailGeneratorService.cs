@@ -38,7 +38,7 @@ namespace Barembo.Services
         {
             if(VideoThumbnailAsyncCallback != null)
             {
-                return await VideoThumbnailAsyncCallback(videoStream, positionPercent, filePath);
+                return await VideoThumbnailAsyncCallback(videoStream, positionPercent, filePath).ConfigureAwait(false);
             }
             //Source: https://github.com/ZeBobo5/Vlc.DotNet/blob/develop/src/Samples/Samples.Core.Thumbnailer/Program.cs
 
