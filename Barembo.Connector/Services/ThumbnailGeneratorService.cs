@@ -18,7 +18,7 @@ namespace Barembo.Services
             Core.Initialize();
         }
 
-        public static Func<Stream, long, Task<string>> VideoThumbnailCallback { get; set; }
+        public static Func<Stream, float, string, Task<string>> VideoThumbnailAsyncCallback { get; set; }
 
         public async Task<string> GenerateThumbnailBase64FromImageAsync(Stream imageStream)
         {
@@ -34,8 +34,12 @@ namespace Barembo.Services
             }
         }
 
-        public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent)
+        public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent, string filePath)
         {
+            if(VideoThumbnailAsyncCallback != null)
+            {
+                return await VideoThumbnailAsyncCallback(videoStream, positionPercent, filePath);
+            }
             //Source: https://github.com/ZeBobo5/Vlc.DotNet/blob/develop/src/Samples/Samples.Core.Thumbnailer/Program.cs
 
             videoStream.Position = 0;

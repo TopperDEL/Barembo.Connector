@@ -103,7 +103,7 @@ namespace Barembo.Connector.Test.Services
 
             using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
             {
-                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, position);
+                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, position, "TestVideo.mp4");
                 var resultBytes = Convert.FromBase64String(result);
                 await File.WriteAllBytesAsync(filename, resultBytes);
 

@@ -422,7 +422,7 @@ namespace Barembo.Connector.Test.Services
                                   .Returns(Task.FromResult(true)).Verifiable();
             _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromImageAsync(stream)).Returns(Task.FromResult(thumbnail));
 
-            var result = await _entryService.SetThumbnailAsync(entryReference, entry, attachment, stream);
+            var result = await _entryService.SetThumbnailAsync(entryReference, entry, attachment, stream, "folder/file.mp4");
 
             Assert.IsTrue(result);
             Assert.AreEqual(thumbnail, entry.ThumbnailBase64);
@@ -450,9 +450,9 @@ namespace Barembo.Connector.Test.Services
 
             _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.ThumbnailBase64 == thumbnail)))
                                   .Returns(Task.FromResult(true)).Verifiable();
-            _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(stream, 0f)).Returns(Task.FromResult(thumbnail));
+            _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(stream, 0f, "folder/file.mp4")).Returns(Task.FromResult(thumbnail));
 
-            var result = await _entryService.SetThumbnailAsync(entryReference, entry, attachment, stream);
+            var result = await _entryService.SetThumbnailAsync(entryReference, entry, attachment, stream, "folder/file.mp4");
 
             Assert.IsTrue(result);
             Assert.AreEqual(thumbnail, entry.ThumbnailBase64);

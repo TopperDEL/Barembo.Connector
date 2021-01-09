@@ -9,6 +9,6 @@ namespace Barembo.Interfaces
     public interface IThumbnailGeneratorService
     {
         Task<string> GenerateThumbnailBase64FromImageAsync(Stream imageStream);
-        Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent);
+        Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent, string filePath);
     }
 }
