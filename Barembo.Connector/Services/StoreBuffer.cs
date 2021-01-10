@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Barembo.Services
 {
-    internal class StoreBuffer : IStoreBuffer
+    public class StoreBuffer : IStoreBuffer
     {
         private static bool _isInitialized;
         private static SQLiteAsyncConnection _dataBase;
