@@ -1,7 +1,7 @@
 # Barembo.Connector
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e3e046bc37e94b4d9f6066a468473c3c)](https://app.codacy.com/gh/TopperDEL/Barembo.Connector?utm_source=github.com&utm_medium=referral&utm_content=TopperDEL/Barembo.Connector&utm_campaign=Badge_Grade)
-[![NuGet Downloads](https://img.shields.io/nuget/dt/Barembo.Connector)](https://www.nuget.org/packages/Barembo.Connector) [![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Barembo.Connector)](https://www.nuget.org/packages/Barembo.Connector) ![Publish](https://github.com/TopperDEL/Barembo.Connector/workflows/Publish/badge.svg) [![Storj.io](https://storj.io/img/storj-badge.svg)](https://storj.io)
 
 ## The connector to Barembo
 
