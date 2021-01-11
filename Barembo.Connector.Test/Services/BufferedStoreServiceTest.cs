@@ -156,6 +156,23 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task GetObjectAsJson_GetsFromStoreIfNotAvailableInBuffer_AndPutsToBuffer()
+        {
+            Entry entry = new Entry();
+
+            _storeBufferMock.Setup(s => s.GetObjectFromBufferAsync<Entry>(_access, _storeKey)).Returns(Task.FromResult<Entry>(null)).Verifiable();
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(_access, _storeKey)).Returns(Task.FromResult(entry)).Verifiable();
+            _storeBufferMock.Setup(s => s.PutObjectToBufferAsync<Entry>(_access, _storeKey, entry)).Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _bufferedStoreService.GetObjectFromJsonAsync<Entry>(_access, _storeKey);
+
+            Assert.AreEqual(entry, result);
+
+            _storeBufferMock.Verify();
+            _storeServiceMock.Verify();
+        }
+
+        [TestMethod]
         public async Task GetObjectAsStream_GetsFromBuffer()
         {
             Stream stream = new MemoryStream();
