@@ -32,6 +32,8 @@ namespace Barembo.Services
 
         public async Task<Stream> GetObjectAsStreamFromBufferAsync(StoreAccess access, StoreKey keyToCheck)
         {
+            await InitAsync().ConfigureAwait(false);
+
             var bufferedEntry = await _dataBase.GetAsync<BufferEntry>(keyToCheck.ToString());
 
             return new MemoryStream(bufferedEntry.BufferedContent);
@@ -39,6 +41,8 @@ namespace Barembo.Services
 
         public async Task<T> GetObjectFromBufferAsync<T>(StoreAccess access, StoreKey keyToCheck)
         {
+            await InitAsync().ConfigureAwait(false);
+
             var bufferedEntry = await _dataBase.GetAsync<BufferEntry>(keyToCheck.ToString());
 
             MemoryStream ms = new MemoryStream(bufferedEntry.BufferedContent);
