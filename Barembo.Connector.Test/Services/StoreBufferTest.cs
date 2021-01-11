@@ -68,6 +68,19 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task GetObjectFromBuffer_ReturnsNull_IfBufferIsEmpty()
+        {
+            await _storeBuffer.RemoveDatabaseAsync();
+
+            Book book = new Book();
+            StoreKey notExisting = StoreKey.Book(book.Id);
+
+            var result = await _storeBuffer.GetObjectFromBufferAsync<Book>(_storeAccess, notExisting);
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
         public async Task BufferObject_Roundtrip_IsWorking()
         {
             await _storeBuffer.RemoveDatabaseAsync();

@@ -54,13 +54,20 @@ namespace Barembo.Services
         {
             await InitAsync().ConfigureAwait(false);
 
-            var bufferedEntry = await _dataBase.GetAsync<BufferEntry>(keyToCheck.ToString());
-
-            MemoryStream ms = new MemoryStream(bufferedEntry.BufferedContent);
-            using (BsonDataReader reader = new BsonDataReader(ms))
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-                return serializer.Deserialize<T>(reader);
+                var bufferedEntry = await _dataBase.GetAsync<BufferEntry>(keyToCheck.ToString());
+
+                MemoryStream ms = new MemoryStream(bufferedEntry.BufferedContent);
+                using (BsonDataReader reader = new BsonDataReader(ms))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    return serializer.Deserialize<T>(reader);
+                }
+            }
+            catch
+            {
+                return default;
             }
         }
 
