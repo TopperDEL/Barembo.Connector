@@ -21,7 +21,14 @@ namespace Barembo.Services
             if (_isInitialized)
                 return;
 
-            var databasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BaremboBuffer.db");
+            var baseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barembo");
+            Directory.CreateDirectory(baseFolder);
+
+#if DEBUG
+            var databasePath = Path.Combine(baseFolder, "BaremboBuffer_Debug.db");
+#else
+            var databasePath = Path.Combine(baseFolder, "BaremboBuffer.db");
+#endif
 
             _dataBase = new SQLiteAsyncConnection(databasePath);
 
