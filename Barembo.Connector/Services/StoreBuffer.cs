@@ -15,19 +15,23 @@ namespace Barembo.Services
     {
         private static bool _isInitialized;
         private static SQLiteAsyncConnection _dataBase;
+        public static string BaseFolder;
 
         private static async Task InitAsync()
         {
             if (_isInitialized)
                 return;
 
-            var baseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barembo");
-            Directory.CreateDirectory(baseFolder);
+            if (string.IsNullOrEmpty(BaseFolder))
+            {
+                BaseFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Barembo");
+            }
+            Directory.CreateDirectory(BaseFolder);
 
 #if DEBUG
-            var databasePath = Path.Combine(baseFolder, "BaremboBuffer_Debug.db");
+            var databasePath = Path.Combine(BaseFolder, "BaremboBuffer_Debug.db");
 #else
-            var databasePath = Path.Combine(baseFolder, "BaremboBuffer.db");
+            var databasePath = Path.Combine(BaseFolder, "BaremboBuffer.db");
 #endif
 
             _dataBase = new SQLiteAsyncConnection(databasePath);
