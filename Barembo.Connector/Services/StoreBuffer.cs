@@ -15,7 +15,7 @@ namespace Barembo.Services
     {
         private static bool _isInitialized;
         private static SQLiteAsyncConnection _dataBase;
-        public static string BaseFolder;
+        public static string BaseFolder { get; set; }
 
         private static async Task InitAsync()
         {
