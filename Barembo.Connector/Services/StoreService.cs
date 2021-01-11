@@ -78,16 +78,32 @@ namespace Barembo.Services
 
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey)
         {
+            return await ListObjectsAsync(access, storeKey, false);
+        }
+
+        public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData)
+        {
             var objectService = GetObjectService(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var listObjectsOption = new ListObjectsOptions();
             listObjectsOption.Prefix = storeKey.ToString();
             listObjectsOption.Recursive = true;
+            listObjectsOption.Custom = withMetaData;
 
             var objects = await objectService.ListObjectsAsync(bucket, listObjectsOption);
 
-            return objects.Items.Select(i => new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key)));
+            return objects.Items.Select(i =>
+            {
+                if (i.CustomMetaData.Entries.Count == 0)
+                {
+                    return new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key), new StoreMetaData());
+                }
+                else
+                {
+                    return new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key), new StoreMetaData(i.CustomMetaData.Entries[0].Key, i.CustomMetaData.Entries[0].Value));
+                }
+            });
         }
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
@@ -98,6 +114,22 @@ namespace Barembo.Services
             var JSONBytes = SerializeToJSON(objectToPut);
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, false);
+            await upload.StartUploadAsync();
+
+            return upload.Completed;
+        }
+
+        public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData)
+        {
+            var objectService = GetObjectService(access);
+            var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
+
+            var JSONBytes = SerializeToJSON(objectToPut);
+
+            CustomMetadata customMetaData = new CustomMetadata();
+            customMetaData.Entries.Add(new CustomMetadataEntry() { Key = metaData.Key, Value = metaData.Value });
+
+            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, customMetaData, false);
             await upload.StartUploadAsync();
 
             return upload.Completed;

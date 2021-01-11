@@ -70,9 +70,9 @@ namespace Barembo.Connector.Test.StoreServices
             var contrib1 = new Contributor() { Id = "contributor1" };
             var contrib2 = new Contributor() { Id = "contributor2" };
             var contributorsToLoad = new List<StoreObject>();
-            var contributor1 = new StoreObject(book.Id + "/Contributors/contributor1.json", "contributor1");
+            var contributor1 = new StoreObject(book.Id + "/Contributors/contributor1.json", "contributor1", new StoreMetaData());
             contributorsToLoad.Add(contributor1);
-            var contributor2 = new StoreObject(book.Id + "/Contributors/contributor2.json", "contributor2");
+            var contributor2 = new StoreObject(book.Id + "/Contributors/contributor2.json", "contributor2", new StoreMetaData());
             contributorsToLoad.Add(contributor2);
 
             _storeServiceMock.Setup(s => s.ListObjectsAsync(Moq.It.Is<StoreAccess>(a => a.AccessGrant == bookReference.AccessGrant), Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.Contributors)))

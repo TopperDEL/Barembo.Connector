@@ -113,11 +113,11 @@ namespace Barembo.Connector.Test.StoreServices
             BookReference bookReference = new BookReference();
             bookReference.BookId = book.Id;
             var bookSharesToLoad = new List<StoreObject>();
-            var share1 = new StoreObject(book.Id + "/Shares/share1.json", "share1");
+            var share1 = new StoreObject(book.Id + "/Shares/share1.json", "share1", new StoreMetaData());
             bookSharesToLoad.Add(share1);
-            var share2 = new StoreObject(book.Id + "/Shares/share2.json", "share2");
+            var share2 = new StoreObject(book.Id + "/Shares/share2.json", "share2", new StoreMetaData());
             bookSharesToLoad.Add(share2);
-            var share3 = new StoreObject(book.Id + "/Shares/share3.json", "share3");
+            var share3 = new StoreObject(book.Id + "/Shares/share3.json", "share3", new StoreMetaData());
             bookSharesToLoad.Add(share3);
 
             _storeServiceMock.Setup(s => s.ListObjectsAsync(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShares)))

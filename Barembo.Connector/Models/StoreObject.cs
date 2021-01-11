@@ -19,10 +19,16 @@ namespace Barembo.Models
         /// </summary>
         public string Id { get; set; }
 
-        internal StoreObject(string key, string id)
+        /// <summary>
+        /// The MetaData for this object if available
+        /// </summary>
+        public StoreMetaData MetaData { get; set; }
+
+        internal StoreObject(string key, string id, StoreMetaData metaData)
         {
             Key = key;
             Id = id;
+            MetaData = metaData;
         }
 
         public bool Equals(StoreObject other)

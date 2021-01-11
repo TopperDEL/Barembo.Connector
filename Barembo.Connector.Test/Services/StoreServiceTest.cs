@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Barembo.Exceptions;
+using Barembo.Interfaces;
 
 namespace Barembo.Connector.Test.Services
 {
@@ -28,7 +29,7 @@ namespace Barembo.Connector.Test.Services
         /// </summary>
         static string _accessGrantForTesting;
 
-        StoreService _storeService;
+        IStoreService _storeService;
         StoreAccess _storeAccess;
 
         [TestInitialize]
@@ -52,6 +53,22 @@ namespace Barembo.Connector.Test.Services
 
             Assert.AreEqual(book.Id, downloaded.Id);
             Assert.AreEqual(book.Name, downloaded.Name);
+        }
+
+        [TestMethod]
+        public async Task PutAsJsonWithMetaData_Uploads_AsJsonWithMetaData()
+        {
+            Book book = new Book();
+            book.Name = "Test-Book - " + DateTime.Now.ToString();
+            Entry entry1 = new Entry();
+            StoreMetaData meta = new StoreMetaData() { Key = StoreMetaData.STOREMETADATA_TIMESTAMP, Value = "123" };
+
+            await _storeService.PutObjectAsJsonAsync<Entry>(_storeAccess, StoreKey.Entry(book.Id, entry1.Id, "contrib1"), entry1, meta);
+
+            var list = await _storeService.ListObjectsAsync(_storeAccess, StoreKey.Entries(book.Id), true);
+
+            Assert.AreEqual(StoreMetaData.STOREMETADATA_TIMESTAMP, list.FirstOrDefault().MetaData.Key);
+            Assert.AreEqual("123", list.FirstOrDefault().MetaData.Value);
         }
 
         [TestMethod]

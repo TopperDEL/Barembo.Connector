@@ -93,11 +93,11 @@ namespace Barembo.Connector.Test.StoreServices
             bookReference.BookId = book.Id;
             bookReference.AccessGrant = "use this access";
             var entriesToLoad = new List<StoreObject>();
-            var entry1 = new StoreObject(book.Id + "/Entries/entry1.json", "entry1");
+            var entry1 = new StoreObject(book.Id + "/Entries/entry1.json", "entry1", new StoreMetaData());
             entriesToLoad.Add(entry1);
-            var entry2 = new StoreObject(book.Id + "/Entries/entry2.json", "entry2");
+            var entry2 = new StoreObject(book.Id + "/Entries/entry2.json", "entry2", new StoreMetaData());
             entriesToLoad.Add(entry2);
-            var entry3 = new StoreObject(book.Id + "/Entries/entry3.json", "entry3");
+            var entry3 = new StoreObject(book.Id + "/Entries/entry3.json", "entry3", new StoreMetaData());
             entriesToLoad.Add(entry3);
 
             _storeServiceMock.Setup(s => s.ListObjectsAsync(Moq.It.Is<StoreAccess>(a => a.AccessGrant == bookReference.AccessGrant), Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.Entries)))

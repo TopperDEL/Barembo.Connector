@@ -57,11 +57,31 @@ namespace Barembo.Interfaces
         Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut);
 
         /// <summary>
+        /// Puts an object as Json to the given StoreKey in the store with an attached metaData
+        /// </summary>
+        /// <typeparam name="T">The type of the object</typeparam>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of that object</param>
+        /// <param name="objectToPut">The object itself</param>
+        /// <param name="metaData">The StoreMetaData to attach</param>
+        /// <returns>True, if the put was successfull - false if not</returns>
+        Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData);
+
+        /// <summary>
         /// Lists all available objects for a particular StoreKey
         /// </summary>
         /// <param name="access">The access to use</param>
         /// <param name="storeKey">The StoreKey of the objects</param>
         /// <returns>An enumerable of StoreObjects</returns>
         Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey);
+
+        /// <summary>
+        /// Lists all available objects for a particular StoreKey with attached StoreMetaData
+        /// </summary>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of the objects</param>
+        /// <param name="withMetaData">True if the metadata should be read, too - false if not</param>
+        /// <returns>An enumerable of StoreObjects</returns>
+        Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData);
     }
 }

@@ -53,9 +53,24 @@ namespace Barembo.Services
             return await _storeService.ListObjectsAsync(access, storeKey);
         }
 
+        public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData)
+        {
+            return await _storeService.ListObjectsAsync(access, storeKey, withMetaData);
+        }
+
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
         {
             var saved = await _storeService.PutObjectAsJsonAsync<T>(access, storeKey, objectToPut);
+
+            if (saved)
+                await _storeBuffer.PutObjectToBufferAsync<T>(access, storeKey, objectToPut);
+
+            return saved;
+        }
+
+        public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData)
+        {
+            var saved = await _storeService.PutObjectAsJsonAsync<T>(access, storeKey, objectToPut, metaData);
 
             if (saved)
                 await _storeBuffer.PutObjectToBufferAsync<T>(access, storeKey, objectToPut);
