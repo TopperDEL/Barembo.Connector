@@ -13,12 +13,15 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>barembo storj tardigrade eternity diary</PackageTags>
     <PackageReleaseNotes>First version - still WIP</PackageReleaseNotes>
-    <Version>0.9.22</Version>
+    <Version>0.9.23</Version>
   </PropertyGroup>
   
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+</PropertyGroup>
+<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+  <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 </PropertyGroup>
 
   <ItemGroup>
