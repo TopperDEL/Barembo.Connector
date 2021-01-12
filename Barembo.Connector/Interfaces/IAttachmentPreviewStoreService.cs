@@ -17,16 +17,16 @@ namespace Barembo.Interfaces
         /// </summary>
         /// <param name="entryRef">The EntryReference of an Attachment-Preview to load</param>
         /// <param name="attachment">The attachment to load the preview for</param>
-        /// <returns>The Attachment-Preview as a Stream if it exists, otherwise throws a AttachmentNotExistsException</returns>
-        Task<Stream> LoadAsStreamAsync(EntryReference entryRef, Attachment attachment);
+        /// <returns>The Attachment-Preview if it exists, otherwise throws a AttachmentPreviewNotExistsException</returns>
+        Task<AttachmentPreview> LoadAsync(EntryReference entryRef, Attachment attachment);
 
         /// <summary>
         /// Saves an Attachment-Preview using an EntryReference and the binary data as stream.
         /// </summary>
         /// <param name="entryRef">The EntryReference of an Entry to save</param>
         /// <param name="attachmentToSave">The Attachment-Preview-Metadata to save</param>
-        /// <param name="attachmentBinary">The binary data of the attachment-preview as stream</param>
+        /// <param name="attachmentPreview">The attachment-preview to save</param>
         /// <returns>true, if the Attachment-preview could be saved</returns>
-        Task<bool> SaveFromStreamAsync(EntryReference entryRef, Attachment attachmentToSave, Stream attachmentBinary);
+        Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview);
     }
 }

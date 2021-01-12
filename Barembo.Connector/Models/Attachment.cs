@@ -4,11 +4,6 @@ using System.Text;
 
 namespace Barembo.Models
 {
-    public enum AttachmentType
-    {
-        Image,
-        Video
-    }
     public class Attachment
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();

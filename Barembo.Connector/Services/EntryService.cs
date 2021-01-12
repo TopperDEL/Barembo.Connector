@@ -14,38 +14,49 @@ namespace Barembo.Services
     {
         readonly IEntryStoreService _entryStoreService;
         readonly IAttachmentStoreService _attachmentStoreService;
+        readonly IAttachmentPreviewStoreService _attachmentPreviewStoreService;
+        readonly IAttachmentPreviewGeneratorService _attachmentPreviewGeneratorService;
         readonly IQueuedPriorityLoaderService<Entry> _queuedLoaderService;
         readonly IThumbnailGeneratorService _thumbnailGeneratorService;
 
-        public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService, IThumbnailGeneratorService thumbnailGeneratorService)
+        public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService, IAttachmentPreviewStoreService attachmentPreviewStoreService, IAttachmentPreviewGeneratorService attachmentPreviewGeneratorService, IThumbnailGeneratorService thumbnailGeneratorService)
         {
             _entryStoreService = entryStoreService;
             _attachmentStoreService = attachmentStoreService;
+            _attachmentPreviewStoreService = attachmentPreviewStoreService;
+            _attachmentPreviewGeneratorService = attachmentPreviewGeneratorService;
             _thumbnailGeneratorService = thumbnailGeneratorService;
 
             _queuedLoaderService = new QueuedPriorityLoaderService<Entry>();
         }
 
-        public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary)
+        public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
-            var success = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary);
-            if (success)
+            var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary);
+            if (!successAttachment)
             {
-                entry.Attachments.Add(attachment);
+                return false;
+            }
 
-                var successEntry = await _entryStoreService.SaveAsync(entryReference, entry);
-                if (successEntry)
-                {
-                    return true;
-                }
-                else
-                {
-                    entry.Attachments.Remove(attachment);
-                    return false;
-                }
+            var preview = await _attachmentPreviewGeneratorService.GeneratePreviewAsync(attachment, attachmentBinary, filePath);
+            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview);
+            if (!successPreview)
+            {
+                return false;
+            }
+
+            entry.Attachments.Add(attachment);
+
+            var successEntry = await _entryStoreService.SaveAsync(entryReference, entry);
+            if (successEntry)
+            {
+                return true;
             }
             else
+            {
+                entry.Attachments.Remove(attachment);
                 return false;
+            }
         }
 
         public async Task<EntryReference> AddEntryToBookAsync(BookReference bookReference, Entry entry)

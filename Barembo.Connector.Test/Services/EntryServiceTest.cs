@@ -19,15 +19,19 @@ namespace Barembo.Connector.Test.Services
         Moq.Mock<IEntryStoreService> _entryStoreServiceMock;
         Moq.Mock<IThumbnailGeneratorService> _thumbnailGeneratorService;
         Moq.Mock<IAttachmentStoreService> _attachmentStoreServiceMock;
+        Moq.Mock<IAttachmentPreviewStoreService> _attachmentPreviewStoreServiceMock;
+        Moq.Mock<IAttachmentPreviewGeneratorService> _attachmentPreviewGeneratorServiceMock;
 
         [TestInitialize]
         public void Init()
         {
             _entryStoreServiceMock = new Moq.Mock<IEntryStoreService>();
             _attachmentStoreServiceMock = new Moq.Mock<IAttachmentStoreService>();
+            _attachmentPreviewStoreServiceMock = new Moq.Mock<IAttachmentPreviewStoreService>();
+            _attachmentPreviewGeneratorServiceMock = new Moq.Mock<IAttachmentPreviewGeneratorService>();
             _thumbnailGeneratorService = new Moq.Mock<IThumbnailGeneratorService>();
 
-            _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object, _thumbnailGeneratorService.Object);
+            _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object, _attachmentPreviewStoreServiceMock.Object, _attachmentPreviewGeneratorServiceMock.Object, _thumbnailGeneratorService.Object);
         }
 
         [TestCleanup]
@@ -387,18 +391,51 @@ namespace Barembo.Connector.Test.Services
             entryReference.EntryId = entry.Id;
             Attachment attachment = new Attachment();
             MemoryStream stream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
 
             _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e=>e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
                                   .Returns(Task.FromResult(true)).Verifiable();
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.SaveAsync(entryReference, attachment, preview)).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream);
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, "filepath");
 
             Assert.IsTrue(result);
             Assert.AreEqual(entry.Attachments[0], attachment);
 
             _entryStoreServiceMock.Verify();
             _attachmentStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task AddAttachment_AddsAndSaves_AttachmentPreviewToEntry()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            MemoryStream stream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
+
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
+                                  .Returns(Task.FromResult(true)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.SaveAsync(entryReference, attachment, preview)).Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, "filepath");
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(entry.Attachments[0], attachment);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
         }
 
         [TestMethod]
@@ -478,7 +515,7 @@ namespace Barembo.Connector.Test.Services
 
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(false)).Verifiable();
 
-            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream);
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, "filepath");
 
             Assert.IsFalse(result);
             Assert.AreEqual(0, entry.Attachments.Count);
@@ -501,12 +538,44 @@ namespace Barembo.Connector.Test.Services
             entryReference.EntryId = entry.Id;
             Attachment attachment = new Attachment();
             MemoryStream stream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
 
             _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
                                   .Returns(Task.FromResult(false)).Verifiable();
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.SaveAsync(entryReference, attachment, preview)).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream);
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, "filepath");
+
+            Assert.IsFalse(result);
+            Assert.AreEqual(0, entry.Attachments.Count);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task AddAttachment_ReturnsFalse_IfPreviewCouldNotBeSaved()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            MemoryStream stream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
+
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
+                                  .Returns(Task.FromResult(false));
+            _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.SaveAsync(entryReference, attachment, preview)).Returns(Task.FromResult(false)).Verifiable();
+
+            var result = await _entryService.AddAttachmentAsync(entryReference, entry, attachment, stream, "filepath");
 
             Assert.IsFalse(result);
             Assert.AreEqual(0, entry.Attachments.Count);

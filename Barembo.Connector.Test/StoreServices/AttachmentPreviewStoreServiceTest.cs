@@ -24,7 +24,7 @@ namespace Barembo.Connector.Test.StoreServices
         }
 
         [TestMethod]
-        public async Task LoadAsStream_Returns_StreamIfObjectExists()
+        public async Task Load_ReturnsAttachmentPreview()
         {
             Book book = new Book();
             Entry entry = new Entry();
@@ -34,21 +34,21 @@ namespace Barembo.Connector.Test.StoreServices
             reference.BookReference.AccessGrant = "use this access";
             reference.EntryId = entry.Id;
             Attachment attachment = new Attachment();
-            MemoryStream returnStream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
 
             _storeServiceMock.Setup(s => s.GetObjectInfoAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.AttachmentPreview)))
                              .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = true })).Verifiable();
-            _storeServiceMock.Setup(s => s.GetObjectAsStreamAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.AttachmentPreview)))
-                             .Returns(Task.FromResult(returnStream as Stream)).Verifiable();
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<AttachmentPreview>(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.AttachmentPreview)))
+                             .Returns(Task.FromResult(preview)).Verifiable();
 
-            var result = await _service.LoadAsStreamAsync(reference, attachment);
+            var result = await _service.LoadAsync(reference, attachment);
 
-            Assert.AreEqual(returnStream, result);
+            Assert.AreEqual(preview, result);
             _storeServiceMock.Verify();
         }
 
         [TestMethod]
-        public async Task SaveAsStream_Saves_Stream()
+        public async Task Save_SavesAttachmentPreview()
         {
             Book book = new Book();
             Entry entry = new Entry();
@@ -58,14 +58,14 @@ namespace Barembo.Connector.Test.StoreServices
             reference.BookReference.AccessGrant = "use this access";
             reference.EntryId = entry.Id;
             Attachment attachment = new Attachment();
-            MemoryStream saveStream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
 
-            _storeServiceMock.Setup(s => s.PutObjectFromStreamAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant),
+            _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant),
                                                                     Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.AttachmentPreview),
-                                                                    saveStream))
+                                                                    preview))
                              .Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _service.SaveFromStreamAsync(reference, attachment, saveStream);
+            var result = await _service.SaveAsync(reference, attachment, preview);
 
             Assert.IsTrue(result);
             _storeServiceMock.Verify();
