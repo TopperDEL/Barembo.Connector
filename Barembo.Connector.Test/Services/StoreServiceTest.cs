@@ -40,6 +40,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
         public async Task PutAsJson_Uploads_AsJson()
         {
             Book book = new Book();
@@ -56,6 +57,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
         public async Task PutAsJsonWithMetaData_Uploads_AsJsonWithMetaData()
         {
             Book book = new Book();
@@ -72,6 +74,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
         public async Task List_Finds_Objects()
         {
             Book book = new Book();
@@ -88,6 +91,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
         public async Task PutAsStream_Uploads_AsStream()
         {
             string stringToStream = "This is a stream test";

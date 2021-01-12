@@ -21,6 +21,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
         public async Task ThumbnailFromImgae_Gets_Generated()
         {
             try
@@ -40,6 +41,7 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
         public async Task ThumbnailFromImage_Gets_GeneratedEvenIfStreamIsNotAtPositionZero()
         {
             try
