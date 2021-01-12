@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Barembo.Models
 {
-    public struct AttachmentPreview
+    public struct AttachmentPreview : IEquatable<AttachmentPreview>
     {
         public AttachmentType Type { get; set; }
         public List<string> PreviewPartsBase64 { get; set; }
@@ -13,6 +13,11 @@ namespace Barembo.Models
         {
             Type = type;
             PreviewPartsBase64 = previewPartsBase64;
+        }
+
+        public bool Equals(AttachmentPreview other)
+        {
+            return false;
         }
     }
 }
