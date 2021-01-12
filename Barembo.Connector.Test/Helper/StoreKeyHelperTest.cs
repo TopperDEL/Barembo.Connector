@@ -91,6 +91,26 @@ namespace Barembo.Connector.Test.Helper
         }
 
         [TestMethod]
+        public void Convert_AttachmentPreview()
+        {
+            StoreKey key = StoreKey.AttachmentPreview("myBookId", "myEntryId", "myAttachmentId");
+
+            var result = StoreKeyHelper.Convert(key);
+
+            Assert.AreEqual("myBookId/myEntryId/Preview/myAttachmentId", result);
+        }
+
+        [TestMethod]
+        public void GetId_AttachmentPreview()
+        {
+            StoreKey key = StoreKey.AttachmentPreview("myBookId", "myEntryId", "myAttachmentId");
+
+            var result = StoreKeyHelper.GetStoreObjectId(key);
+
+            Assert.AreEqual("myAttachmentId", result);
+        }
+
+        [TestMethod]
         public void Convert_Contributor()
         {
             StoreKey key = StoreKey.Contributor("myBookId", "myContributorId");

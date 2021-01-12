@@ -45,7 +45,11 @@ namespace Barembo.Models
         /// <summary>
         /// A list of BookShares
         /// </summary>
-        BookShares = 9
+        BookShares = 9,
+        /// <summary>
+        /// An attachment-preview
+        /// </summary>
+        AttachmentPreview = 10,
     }
 
     /// <summary>
@@ -90,7 +94,7 @@ namespace Barembo.Models
         /// <returns>The StoreKey</returns>
         public static StoreKey BookShelf()
         {
-            return new StoreKey(StoreKeyTypes.BookShelf );
+            return new StoreKey(StoreKeyTypes.BookShelf);
         }
 
         /// <summary>
@@ -151,6 +155,23 @@ namespace Barembo.Models
             properties.Add(StoreKeyHelper.PROPERTY_ATTACHMENT_ID, attachmentId);
 
             return new StoreKey(StoreKeyTypes.Attachment, properties);
+        }
+
+        /// <summary>
+        /// Returns the StoreKey for an Attachment-Preview
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <param name="entryId">The Id of an Entry</param>
+        /// <param name="attachmentId">The Id of an Attachment</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey AttachmentPreview(string bookId, string entryId, string attachmentId)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
+            properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
+            properties.Add(StoreKeyHelper.PROPERTY_ATTACHMENT_ID, attachmentId);
+
+            return new StoreKey(StoreKeyTypes.AttachmentPreview, properties);
         }
 
         /// <summary>
