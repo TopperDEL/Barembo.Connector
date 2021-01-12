@@ -24,6 +24,11 @@ namespace Barembo.Models
         /// </summary>
         public string EntryId { get; set; }
 
+        /// <summary>
+        /// The creation date of that entry - to be used to sort entries
+        /// </summary>
+        public DateTime CreationDate { get; set; }
+
         public bool Equals(EntryReference other)
         {
             return BookReference.BookId == other.BookReference.BookId && EntryId == other.EntryId;

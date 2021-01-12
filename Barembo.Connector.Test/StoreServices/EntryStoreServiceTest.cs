@@ -13,7 +13,7 @@ namespace Barembo.Connector.Test.StoreServices
     [TestClass]
     public class EntryStoreServiceTest
     {
-        EntryStoreService _service;
+        IEntryStoreService _service;
         Moq.Mock<IStoreService> _storeServiceMock;
 
         [TestInitialize]
@@ -86,21 +86,21 @@ namespace Barembo.Connector.Test.StoreServices
         }
 
         [TestMethod]
-        public async Task List_Lists_AllEntries()
+        public async Task List_Lists_AllEntriesWithMetadataAndSorted()
         {
             Book book = new Book();
             BookReference bookReference = new BookReference();
             bookReference.BookId = book.Id;
             bookReference.AccessGrant = "use this access";
             var entriesToLoad = new List<StoreObject>();
-            var entry1 = new StoreObject(book.Id + "/Entries/entry1.json", "entry1", new StoreMetaData());
+            var entry1 = new StoreObject(book.Id + "/Entries/entry1.json", "tomorrow", new StoreMetaData(StoreMetaData.STOREMETADATA_TIMESTAMP, DateTimeOffset.Now.AddDays(1).ToUnixTimeSeconds().ToString()));
             entriesToLoad.Add(entry1);
-            var entry2 = new StoreObject(book.Id + "/Entries/entry2.json", "entry2", new StoreMetaData());
+            var entry2 = new StoreObject(book.Id + "/Entries/entry2.json", "yesterday", new StoreMetaData(StoreMetaData.STOREMETADATA_TIMESTAMP, DateTimeOffset.Now.AddDays(-1).ToUnixTimeSeconds().ToString()));
             entriesToLoad.Add(entry2);
-            var entry3 = new StoreObject(book.Id + "/Entries/entry3.json", "entry3", new StoreMetaData());
+            var entry3 = new StoreObject(book.Id + "/Entries/entry3.json", "today", new StoreMetaData(StoreMetaData.STOREMETADATA_TIMESTAMP, DateTimeOffset.Now.ToUnixTimeSeconds().ToString()));
             entriesToLoad.Add(entry3);
 
-            _storeServiceMock.Setup(s => s.ListObjectsAsync(Moq.It.Is<StoreAccess>(a => a.AccessGrant == bookReference.AccessGrant), Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.Entries)))
+            _storeServiceMock.Setup(s => s.ListObjectsAsync(Moq.It.Is<StoreAccess>(a => a.AccessGrant == bookReference.AccessGrant), Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.Entries), true))
             .Returns(Task.FromResult(entriesToLoad as IEnumerable<StoreObject>));
 
             var entries = (await _service.ListAsync(bookReference)).ToList();
@@ -108,10 +108,10 @@ namespace Barembo.Connector.Test.StoreServices
             Assert.AreEqual(3, entries.Count());
             Assert.AreEqual(entry1.Id, entries[0].EntryId);
             Assert.AreEqual(entry1.Key, entries[0].EntryKey);
-            Assert.AreEqual(entry2.Id, entries[1].EntryId);
-            Assert.AreEqual(entry2.Key, entries[1].EntryKey);
-            Assert.AreEqual(entry3.Id, entries[2].EntryId);
-            Assert.AreEqual(entry3.Key, entries[2].EntryKey);
+            Assert.AreEqual(entry3.Id, entries[1].EntryId);
+            Assert.AreEqual(entry3.Key, entries[1].EntryKey);
+            Assert.AreEqual(entry2.Id, entries[2].EntryId);
+            Assert.AreEqual(entry2.Key, entries[2].EntryKey);
         }
     }
 }

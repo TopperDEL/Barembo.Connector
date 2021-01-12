@@ -20,9 +20,20 @@ namespace Barembo.StoreServices
 
         public async Task<IEnumerable<EntryReference>> ListAsync(BookReference bookRef)
         {
-            var entries = await _storeService.ListObjectsAsync(new StoreAccess(bookRef.AccessGrant), StoreKey.Entries(bookRef.BookId));
+            var entries = await _storeService.ListObjectsAsync(new StoreAccess(bookRef.AccessGrant), StoreKey.Entries(bookRef.BookId), true);
 
-            return entries.Select(e => new EntryReference { BookReference = bookRef, EntryKey = e.Key, EntryId = e.Id });
+            return entries.Select(e =>
+                {
+                    return new EntryReference
+                    {
+                        BookReference = bookRef,
+                        EntryKey = e.Key,
+                        EntryId = e.Id,
+                        CreationDate = string.IsNullOrEmpty(e.MetaData.Value) ? 
+                                        DateTime.MinValue : DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(e.MetaData.Value)).DateTime
+                    };
+                }
+                ).OrderByDescending(e=>e.CreationDate);
         }
 
         public async Task<Entry> LoadAsync(EntryReference entryRef)
