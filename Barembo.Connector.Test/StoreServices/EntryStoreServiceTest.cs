@@ -34,7 +34,7 @@ namespace Barembo.Connector.Test.StoreServices
             reference.BookReference.AccessGrant = "use this access";
             reference.EntryId = entryToSave.Id;
 
-            _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync<Entry>(Moq.It.Is<StoreAccess>(s=>s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s=>s.StoreKeyType == StoreKeyTypes.Entry), entryToSave))
+            _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync<Entry>(Moq.It.Is<StoreAccess>(s=>s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s=>s.StoreKeyType == StoreKeyTypes.Entry), entryToSave, Moq.It.Is<StoreMetaData>(m=>m.Key == StoreMetaData.STOREMETADATA_TIMESTAMP)))
                              .Returns(Task.FromResult(true)).Verifiable();
 
             var result = await _service.SaveAsync(reference, entryToSave);
@@ -54,7 +54,7 @@ namespace Barembo.Connector.Test.StoreServices
             reference.BookReference.AccessGrant = "use this access";
             reference.EntryId = entryToSave.Id;
 
-            _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync<Entry>(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Entry), entryToSave))
+            _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync<Entry>(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Entry), entryToSave, Moq.It.Is<StoreMetaData>(m => m.Key == StoreMetaData.STOREMETADATA_TIMESTAMP)))
                              .Returns(Task.FromResult(false)).Verifiable();
 
             var result = await _service.SaveAsync(reference, entryToSave);

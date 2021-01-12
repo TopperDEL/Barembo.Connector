@@ -48,7 +48,12 @@ namespace Barembo.StoreServices
 
         public async Task<bool> SaveAsync(EntryReference entryRef, Entry entryToSave)
         {
-            return await _storeService.PutObjectAsJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId), entryToSave);
+            DateTimeOffset dToffset = new DateTimeOffset(entryToSave.CreationDate);
+            StoreMetaData metaData = new StoreMetaData(StoreMetaData.STOREMETADATA_TIMESTAMP, dToffset.ToUnixTimeSeconds().ToString());
+            return await _storeService.PutObjectAsJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), 
+                                                                   StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId), 
+                                                                   entryToSave,
+                                                                   metaData);
         }
     }
 }
