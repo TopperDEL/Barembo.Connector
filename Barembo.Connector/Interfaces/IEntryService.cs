@@ -27,5 +27,6 @@ namespace Barembo.Interfaces
         void LoadEntryAsSoonAsPossible(EntryReference entryReference, ElementLoadedDelegate<Entry> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued);
 
         Task<Stream> LoadAttachmentAsync(EntryReference entryReference, Attachment attachment);
+        Task<AttachmentPreview> LoadAttachmentPreviewAsync(EntryReference entryReference, Attachment attachment);
     }
 }

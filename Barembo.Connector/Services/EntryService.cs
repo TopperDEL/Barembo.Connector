@@ -119,6 +119,11 @@ namespace Barembo.Services
             return await _attachmentStoreService.LoadAsStreamAsync(entryReference, attachment);
         }
 
+        public async Task<AttachmentPreview> LoadAttachmentPreviewAsync(EntryReference entryReference, Attachment attachment)
+        {
+            return await _attachmentPreviewStoreService.LoadAsync(entryReference, attachment);
+        }
+
         public async Task<Entry> LoadEntryAsync(EntryReference entryReference)
         {
             if (!entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanReadEntries)

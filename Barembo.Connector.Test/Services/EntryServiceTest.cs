@@ -639,5 +639,60 @@ namespace Barembo.Connector.Test.Services
             _entryStoreServiceMock.Verify();
             _attachmentStoreServiceMock.Verify();
         }
+
+        [TestMethod]
+        public async Task LoadAttachmentPreview_Loads_AttachmentPreview()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            AttachmentPreview preview = new AttachmentPreview();
+
+            _attachmentPreviewStoreServiceMock.Setup(s => s.LoadAsync(entryReference, attachment)).Returns(Task.FromResult(preview)).Verifiable();
+
+            var result = await _entryService.LoadAttachmentPreviewAsync(entryReference, attachment);
+
+            Assert.AreEqual(preview, result);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task LoadAttachmentPreview_RaisesError_IfAttachmentPreviewDoesNotExist()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+
+            _attachmentPreviewStoreServiceMock.Setup(s => s.LoadAsync(entryReference, attachment)).Throws(new AttachmentPreviewNotExistsException()).Verifiable();
+
+            try
+            {
+                var result = await _entryService.LoadAttachmentPreviewAsync(entryReference, attachment);
+                Assert.IsTrue(false);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsInstanceOfType(ex, typeof(AttachmentPreviewNotExistsException));
+            }
+
+            _entryStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
+        }
     }
 }
