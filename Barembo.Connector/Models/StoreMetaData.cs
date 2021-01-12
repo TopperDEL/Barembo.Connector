@@ -4,9 +4,12 @@ using System.Text;
 
 namespace Barembo.Models
 {
-    public struct StoreMetaData
+    public struct StoreMetaData : IEquatable<StoreMetaData>
     {
-        public const string STOREMETADATA_TIMESTAMP = "BAREMBO:TIMESTAMP";
+        public static string STOREMETADATA_TIMESTAMP
+        {
+            get { return "BAREMBO:TIMESTAMP"; }
+        }
 
         public string Key { get; set; }
         public string Value { get; set; }
@@ -15,6 +18,11 @@ namespace Barembo.Models
         {
             Key = key;
             Value = value;
+        }
+
+        public bool Equals(StoreMetaData other)
+        {
+            return Key == other.Key && Value == other.Value;
         }
     }
 }

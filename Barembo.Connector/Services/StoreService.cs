@@ -78,7 +78,7 @@ namespace Barembo.Services
 
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey)
         {
-            return await ListObjectsAsync(access, storeKey, false);
+            return await ListObjectsAsync(access, storeKey, false).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData)
@@ -127,7 +127,7 @@ namespace Barembo.Services
             var JSONBytes = SerializeToJSON(objectToPut);
 
             CustomMetadata customMetaData = new CustomMetadata();
-            customMetaData.Entries.Add(new CustomMetadataEntry() { Key = metaData.Key, Value = metaData.Value });
+            customMetaData.Entries.Add(new CustomMetadataEntry { Key = metaData.Key, Value = metaData.Value });
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, customMetaData, false);
             await upload.StartUploadAsync();
