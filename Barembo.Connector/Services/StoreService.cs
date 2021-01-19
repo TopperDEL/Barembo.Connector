@@ -54,7 +54,7 @@ namespace Barembo.Services
 
             if (download.Completed)
             {
-                return DeserializeFromJSON<T>(download.DownloadedBytes);
+                return JSONHelper.DeserializeFromJSON<T>(download.DownloadedBytes);
             }
             else
                 return default(T);
@@ -111,7 +111,7 @@ namespace Barembo.Services
             var objectService = GetObjectService(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
-            var JSONBytes = SerializeToJSON(objectToPut);
+            var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, false);
             await upload.StartUploadAsync();
@@ -124,7 +124,7 @@ namespace Barembo.Services
             var objectService = GetObjectService(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
-            var JSONBytes = SerializeToJSON(objectToPut);
+            var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
 
             CustomMetadata customMetaData = new CustomMetadata();
             customMetaData.Entries.Add(new CustomMetadataEntry { Key = metaData.Key, Value = metaData.Value });
@@ -189,18 +189,6 @@ namespace Barembo.Services
             _BucketInstances.Add(access.AccessGrant, bucket);
 
             return bucket;
-        }
-
-        private static byte[] SerializeToJSON(object objectToSerialize)
-        {
-            var JSONString = Newtonsoft.Json.JsonConvert.SerializeObject(objectToSerialize);
-            return Encoding.UTF8.GetBytes(JSONString);
-        }
-
-        private static T DeserializeFromJSON<T>(byte[] JSONBytes)
-        {
-            var JSONString = Encoding.UTF8.GetString(JSONBytes);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(JSONString);
         }
     }
 }
