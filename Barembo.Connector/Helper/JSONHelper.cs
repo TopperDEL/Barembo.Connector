@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Barembo.Helper
 {
-    internal abstract class JSONHelper
+    static class JSONHelper
     {
         internal static byte[] SerializeToJSON(object objectToSerialize)
         {
