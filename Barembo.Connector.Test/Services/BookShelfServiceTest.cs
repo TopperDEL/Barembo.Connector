@@ -238,6 +238,7 @@ namespace Barembo.Connector.Test.Services
         public async Task ShareBook_Creates_ContributorAndBookShareAndBookShareReference()
         {
             Book sharedBook = new Book();
+            sharedBook.Name = "sharedBook";
             Contributor contributor = new Contributor();
             contributor.Name = "my significant other";
             StoreAccess storeAccess = new StoreAccess("use this access");
@@ -256,8 +257,9 @@ namespace Barembo.Connector.Test.Services
             _bookShareStoreServiceMock.Setup(s => s.SaveBookShareAsync(storeAccess,
                                                                        Moq.It.Is<BookShare>(b => b.BookId == sharedBook.Id &&
                                                                                             b.OwnerName == bookShelf.OwnerName &&
-                                                                                            b.AccessRights == accessRights))).Returns(Task.FromResult(bookShareReference)).Verifiable();
-            var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                                                                                            b.AccessRights == accessRights &&
+                                                                                            b.BookName == sharedBook.Name))).Returns(Task.FromResult(bookShareReference)).Verifiable();
+            var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights, sharedBook.Name);
 
             Assert.AreEqual(bookShareReference, result);
             _storeAccessService.Verify();
@@ -270,6 +272,7 @@ namespace Barembo.Connector.Test.Services
         public async Task ShareBook_RaisesError_IfBookShelfNotExists()
         {
             Book sharedBook = new Book();
+            sharedBook.Name = "sharedBook";
             Contributor contributor = new Contributor();
             contributor.Name = "my significant other";
             StoreAccess storeAccess = new StoreAccess("use this access");
@@ -285,7 +288,7 @@ namespace Barembo.Connector.Test.Services
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException()).Verifiable();
             try
             {
-                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights, sharedBook.Name);
                 Assert.IsTrue(false);
             }
             catch (Exception ex)
@@ -304,6 +307,7 @@ namespace Barembo.Connector.Test.Services
         public async Task ShareBook_RaisesError_IfContributorCouldNotBeSaved()
         {
             Book sharedBook = new Book();
+            sharedBook.Name = "sharedBook";
             Contributor contributor = new Contributor();
             contributor.Name = "my significant other";
             StoreAccess storeAccess = new StoreAccess("use this access");
@@ -320,7 +324,7 @@ namespace Barembo.Connector.Test.Services
             _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Returns(Task.FromResult(bookShelf)).Verifiable();
             try
             {
-                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights, sharedBook.Name);
                 Assert.IsTrue(false);
             }
             catch (Exception ex)
@@ -339,6 +343,7 @@ namespace Barembo.Connector.Test.Services
         public async Task ShareBook_RaisesError_IfBookShareCouldNotBeSaved()
         {
             Book sharedBook = new Book();
+            sharedBook.Name = "sharedBook";
             Contributor contributor = new Contributor();
             contributor.Name = "my significant other";
             StoreAccess storeAccess = new StoreAccess("use this access");
@@ -360,7 +365,7 @@ namespace Barembo.Connector.Test.Services
                                                                                             b.AccessRights == accessRights))).Throws(new BookShareCouldNotBeSavedException()).Verifiable();
             try
             {
-                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights, sharedBook.Name);
                 Assert.IsTrue(false);
             }
             catch (Exception ex)
@@ -379,6 +384,7 @@ namespace Barembo.Connector.Test.Services
         public async Task ShareBook_RaisesError_IfActionNotAllowed()
         {
             Book sharedBook = new Book();
+            sharedBook.Name = "sharedBook";
             Contributor contributor = new Contributor();
             contributor.Name = "my significant other";
             StoreAccess storeAccess = new StoreAccess("use this access");
@@ -394,7 +400,7 @@ namespace Barembo.Connector.Test.Services
 
             try
             {
-                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights);
+                var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights, sharedBook.Name);
                 Assert.IsTrue(false);
             }
             catch (Exception ex)

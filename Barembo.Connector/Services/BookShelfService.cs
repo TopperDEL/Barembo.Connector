@@ -127,7 +127,7 @@ namespace Barembo.Services
             }
         }
 
-        public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights)
+        public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights, string bookName)
         {
             if (!bookReferenceToShare.AccessRights.CanShareBook)
                 throw new ActionNotAllowedException();
@@ -148,6 +148,7 @@ namespace Barembo.Services
                 bookShare.BookId = bookReferenceToShare.BookId;
                 bookShare.ContributorId = contributor.Id;
                 bookShare.OwnerName = bookShelf.OwnerName;
+                bookShare.BookName = bookName;
 
                 var reference = await _bookShareStoreService.SaveBookShareAsync(access, bookShare);
 

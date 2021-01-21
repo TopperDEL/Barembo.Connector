@@ -40,6 +40,11 @@ namespace Barembo.Models
         /// </summary>
         public string ContributorId { get; set; }
 
+        /// <summary>
+        /// The name of the shared Book
+        /// </summary>
+        public string BookName { get; set; }
+
         internal BookShare() { }
     }
 }
