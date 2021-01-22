@@ -10,14 +10,16 @@ using System.Text;
 namespace Barembo.Connector.Test.Services
 {
     [TestClass]
-    public class MagicLinkGeneratorServiceTest
+    public class MagicLinkServiceTest
     {
-        IMagicLinkGeneratorService _service;
+        IMagicLinkGeneratorService _genService;
+        IMagicLinkResolverService _resService;
 
         [TestInitialize]
         public void Init()
         {
-            _service = new MagicLinkGeneratorService();
+            _genService = new MagicLinkService();
+            _resService = new MagicLinkService();
         }
 
         [TestMethod]
@@ -25,7 +27,7 @@ namespace Barembo.Connector.Test.Services
         {
             BookShareReference bookShareReference = new BookShareReference();
 
-            var generated = _service.GetMagicLinkFor(bookShareReference);
+            var generated = _genService.GetMagicLinkFor(bookShareReference);
 
             Assert.IsTrue(generated.StartsWith("barembo://"));
         }
@@ -35,7 +37,7 @@ namespace Barembo.Connector.Test.Services
         {
             BookShareReference bookShareReference = new BookShareReference();
 
-            var generated = _service.GetMagicLinkFor(bookShareReference);
+            var generated = _genService.GetMagicLinkFor(bookShareReference);
 
             Assert.IsTrue(generated.StartsWith("barembo://BSR/"));
         }
@@ -45,11 +47,24 @@ namespace Barembo.Connector.Test.Services
         {
             BookShareReference bookShareReference = new BookShareReference();
 
-            var generated = _service.GetMagicLinkFor(bookShareReference);
+            var generated = _genService.GetMagicLinkFor(bookShareReference);
 
             var base64 = Convert.ToBase64String(JSONHelper.SerializeToJSON(bookShareReference));
 
             Assert.AreEqual(base64, generated.Replace("barembo://BSR/",""));
+        }
+
+        [TestMethod]
+        public void ResolveBookShareReference_Resolves_BookShareReference()
+        {
+            BookShareReference bookShareReference = new BookShareReference();
+            bookShareReference.StoreAccess = new StoreAccess("myGrant");
+
+            var generated = _genService.GetMagicLinkFor(bookShareReference);
+
+            var resolved = _resService.GetBookShareReferenceFrom(generated);
+
+            Assert.AreEqual(bookShareReference.StoreAccess.AccessGrant, resolved.StoreAccess.AccessGrant);
         }
     }
 }
