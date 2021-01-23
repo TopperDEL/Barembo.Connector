@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using Barembo.Helper;
 
 namespace Barembo.Connector.Test.StoreServices
 {
@@ -40,6 +41,26 @@ namespace Barembo.Connector.Test.StoreServices
 
             _storeServiceMock.Verify();
             _storeAccessServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task Save_Returns_BookShareReferenceThatCanBeSerialisedToJSON()
+        {
+            StoreAccess access = new StoreAccess("use this access");
+            StoreAccess sharedAccess = new StoreAccess("use this restricted access");
+            BookShare bookShare = new BookShare();
+
+            _storeServiceMock.Setup(s => s.PutObjectAsJsonAsync(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare), bookShare)).Returns(Task.FromResult(true)).Verifiable();
+            _storeAccessServiceMock.Setup(s => s.ShareBookShareAccess(access, Moq.It.Is<StoreKey>(k => k.StoreKeyType == StoreKeyTypes.BookShare))).Returns(sharedAccess).Verifiable();
+
+            var result = await _service.SaveBookShareAsync(access, bookShare);
+
+            var json = JSONHelper.SerializeToJSON(result);
+            var deserialised = JSONHelper.DeserializeFromJSON<BookShareReference>(json);
+
+            Assert.AreEqual(result.StoreAccess.AccessGrant, deserialised.StoreAccess.AccessGrant);
+            Assert.AreEqual(result.StoreKey.StoreKeyType, deserialised.StoreKey.StoreKeyType);
+            Assert.AreEqual(result.StoreKey.Properties.Count, deserialised.StoreKey.Properties.Count);
         }
 
         [TestMethod]

@@ -61,12 +61,12 @@ namespace Barembo.Models
         /// <summary>
         /// The type of this StoreKey
         /// </summary>
-        public StoreKeyTypes StoreKeyType { get; private set; }
+        public StoreKeyTypes StoreKeyType { get; set; }
 
         /// <summary>
         /// Properties to further define this StoreKey
         /// </summary>
-        public Dictionary<string, string> Properties { get; private set; }
+        public Dictionary<string, string> Properties { get; set; }
 
         /// <summary>
         /// Creates a StoreKey
