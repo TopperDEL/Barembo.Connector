@@ -1,4 +1,5 @@
-﻿using Barembo.Interfaces;
+﻿using Barembo.Helper;
+using Barembo.Interfaces;
 using Barembo.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,17 @@ namespace Barembo.Services
 {
     public class StoreAccessService : IStoreAccessService
     {
+        readonly string _bucketName;
+
+        public StoreAccessService() : this("barembo")
+        {
+        }
+
+        public StoreAccessService(string bucketName)
+        {
+            _bucketName = bucketName;
+        }
+
         public StoreAccess GenerateAccessFromLogin(LoginData loginData)
         {
             var access = new Access(loginData.SatelliteAddress, loginData.ApiKey, loginData.Secret);
@@ -21,12 +33,15 @@ namespace Barembo.Services
         {
             var access = new Access(baseAccess.AccessGrant);
             Permission permission = new Permission();
-            permission.AllowDelete = true;
-            permission.AllowDownload = true;
+            permission.AllowDelete = accessRights.CanDeleteEntries || accessRights.CanDeleteForeignEntries;
+            permission.AllowDownload = accessRights.CanReadEntries || accessRights.CanReadForeignEntries || accessRights.CanEditBook || accessRights.CanEditForeignEntries || accessRights.CanEditOwnEntries;
             permission.AllowList = true;
             permission.AllowUpload = true;
 
+            var bookStoreKey = StoreKey.Book(bookReferenceToShare.BookId);
+
             List<SharePrefix> prefixes = new List<SharePrefix>();
+            prefixes.Add(new SharePrefix { Bucket = _bucketName, Prefix = StoreKeyHelper.Convert(bookStoreKey) });
 
             var sharedAccess = access.Share(permission, prefixes);
 
@@ -43,7 +58,7 @@ namespace Barembo.Services
             permission.AllowUpload = false;
 
             List<SharePrefix> prefixes = new List<SharePrefix>();
-            prefixes.Add(new SharePrefix { Bucket = "", Prefix = "" });
+            prefixes.Add(new SharePrefix { Bucket = _bucketName, Prefix = StoreKeyHelper.Convert(storeKey) });
 
             var sharedAccess = access.Share(permission, prefixes);
 
