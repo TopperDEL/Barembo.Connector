@@ -33,15 +33,18 @@ namespace Barembo.Services
         {
             var access = new Access(baseAccess.AccessGrant);
             Permission permission = new Permission();
-            permission.AllowDelete = accessRights.CanDeleteEntries || accessRights.CanDeleteForeignEntries;
+            permission.AllowDelete = accessRights.CanDeleteEntries || accessRights.CanDeleteForeignEntries || accessRights.CanEditBook || accessRights.CanEditForeignEntries || accessRights.CanEditOwnEntries;
             permission.AllowDownload = accessRights.CanReadEntries || accessRights.CanReadForeignEntries || accessRights.CanEditBook || accessRights.CanEditForeignEntries || accessRights.CanEditOwnEntries;
-            permission.AllowList = true;
-            permission.AllowUpload = true;
+            permission.AllowList = accessRights.CanReadEntries || accessRights.CanReadForeignEntries;
+            permission.AllowUpload = accessRights.CanEditBook || accessRights.CanAddEntries || accessRights.CanEditForeignEntries || accessRights.CanEditOwnEntries;
 
             var bookStoreKey = StoreKey.Book(bookReferenceToShare.BookId);
 
+            //This has to be extended. Once Storj supports setting permissions by
+            //prefix, the access grant could be defined in much more detail to really only allow
+            //what the access rights define.
             List<SharePrefix> prefixes = new List<SharePrefix>();
-            prefixes.Add(new SharePrefix { Bucket = _bucketName, Prefix = StoreKeyHelper.Convert(bookStoreKey) });
+            prefixes.Add(new SharePrefix { Bucket = _bucketName, Prefix = StoreKeyHelper.GetStoreObjectId(StoreKeyHelper.Convert(bookStoreKey)) });
 
             var sharedAccess = access.Share(permission, prefixes);
 

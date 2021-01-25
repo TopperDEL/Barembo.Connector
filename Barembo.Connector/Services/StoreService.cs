@@ -185,10 +185,27 @@ namespace Barembo.Services
                 return _BucketInstances[access.AccessGrant];
 
             var bucketService = GetBucketService(access);
-            var bucket = await bucketService.EnsureBucketAsync(bucketName);
-            _BucketInstances.Add(access.AccessGrant, bucket);
+            try
+            {
+                var bucket = await bucketService.EnsureBucketAsync(bucketName);
+                _BucketInstances.Add(access.AccessGrant, bucket);
 
-            return bucket;
+                return bucket;
+            }
+            catch
+            {
+                try
+                {
+                    var bucket = await bucketService.GetBucketAsync(bucketName);
+                    _BucketInstances.Add(access.AccessGrant, bucket);
+
+                    return bucket;
+                }
+                catch(Exception ex)
+                {
+                    return null;
+                }
+            }
         }
     }
 }
