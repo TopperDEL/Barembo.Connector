@@ -65,7 +65,7 @@ namespace Barembo.Connector.Test.StoreServices
                                                                     saveStream))
                              .Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _service.SaveFromStreamAsync(reference, attachment, saveStream);
+            var result = await _service.SaveFromStreamAsync(reference, attachment, saveStream, "filepath");
 
             Assert.IsTrue(result);
             _storeServiceMock.Verify();

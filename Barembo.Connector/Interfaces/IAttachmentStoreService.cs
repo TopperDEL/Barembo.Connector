@@ -26,7 +26,8 @@ namespace Barembo.Interfaces
         /// <param name="entryRef">The EntryReference of an Entry to save</param>
         /// <param name="attachmentToSave">The Attachment-Metadata to save</param>
         /// <param name="attachmentBinary">The binary data of the attachment as stream</param>
+        /// <param name="filePath">The path to the file on the device</param>
         /// <returns>true, if the Attachment could be saved</returns>
-        Task<bool> SaveFromStreamAsync(EntryReference entryRef, Attachment attachmentToSave, Stream attachmentBinary);
+        Task<bool> SaveFromStreamAsync(EntryReference entryRef, Attachment attachmentToSave, Stream attachmentBinary, string filePath);
     }
 }

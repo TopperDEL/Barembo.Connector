@@ -28,7 +28,7 @@ namespace Barembo.StoreServices
             return await _storeService.GetObjectAsStreamAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Attachment(entryRef.BookReference.BookId, entryRef.EntryId, attachment.Id));
         }
 
-        public async Task<bool> SaveFromStreamAsync(EntryReference entryRef, Attachment attachmentToSave, Stream attachmentBinary)
+        public async Task<bool> SaveFromStreamAsync(EntryReference entryRef, Attachment attachmentToSave, Stream attachmentBinary, string filePath)
         {
             return await _storeService.PutObjectFromStreamAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Attachment(entryRef.BookReference.BookId, entryRef.EntryId, attachmentToSave.Id), attachmentBinary);
         }

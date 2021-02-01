@@ -28,7 +28,7 @@ namespace Barembo.StoreServices
             return await _storeService.GetObjectFromJsonAsync<AttachmentPreview>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, attachment.Id));
         }
 
-        public async Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview)
+        public async Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview, string filePath)
         {
             return await _storeService.PutObjectAsJsonAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, attachmentToSave.Id), attachmentPreview);
         }

@@ -19,6 +19,7 @@ namespace Barembo.Interfaces
         /// </summary>
         /// <param name="attachment">The attachment-metadata</param>
         /// <param name="attachmentBinary">The attachment-binary as stream</param>
+        /// <param name="filePath">The path to the file on the device</param>
         /// <returns>The generated AttachmentPreview</returns>
         Task<AttachmentPreview> GeneratePreviewAsync(Attachment attachment, Stream attachmentBinary, string filePath);
     }

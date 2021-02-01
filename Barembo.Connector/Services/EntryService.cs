@@ -32,14 +32,14 @@ namespace Barembo.Services
 
         public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
-            var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary);
+            var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary, filePath);
             if (!successAttachment)
             {
                 return false;
             }
 
             var preview = await _attachmentPreviewGeneratorService.GeneratePreviewAsync(attachment, attachmentBinary, filePath);
-            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview);
+            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview, filePath);
             if (!successPreview)
             {
                 return false;
