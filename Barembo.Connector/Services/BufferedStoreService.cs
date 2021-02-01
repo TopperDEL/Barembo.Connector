@@ -78,9 +78,9 @@ namespace Barembo.Services
             return saved;
         }
 
-        public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut)
+        public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut, string filePath)
         {
-            var saved = await _storeService.PutObjectFromStreamAsync(access, storeKey, objectToPut);
+            var saved = await _storeService.PutObjectFromStreamAsync(access, storeKey, objectToPut, filePath);
 
             if (saved)
                 await _storeBuffer.PutObjectFromStreamToBufferAsync(access, storeKey, objectToPut);

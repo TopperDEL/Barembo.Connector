@@ -65,7 +65,7 @@ namespace Barembo.Connector.Test.StoreServices
                                                                     preview))
                              .Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _service.SaveAsync(reference, attachment, preview, "filepath");
+            var result = await _service.SaveAsync(reference, attachment, preview);
 
             Assert.IsTrue(result);
             _storeServiceMock.Verify();

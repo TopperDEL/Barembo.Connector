@@ -98,7 +98,7 @@ namespace Barembo.Connector.Test.Services
             string testGuid = Guid.NewGuid().ToString();
             MemoryStream mstream = new MemoryStream(Encoding.UTF8.GetBytes(stringToStream));
 
-            var result = await _storeService.PutObjectFromStreamAsync(_storeAccess, StoreKey.Book(testGuid), mstream);
+            var result = await _storeService.PutObjectFromStreamAsync(_storeAccess, StoreKey.Book(testGuid), mstream, "filePath");
 
             Assert.IsTrue(result);
 

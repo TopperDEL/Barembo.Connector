@@ -43,8 +43,9 @@ namespace Barembo.Interfaces
         /// <param name="access">The access to use</param>
         /// <param name="storeKey">The StoreKey of that object</param>
         /// <param name="objectToPut">The stream of the object</param>
+        /// <param name="filePath">The filePath of the object</param>
         /// <returns>True, if the put was successfull - false if not</returns>
-        Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut);
+        Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut, string filePath);
 
         /// <summary>
         /// Puts an object as Json to the given StoreKey in the store

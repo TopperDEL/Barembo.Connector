@@ -83,10 +83,10 @@ namespace Barembo.Connector.Test.Services
         {
             Stream stream = new MemoryStream();
 
-            _storeServiceMock.Setup(s => s.PutObjectFromStreamAsync(_access, _storeKey, stream)).Returns(Task.FromResult(true)).Verifiable();
+            _storeServiceMock.Setup(s => s.PutObjectFromStreamAsync(_access, _storeKey, stream, "filePath")).Returns(Task.FromResult(true)).Verifiable();
             _storeBufferMock.Setup(s => s.PutObjectFromStreamToBufferAsync(_access, _storeKey, stream)).Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _bufferedStoreService.PutObjectFromStreamAsync(_access, _storeKey, stream);
+            var result = await _bufferedStoreService.PutObjectFromStreamAsync(_access, _storeKey, stream, "filePath");
 
             Assert.IsTrue(result);
 
@@ -99,9 +99,9 @@ namespace Barembo.Connector.Test.Services
         {
             Stream stream = new MemoryStream();
 
-            _storeServiceMock.Setup(s => s.PutObjectFromStreamAsync(_access, _storeKey, stream)).Returns(Task.FromResult(false)).Verifiable();
+            _storeServiceMock.Setup(s => s.PutObjectFromStreamAsync(_access, _storeKey, stream, "filePath")).Returns(Task.FromResult(false)).Verifiable();
 
-            var result = await _bufferedStoreService.PutObjectFromStreamAsync(_access, _storeKey, stream);
+            var result = await _bufferedStoreService.PutObjectFromStreamAsync(_access, _storeKey, stream, "filePath");
 
             Assert.IsFalse(result);
 

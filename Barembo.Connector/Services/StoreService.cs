@@ -135,7 +135,7 @@ namespace Barembo.Services
             return upload.Completed;
         }
 
-        public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut)
+        public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut, string filePath)
         {
             var objectService = GetObjectService(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);

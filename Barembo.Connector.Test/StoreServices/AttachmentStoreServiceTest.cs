@@ -62,10 +62,11 @@ namespace Barembo.Connector.Test.StoreServices
 
             _storeServiceMock.Setup(s => s.PutObjectFromStreamAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant),
                                                                     Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Attachment),
-                                                                    saveStream))
+                                                                    saveStream,
+                                                                    "filePath"))
                              .Returns(Task.FromResult(true)).Verifiable();
 
-            var result = await _service.SaveFromStreamAsync(reference, attachment, saveStream, "filepath");
+            var result = await _service.SaveFromStreamAsync(reference, attachment, saveStream, "filePath");
 
             Assert.IsTrue(result);
             _storeServiceMock.Verify();

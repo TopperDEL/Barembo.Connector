@@ -26,8 +26,7 @@ namespace Barembo.Interfaces
         /// <param name="entryRef">The EntryReference of an Entry to save</param>
         /// <param name="attachmentToSave">The Attachment-Preview-Metadata to save</param>
         /// <param name="attachmentPreview">The attachment-preview to save</param>
-        /// <param name="filePath">The path to the file on the device</param>
         /// <returns>true, if the Attachment-preview could be saved</returns>
-        Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview, string filePath);
+        Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview);
     }
 }

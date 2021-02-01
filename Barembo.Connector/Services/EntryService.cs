@@ -39,7 +39,7 @@ namespace Barembo.Services
             }
 
             var preview = await _attachmentPreviewGeneratorService.GeneratePreviewAsync(attachment, attachmentBinary, filePath);
-            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview, filePath);
+            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview);
             if (!successPreview)
             {
                 return false;
