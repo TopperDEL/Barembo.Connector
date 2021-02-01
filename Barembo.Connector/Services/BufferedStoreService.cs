@@ -1,10 +1,13 @@
-﻿using Barembo.Interfaces;
+﻿using Barembo.Helper;
+using Barembo.Interfaces;
 using Barembo.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using uplink.NET.Interfaces;
+using uplink.NET.Services;
 
 namespace Barembo.Services
 {
@@ -12,11 +15,20 @@ namespace Barembo.Services
     {
         readonly IStoreBuffer _storeBuffer;
         readonly IStoreService _storeService;
+        readonly IUploadQueueService _uploadQueueService;
 
-        public BufferedStoreService(IStoreBuffer storeBuffer, IStoreService storeService)
+        readonly string _bucketName;
+
+        public BufferedStoreService(IStoreBuffer storeBuffer, IStoreService storeService, IUploadQueueService uploadQueueService) : this(storeBuffer, storeService, uploadQueueService, "barembo")
+        {
+        }
+
+        public BufferedStoreService(IStoreBuffer storeBuffer, IStoreService storeService, IUploadQueueService uploadQueueService, string bucketName)
         {
             _storeBuffer = storeBuffer;
             _storeService = storeService;
+            _uploadQueueService = uploadQueueService;
+            _bucketName = bucketName;
         }
 
         public async Task<Stream> GetObjectAsStreamAsync(StoreAccess access, StoreKey storeKey)
@@ -60,12 +72,20 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
         {
-            var saved = await _storeService.PutObjectAsJsonAsync<T>(access, storeKey, objectToPut);
+            try
+            {
+                var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
 
-            if (saved)
+                await _uploadQueueService.AddObjectToUploadQueue(_bucketName, storeKey.ToString(), access.AccessGrant, JSONBytes, null);
+
                 await _storeBuffer.PutObjectToBufferAsync<T>(access, storeKey, objectToPut);
 
-            return saved;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData)
@@ -80,12 +100,33 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut, string filePath)
         {
-            var saved = await _storeService.PutObjectFromStreamAsync(access, storeKey, objectToPut, filePath);
+            try
+            {
+                var bytes = ReadFully(objectToPut);
+                await _uploadQueueService.AddObjectToUploadQueue(_bucketName, storeKey.ToString(), access.AccessGrant, bytes, filePath);
 
-            if (saved)
                 await _storeBuffer.PutObjectFromStreamToBufferAsync(access, storeKey, objectToPut);
 
-            return saved;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static byte[] ReadFully(Stream input)
+        {
+            byte[] buffer = new byte[16 * 1024];
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
         }
     }
 }

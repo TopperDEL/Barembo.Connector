@@ -57,7 +57,7 @@ namespace Barembo.Services
                 return JSONHelper.DeserializeFromJSON<T>(download.DownloadedBytes);
             }
             else
-                return default(T);
+                return default;
         }
 
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)
@@ -141,7 +141,7 @@ namespace Barembo.Services
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), objectToPut, false);
-            await upload.StartUploadAsync(); //ToDo: Place Stream in UploadQueue
+            await upload.StartUploadAsync();
 
             return upload.Completed;
         }
@@ -201,7 +201,7 @@ namespace Barembo.Services
 
                     return bucket;
                 }
-                catch(Exception ex)
+                catch
                 {
                     return null;
                 }
