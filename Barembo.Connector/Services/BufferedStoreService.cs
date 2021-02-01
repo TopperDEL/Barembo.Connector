@@ -70,7 +70,12 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData)
         {
-            return await PutObjectAsJsonAsync<T>(access, storeKey, objectToPut);
+            var saved = await _storeService.PutObjectAsJsonAsync<T>(access, storeKey, objectToPut, metaData);
+
+            if (saved)
+                await _storeBuffer.PutObjectToBufferAsync<T>(access, storeKey, objectToPut);
+
+            return saved;
         }
 
         public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut)
