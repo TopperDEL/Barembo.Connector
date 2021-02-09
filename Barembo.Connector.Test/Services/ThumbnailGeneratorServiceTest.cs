@@ -61,56 +61,61 @@ namespace Barembo.Connector.Test.Services
             }
         }
 
-        //[TestMethod]
-        //public async Task ThumbnailFromVideo_Gets_Generated()
-        //{
-        //    await GenerateAndTestVideo("TestVideoThumbnail_0prz.jpg", 0f);
+        [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
+        public async Task ThumbnailFromVideo_Gets_Generated()
+        {
+            await GenerateAndTestVideo("TestVideoThumbnail_0prz.jpg", 0f);
 
-        //}
+        }
 
-        //[TestMethod]
-        //public async Task ThumbnailFromVideo_Gets_GeneratedForAfter25Percent()
-        //{
-        //    await GenerateAndTestVideo("TestVideoThumbnail_25prz.jpg", 0.25f);
+        [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
+        public async Task ThumbnailFromVideo_Gets_GeneratedForAfter25Percent()
+        {
+            await GenerateAndTestVideo("TestVideoThumbnail_25prz.jpg", 0.25f);
 
-        //}
+        }
 
-        //[TestMethod]
-        //public async Task ThumbnailFromVideo_Gets_GeneratedForAfter50Percent()
-        //{
-        //    await GenerateAndTestVideo("TestVideoThumbnail_50prz.jpg", 0.50f);
+        [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
+        public async Task ThumbnailFromVideo_Gets_GeneratedForAfter50Percent()
+        {
+            await GenerateAndTestVideo("TestVideoThumbnail_50prz.jpg", 0.50f);
 
-        //}
+        }
 
-        //[TestMethod]
-        //public async Task ThumbnailFromVideo_Gets_GeneratedForAfter75Percent()
-        //{
-        //    await GenerateAndTestVideo("TestVideoThumbnail_75prz.jpg", 0.75f);
+        [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
+        public async Task ThumbnailFromVideo_Gets_GeneratedForAfter75Percent()
+        {
+            await GenerateAndTestVideo("TestVideoThumbnail_75prz.jpg", 0.75f);
 
-        //}
+        }
 
-        //[TestMethod]
-        //public async Task ThumbnailFromVideo_Gets_GeneratedForAfter99Percent()
-        //{
-        //    await GenerateAndTestVideo("TestVideoThumbnail_99prz.jpg", 0.99f);
-        //}
+        [TestMethod]
+        [TestCategory("NeedsSpecificBinaries")]
+        public async Task ThumbnailFromVideo_Gets_GeneratedForAfter99Percent()
+        {
+            await GenerateAndTestVideo("TestVideoThumbnail_99prz.jpg", 0.99f);
+        }
 
-        //private async Task GenerateAndTestVideo(string filename, float position)
-        //{
-        //    try
-        //    {
-        //        File.Delete(filename);
-        //    }
-        //    catch { }
+        private async Task GenerateAndTestVideo(string filename, float position)
+        {
+            try
+            {
+                File.Delete(filename);
+            }
+            catch { }
 
-        //    using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
-        //    {
-        //        var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, position, "TestVideo.mp4");
-        //        var resultBytes = Convert.FromBase64String(result);
-        //        await File.WriteAllBytesAsync(filename, resultBytes);
+            using (FileStream video = new FileStream("TestVideo.mp4", FileMode.Open))
+            {
+                var result = await _service.GenerateThumbnailBase64FromVideoAsync(video, position, "TestVideo.mp4");
+                var resultBytes = Convert.FromBase64String(result);
+                await File.WriteAllBytesAsync(filename, resultBytes);
 
-        //        Assert.IsTrue(File.Exists(filename));
-        //    }
-        //}
+                Assert.IsTrue(File.Exists(filename));
+            }
+        }
     }
 }

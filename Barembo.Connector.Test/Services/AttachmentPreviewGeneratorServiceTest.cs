@@ -55,7 +55,7 @@ namespace Barembo.Connector.Test.Services
             _thumbnailGeneratorServiceMock.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(Moq.It.IsAny<Stream>(),0.4f,"TestVideo.mp4")).Returns(Task.FromResult("part3")).Verifiable();
             _thumbnailGeneratorServiceMock.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(Moq.It.IsAny<Stream>(),0.6f,"TestVideo.mp4")).Returns(Task.FromResult("part4")).Verifiable();
             _thumbnailGeneratorServiceMock.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(Moq.It.IsAny<Stream>(),0.8f,"TestVideo.mp4")).Returns(Task.FromResult("part5")).Verifiable();
-            _thumbnailGeneratorServiceMock.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(Moq.It.IsAny<Stream>(),1f,"TestVideo.mp4")).Returns(Task.FromResult("part6")).Verifiable();
+            _thumbnailGeneratorServiceMock.Setup(s => s.GenerateThumbnailBase64FromVideoAsync(Moq.It.IsAny<Stream>(),0.9f,"TestVideo.mp4")).Returns(Task.FromResult("part6")).Verifiable();
 
 
             using (FileStream image = new FileStream("TestVideo.mp4", FileMode.Open))
