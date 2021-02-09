@@ -42,7 +42,7 @@ namespace Barembo.Services
                 var part5 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0.8f, filePath);
                 parts.Add(part5);
 
-                var part6 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 1f, filePath);
+                var part6 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0.9f, filePath);
                 parts.Add(part6);
             }
 
