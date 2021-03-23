@@ -23,5 +23,10 @@ namespace Barembo.Models
         /// The encryption passphrase/secret
         /// </summary>
         public string Secret { get; set; }
+
+        /// <summary>
+        /// The access grant holding all of the access info (satellite, apikey, secret)
+        /// </summary>
+        public string AccessGrant { get; set; }
     }
 }

@@ -24,7 +24,15 @@ namespace Barembo.Services
 
         public StoreAccess GenerateAccessFromLogin(LoginData loginData)
         {
-            var access = new Access(loginData.SatelliteAddress, loginData.ApiKey, loginData.Secret);
+            Access access;
+            if (!string.IsNullOrEmpty(loginData.AccessGrant))
+            {
+                access = new Access(loginData.AccessGrant);
+            }
+            else
+            {
+                access = new Access(loginData.SatelliteAddress, loginData.ApiKey, loginData.Secret);
+            }
 
             return new StoreAccess(access.Serialize());
         }

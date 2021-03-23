@@ -25,7 +25,7 @@ namespace Barembo.Connector.Test.Services
         ///     }
         /// }
         /// 
-        /// Be sure to exclude this file from Git to now expose your Access!
+        /// Be sure to exclude this file from Git to not expose your Access!
         /// </summary>
         internal static string _accessGrantForTesting;
 
