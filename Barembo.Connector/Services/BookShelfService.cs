@@ -127,6 +127,44 @@ namespace Barembo.Services
             }
         }
 
+        //ToDo: Remove that signature
+        public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, string contributorId, AccessRights accessRights, string bookName)
+        {
+            if (!bookReferenceToShare.AccessRights.CanShareBook)
+                throw new ActionNotAllowedException();
+
+            try
+            {
+                var bookShelf = await _bookShelfStoreService.LoadAsync(access);
+
+                Contributor contributor = new Contributor();
+                contributor.Name = contributorName;
+                contributor.Id = contributorId;
+                var contributorSaved = await _contributorStoreService.SaveAsync(bookReferenceToShare, contributor);
+                if (!contributorSaved)
+                    throw new CouldNotShareBookException(CouldNotShareBookReason.CouldNotSaveContributor);
+
+                BookShare bookShare = new BookShare();
+                bookShare.Access = _storeAccessService.ShareBookAccess(access, bookReferenceToShare, contributor, accessRights);
+                bookShare.AccessRights = accessRights;
+                bookShare.BookId = bookReferenceToShare.BookId;
+                bookShare.ContributorId = contributor.Id;
+                bookShare.OwnerName = bookShelf.OwnerName;
+                bookShare.BookName = bookName;
+
+                var reference = await _bookShareStoreService.SaveBookShareAsync(access, bookShare);
+
+                return reference;
+            }
+            catch (NoBookShelfExistsException)
+            {
+                throw new CouldNotShareBookException(CouldNotShareBookReason.BookShelfNotFound);
+            }
+            catch (BookShareCouldNotBeSavedException)
+            {
+                throw new CouldNotShareBookException(CouldNotShareBookReason.BookShareCouldNotBeSaved);
+            }
+        }
         public async Task<BookShareReference> ShareBookAsync(StoreAccess access, BookReference bookReferenceToShare, string contributorName, AccessRights accessRights, string bookName)
         {
             if (!bookReferenceToShare.AccessRights.CanShareBook)
