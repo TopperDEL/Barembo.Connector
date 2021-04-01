@@ -45,14 +45,18 @@ namespace Barembo.Services
         {
             var fromBuffer = await _storeBuffer.GetObjectFromBufferAsync<T>(access, storeKey);
 
-            if (fromBuffer != null)
-                return fromBuffer;
-            else
+            if (typeof(T).IsClass && fromBuffer != null)
             {
-                var result = await _storeService.GetObjectFromJsonAsync<T>(access, storeKey);
-                await _storeBuffer.PutObjectToBufferAsync(access, storeKey, result);
-                return result;
+                return fromBuffer;
             }
+            else if (!typeof(T).IsClass && !fromBuffer.Equals(default(T)))
+            {
+                return fromBuffer;
+            }
+
+            var result = await _storeService.GetObjectFromJsonAsync<T>(access, storeKey);
+            await _storeBuffer.PutObjectToBufferAsync(access, storeKey, result);
+            return result;
         }
 
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)

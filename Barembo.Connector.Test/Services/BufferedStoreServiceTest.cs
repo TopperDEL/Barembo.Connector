@@ -152,6 +152,22 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task GetObjectAsJson_GetsFromBufferForStruc()
+        {
+            AttachmentPreview preview = new AttachmentPreview();
+            preview.Type = AttachmentType.Video;
+
+            _storeBufferMock.Setup(s => s.GetObjectFromBufferAsync<AttachmentPreview>(_access, _storeKey)).Returns(Task.FromResult(preview)).Verifiable();
+
+            var result = await _bufferedStoreService.GetObjectFromJsonAsync<AttachmentPreview>(_access, _storeKey);
+
+            Assert.AreEqual(preview, result);
+
+            _storeBufferMock.Verify();
+            _storeServiceMock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
         public async Task GetObjectAsJson_GetsFromStore_IfNotAvailableInBuffer()
         {
             Entry entry = new Entry();
@@ -162,6 +178,23 @@ namespace Barembo.Connector.Test.Services
             var result = await _bufferedStoreService.GetObjectFromJsonAsync<Entry>(_access, _storeKey);
 
             Assert.AreEqual(entry, result);
+
+            _storeBufferMock.Verify();
+            _storeServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task GetObjectAsJson_GetsFromStore_IfNotAvailableInBufferForStruc()
+        {
+            AttachmentPreview preview = new AttachmentPreview();
+            preview.Type = AttachmentType.Video;
+
+            _storeBufferMock.Setup(s => s.GetObjectFromBufferAsync<AttachmentPreview>(_access, _storeKey)).Returns(Task.FromResult<AttachmentPreview>(new AttachmentPreview())).Verifiable();
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<AttachmentPreview>(_access, _storeKey)).Returns(Task.FromResult(preview)).Verifiable();
+
+            var result = await _bufferedStoreService.GetObjectFromJsonAsync<AttachmentPreview>(_access, _storeKey);
+
+            Assert.AreEqual(preview.Type, result.Type);
 
             _storeBufferMock.Verify();
             _storeServiceMock.Verify();
@@ -179,6 +212,24 @@ namespace Barembo.Connector.Test.Services
             var result = await _bufferedStoreService.GetObjectFromJsonAsync<Entry>(_access, _storeKey);
 
             Assert.AreEqual(entry, result);
+
+            _storeBufferMock.Verify();
+            _storeServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task GetObjectAsJson_GetsFromStoreIfNotAvailableInBuffer_AndPutsToBufferForStruc()
+        {
+            AttachmentPreview preview = new AttachmentPreview();
+            preview.Type = AttachmentType.Video;
+
+            _storeBufferMock.Setup(s => s.GetObjectFromBufferAsync<AttachmentPreview>(_access, _storeKey)).Returns(Task.FromResult<AttachmentPreview>(new AttachmentPreview())).Verifiable();
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<AttachmentPreview>(_access, _storeKey)).Returns(Task.FromResult(preview)).Verifiable();
+            _storeBufferMock.Setup(s => s.PutObjectToBufferAsync<AttachmentPreview>(_access, _storeKey, preview)).Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _bufferedStoreService.GetObjectFromJsonAsync<AttachmentPreview>(_access, _storeKey);
+
+            Assert.AreEqual(preview, result);
 
             _storeBufferMock.Verify();
             _storeServiceMock.Verify();
