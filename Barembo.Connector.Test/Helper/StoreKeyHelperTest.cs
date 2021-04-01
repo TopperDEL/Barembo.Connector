@@ -73,17 +73,17 @@ namespace Barembo.Connector.Test.Helper
         [TestMethod]
         public void Convert_Attachment()
         {
-            StoreKey key = StoreKey.Attachment("myBookId", "myEntryId", "myAttachmentId");
+            StoreKey key = StoreKey.Attachment("myBookId", "myEntryId", "myContributorId", "myAttachmentId");
 
             var result = StoreKeyHelper.Convert(key);
 
-            Assert.AreEqual("myBookId/myEntryId/myAttachmentId", result);
+            Assert.AreEqual("myBookId/Attachments/myContributorId/myEntryId/myAttachmentId", result);
         }
 
         [TestMethod]
         public void GetId_Attachment()
         {
-            StoreKey key = StoreKey.Attachment("myBookId", "myEntryId", "myAttachmentId");
+            StoreKey key = StoreKey.Attachment("myBookId", "myEntryId", "myContributorId", "myAttachmentId");
 
             var result = StoreKeyHelper.GetStoreObjectId(key);
 
@@ -93,17 +93,17 @@ namespace Barembo.Connector.Test.Helper
         [TestMethod]
         public void Convert_AttachmentPreview()
         {
-            StoreKey key = StoreKey.AttachmentPreview("myBookId", "myEntryId", "myAttachmentId");
+            StoreKey key = StoreKey.AttachmentPreview("myBookId", "myEntryId", "myContributorId", "myAttachmentId");
 
             var result = StoreKeyHelper.Convert(key);
 
-            Assert.AreEqual("myBookId/myEntryId/Preview/myAttachmentId", result);
+            Assert.AreEqual("myBookId/Attachments/myContributorId/myEntryId/Preview/myAttachmentId", result);
         }
 
         [TestMethod]
         public void GetId_AttachmentPreview()
         {
-            StoreKey key = StoreKey.AttachmentPreview("myBookId", "myEntryId", "myAttachmentId");
+            StoreKey key = StoreKey.AttachmentPreview("myBookId", "myEntryId", "myContributorId", "myAttachmentId");
 
             var result = StoreKeyHelper.GetStoreObjectId(key);
 

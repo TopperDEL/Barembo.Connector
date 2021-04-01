@@ -20,17 +20,17 @@ namespace Barembo.StoreServices
 
         public async Task<AttachmentPreview> LoadAsync(EntryReference entryRef, Attachment attachment)
         {
-            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, attachment.Id));
+            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId, attachment.Id));
 
             if (!entryInfo.ObjectExists)
                 throw new AttachmentPreviewNotExistsException();
 
-            return await _storeService.GetObjectFromJsonAsync<AttachmentPreview>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, attachment.Id));
+            return await _storeService.GetObjectFromJsonAsync<AttachmentPreview>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId, attachment.Id));
         }
 
         public async Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview)
         {
-            return await _storeService.PutObjectAsJsonAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, attachmentToSave.Id), attachmentPreview);
+            return await _storeService.PutObjectAsJsonAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.AttachmentPreview(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId, attachmentToSave.Id), attachmentPreview);
         }
     }
 }

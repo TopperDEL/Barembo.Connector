@@ -26,9 +26,9 @@ namespace Barembo.Helper
                 case StoreKeyTypes.Entries:
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Entries/";
                 case StoreKeyTypes.Attachment:
-                    return storeKey.Properties[PROPERTY_BOOK_ID] + "/" + storeKey.Properties[PROPERTY_ENTRY_ID] + "/" + storeKey.Properties[PROPERTY_ATTACHMENT_ID];
+                    return storeKey.Properties[PROPERTY_BOOK_ID] + "/Attachments/" + storeKey.Properties[PROPERTY_CONTRIBUTOR_ID] + "/" + storeKey.Properties[PROPERTY_ENTRY_ID] + "/" + storeKey.Properties[PROPERTY_ATTACHMENT_ID];
                 case StoreKeyTypes.AttachmentPreview:
-                    return storeKey.Properties[PROPERTY_BOOK_ID] + "/" + storeKey.Properties[PROPERTY_ENTRY_ID] + "/Preview/" + storeKey.Properties[PROPERTY_ATTACHMENT_ID];
+                    return storeKey.Properties[PROPERTY_BOOK_ID] + "/Attachments/" + storeKey.Properties[PROPERTY_CONTRIBUTOR_ID] + "/" + storeKey.Properties[PROPERTY_ENTRY_ID] + "/Preview/" + storeKey.Properties[PROPERTY_ATTACHMENT_ID];
                 case StoreKeyTypes.Contributor:
                     return storeKey.Properties[PROPERTY_BOOK_ID] + "/Contributors/" + storeKey.Properties[PROPERTY_CONTRIBUTOR_ID] + ".json";
                 case StoreKeyTypes.Contributors:

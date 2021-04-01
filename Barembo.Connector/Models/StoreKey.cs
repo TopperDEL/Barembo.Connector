@@ -145,13 +145,15 @@ namespace Barembo.Models
         /// </summary>
         /// <param name="bookId">The Id of a Book</param>
         /// <param name="entryId">The Id of an Entry</param>
+        /// <param name="contributorId">The Id of a Contributor</param>
         /// <param name="attachmentId">The Id of an Attachment</param>
         /// <returns>The StoreKey</returns>
-        public static StoreKey Attachment(string bookId, string entryId, string attachmentId)
+        public static StoreKey Attachment(string bookId, string entryId, string contributorId, string attachmentId)
         {
             Dictionary<string, string> properties = new Dictionary<string, string>();
             properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
             properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
+            properties.Add(StoreKeyHelper.PROPERTY_CONTRIBUTOR_ID, contributorId);
             properties.Add(StoreKeyHelper.PROPERTY_ATTACHMENT_ID, attachmentId);
 
             return new StoreKey(StoreKeyTypes.Attachment, properties);
@@ -162,13 +164,15 @@ namespace Barembo.Models
         /// </summary>
         /// <param name="bookId">The Id of a Book</param>
         /// <param name="entryId">The Id of an Entry</param>
+        /// <param name="contributorId">The Id of a Contributor</param>
         /// <param name="attachmentId">The Id of an Attachment</param>
         /// <returns>The StoreKey</returns>
-        public static StoreKey AttachmentPreview(string bookId, string entryId, string attachmentId)
+        public static StoreKey AttachmentPreview(string bookId, string entryId, string contributorId, string attachmentId)
         {
             Dictionary<string, string> properties = new Dictionary<string, string>();
             properties.Add(StoreKeyHelper.PROPERTY_BOOK_ID, bookId);
             properties.Add(StoreKeyHelper.PROPERTY_ENTRY_ID, entryId);
+            properties.Add(StoreKeyHelper.PROPERTY_CONTRIBUTOR_ID, contributorId);
             properties.Add(StoreKeyHelper.PROPERTY_ATTACHMENT_ID, attachmentId);
 
             return new StoreKey(StoreKeyTypes.AttachmentPreview, properties);
