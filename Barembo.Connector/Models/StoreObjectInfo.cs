@@ -19,6 +19,11 @@ namespace Barembo.Models
         /// </summary>
         public long Size { get; set; }
 
+        /// <summary>
+        /// A message stating more about why the object might not exist
+        /// </summary>
+        public string NotExistsErrorMessage { get; set; }
+
         public bool Equals(StoreObjectInfo other)
         {
             throw new NotImplementedException();

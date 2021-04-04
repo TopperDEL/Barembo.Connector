@@ -49,7 +49,7 @@ namespace Barembo.StoreServices
 
             if (!bookShelfInfo.ObjectExists)
             {
-                throw new NoBookShelfExistsException();
+                throw new NoBookShelfExistsException(access.AccessGrant, StoreKey.BookShelf().ToString(), bookShelfInfo.NotExistsErrorMessage);
             }
 
             return await _storeService.GetObjectFromJsonAsync<BookShelf>(access, StoreKey.BookShelf());

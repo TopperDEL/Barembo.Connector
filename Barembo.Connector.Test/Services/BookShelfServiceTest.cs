@@ -98,7 +98,7 @@ namespace Barembo.Connector.Test.Services
             BookShelf bookShelf = new BookShelf();
             Contributor contributor = new Contributor();
 
-            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException()).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException(storeAccess.AccessGrant, StoreKey.BookShelf().ToString(), "none")).Verifiable();
             var result = await _bookShelfService.AddOwnBookToBookShelfAndSaveAsync(storeAccess, bookToAdd, contributor);
 
             Assert.IsFalse(result);
@@ -285,7 +285,7 @@ namespace Barembo.Connector.Test.Services
             bookReference.BookId = sharedBook.Id;
             bookReference.OwnerName = bookShelf.OwnerName;
 
-            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException()).Verifiable();
+            _bookShelfStoreServiceMock.Setup(s => s.LoadAsync(storeAccess)).Throws(new NoBookShelfExistsException(storeAccess.AccessGrant, StoreKey.BookShelf().ToString(), "none")).Verifiable();
             try
             {
                 var result = await _bookShelfService.ShareBookAsync(storeAccess, bookReference, "my significant other", accessRights, sharedBook.Name);
@@ -442,7 +442,7 @@ namespace Barembo.Connector.Test.Services
             bookShare.Access = newAccess;
             bookShare.AccessRights = newAccessRights;
 
-            _bookShareStoreServiceMock.Setup(s => s.LoadBookShareAsync(bookShareReference)).Returns(Task.FromResult(bookShare)).Verifiable();          
+            _bookShareStoreServiceMock.Setup(s => s.LoadBookShareAsync(bookShareReference)).Returns(Task.FromResult(bookShare)).Verifiable();
             await _bookShelfService.RefreshBookAccessAsync(bookReference);
 
             Assert.AreEqual(newAccess.AccessGrant, bookReference.AccessGrant);

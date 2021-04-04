@@ -70,9 +70,9 @@ namespace Barembo.Services
                 var objectInfo = await objectService.GetObjectAsync(bucket, storeKey.ToString());
                 return new StoreObjectInfo { ObjectExists = true, Size = objectInfo.SystemMetaData.ContentLength };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new StoreObjectInfo { ObjectExists = false };
+                return new StoreObjectInfo { ObjectExists = false, NotExistsErrorMessage = ex.Message  };
             }
         }
 
