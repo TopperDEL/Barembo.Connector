@@ -181,7 +181,7 @@ namespace Barembo.Services
 
         internal static async Task<Bucket> GetBucketAsync(string bucketName, StoreAccess access)
         {
-            await _getBucketAsyncLock.WaitAsync();
+            await _getBucketAsyncLock.WaitAsync().ConfigureAwait(false);
 
             try
             {
