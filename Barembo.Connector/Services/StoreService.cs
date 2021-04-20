@@ -48,11 +48,11 @@ namespace Barembo.Services
 
         public async Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey)
         {
-            var objectService = await GetObjectServiceAsync(access);
+            var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
-            var download = await objectService.DownloadObjectAsync(bucket, storeKey.ToString(), new DownloadOptions(), false);
-            await download.StartDownloadAsync();
+            var download = await objectService.DownloadObjectAsync(bucket, storeKey.ToString(), new DownloadOptions(), false).ConfigureAwait(false);
+            await download.StartDownloadAsync().ConfigureAwait(false);
 
             if (download.Completed)
             {
@@ -64,12 +64,12 @@ namespace Barembo.Services
 
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)
         {
-            var objectService = await GetObjectServiceAsync(access);
+            var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             try
             {
-                var objectInfo = await objectService.GetObjectAsync(bucket, storeKey.ToString());
+                var objectInfo = await objectService.GetObjectAsync(bucket, storeKey.ToString()).ConfigureAwait(false);
                 return new StoreObjectInfo { ObjectExists = true, Size = objectInfo.SystemMetaData.ContentLength };
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace Barembo.Services
 
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData)
         {
-            var objectService = await GetObjectServiceAsync(access);
+            var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var listObjectsOption = new ListObjectsOptions();
@@ -93,7 +93,7 @@ namespace Barembo.Services
             listObjectsOption.Recursive = true;
             listObjectsOption.Custom = withMetaData;
 
-            var objects = await objectService.ListObjectsAsync(bucket, listObjectsOption);
+            var objects = await objectService.ListObjectsAsync(bucket, listObjectsOption).ConfigureAwait(false);
 
             return objects.Items.Select(i =>
             {
@@ -110,12 +110,12 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
         {
-            var objectService = await GetObjectServiceAsync(access);
+            var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
 
-            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, false);
+            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, false).ConfigureAwait(false);
             await upload.StartUploadAsync();
 
             return upload.Completed;
@@ -123,7 +123,7 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData)
         {
-            var objectService = await GetObjectServiceAsync(access);
+            var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
@@ -131,7 +131,7 @@ namespace Barembo.Services
             CustomMetadata customMetaData = new CustomMetadata();
             customMetaData.Entries.Add(new CustomMetadataEntry { Key = metaData.Key, Value = metaData.Value });
 
-            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, customMetaData, false);
+            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), JSONBytes, customMetaData, false).ConfigureAwait(false);
             await upload.StartUploadAsync();
 
             return upload.Completed;
@@ -139,10 +139,10 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut, string filePath)
         {
-            var objectService = await GetObjectServiceAsync(access);
+            var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
-            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), objectToPut, false);
+            var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), objectToPut, false).ConfigureAwait(false);
             await upload.StartUploadAsync();
 
             return upload.Completed;
@@ -156,7 +156,7 @@ namespace Barembo.Services
             if (_bucketServiceInstances.ContainsKey(access.AccessGrant))
                 return _bucketServiceInstances[access.AccessGrant];
 
-            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant);
+            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant).ConfigureAwait(false);
             var bucketService = new BucketService(storjAccess);
             _bucketServiceInstances.Add(access.AccessGrant, bucketService);
 
@@ -171,7 +171,7 @@ namespace Barembo.Services
             if (_objectServiceInstances.ContainsKey(access.AccessGrant))
                 return _objectServiceInstances[access.AccessGrant];
 
-            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant);
+            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant).ConfigureAwait(false);
             var objectService = new ObjectService(storjAccess);
             _objectServiceInstances.Add(access.AccessGrant, objectService);
 
@@ -213,7 +213,7 @@ namespace Barembo.Services
                 if (_bucketInstances.ContainsKey(access.AccessGrant))
                     return _bucketInstances[access.AccessGrant];
 
-                var bucketService = await GetBucketServiceAsync(access);
+                var bucketService = await GetBucketServiceAsync(access).ConfigureAwait(false);
                 try
                 {
                     var bucket = await bucketService.EnsureBucketAsync(bucketName);
@@ -225,7 +225,7 @@ namespace Barembo.Services
                 {
                     try
                     {
-                        var bucket = await bucketService.GetBucketAsync(bucketName);
+                        var bucket = await bucketService.GetBucketAsync(bucketName).ConfigureAwait(false);
                         _bucketInstances.Add(access.AccessGrant, bucket);
 
                         return bucket;
