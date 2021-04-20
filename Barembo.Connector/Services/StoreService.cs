@@ -19,7 +19,8 @@ namespace Barembo.Services
     {
         private static Dictionary<string, IBucketService> _bucketServiceInstances = new Dictionary<string, IBucketService>();
         private static Dictionary<string, IObjectService> _objectServiceInstances = new Dictionary<string, IObjectService>();
-        private static Dictionary<string, Bucket> _BucketInstances = new Dictionary<string, Bucket>();
+        private static Dictionary<string, Bucket> _bucketInstances = new Dictionary<string, Bucket>();
+        private static Dictionary<string, Access> _accessInstances = new Dictionary<string, Access>();
 
         readonly string _bucketName;
 
@@ -47,7 +48,7 @@ namespace Barembo.Services
 
         public async Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey)
         {
-            var objectService = GetObjectService(access);
+            var objectService = await GetObjectServiceAsync(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var download = await objectService.DownloadObjectAsync(bucket, storeKey.ToString(), new DownloadOptions(), false);
@@ -63,7 +64,7 @@ namespace Barembo.Services
 
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)
         {
-            var objectService = GetObjectService(access);
+            var objectService = await GetObjectServiceAsync(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             try
@@ -84,7 +85,7 @@ namespace Barembo.Services
 
         public async Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData)
         {
-            var objectService = GetObjectService(access);
+            var objectService = await GetObjectServiceAsync(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var listObjectsOption = new ListObjectsOptions();
@@ -109,7 +110,7 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut)
         {
-            var objectService = GetObjectService(access);
+            var objectService = await GetObjectServiceAsync(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
@@ -122,7 +123,7 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectAsJsonAsync<T>(StoreAccess access, StoreKey storeKey, T objectToPut, StoreMetaData metaData)
         {
-            var objectService = GetObjectService(access);
+            var objectService = await GetObjectServiceAsync(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
@@ -138,7 +139,7 @@ namespace Barembo.Services
 
         public async Task<bool> PutObjectFromStreamAsync(StoreAccess access, StoreKey storeKey, Stream objectToPut, string filePath)
         {
-            var objectService = GetObjectService(access);
+            var objectService = await GetObjectServiceAsync(access);
             var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
 
             var upload = await objectService.UploadObjectAsync(bucket, storeKey.ToString(), new UploadOptions(), objectToPut, false);
@@ -147,7 +148,7 @@ namespace Barembo.Services
             return upload.Completed;
         }
 
-        internal static IBucketService GetBucketService(StoreAccess access)
+        internal static async Task<IBucketService> GetBucketServiceAsync(StoreAccess access)
         {
             if (string.IsNullOrEmpty(access.AccessGrant))
                 throw new StoreAccessInvalidException();
@@ -155,14 +156,14 @@ namespace Barembo.Services
             if (_bucketServiceInstances.ContainsKey(access.AccessGrant))
                 return _bucketServiceInstances[access.AccessGrant];
 
-            Access storjAccess = new Access(access.AccessGrant);
+            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant);
             var bucketService = new BucketService(storjAccess);
             _bucketServiceInstances.Add(access.AccessGrant, bucketService);
 
             return bucketService;
         }
 
-        internal static IObjectService GetObjectService(StoreAccess access)
+        internal static async Task<IObjectService> GetObjectServiceAsync(StoreAccess access)
         {
             if (string.IsNullOrEmpty(access.AccessGrant))
                 throw new StoreAccessInvalidException();
@@ -170,11 +171,32 @@ namespace Barembo.Services
             if (_objectServiceInstances.ContainsKey(access.AccessGrant))
                 return _objectServiceInstances[access.AccessGrant];
 
-            Access storjAccess = new Access(access.AccessGrant);
+            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant);
             var objectService = new ObjectService(storjAccess);
             _objectServiceInstances.Add(access.AccessGrant, objectService);
 
             return objectService;
+        }
+
+        private static readonly SemaphoreSlim _getAccessAsyncLock = new SemaphoreSlim(1, 1);
+
+        private static async Task<Access> GetAccessFromAccessGrantAsync(string accessGrant)
+        {
+            await _getAccessAsyncLock.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                if (!_accessInstances.ContainsKey(accessGrant))
+                {
+                    Access storjAccess = new Access(accessGrant);
+                    _accessInstances.Add(accessGrant, storjAccess);
+                }
+                return _accessInstances[accessGrant];
+            }
+            finally
+            {
+                _getAccessAsyncLock.Release();
+            }
         }
 
         private static readonly SemaphoreSlim _getBucketAsyncLock = new SemaphoreSlim(1, 1);
@@ -188,14 +210,14 @@ namespace Barembo.Services
                 if (string.IsNullOrEmpty(access.AccessGrant))
                     throw new StoreAccessInvalidException();
 
-                if (_BucketInstances.ContainsKey(access.AccessGrant))
-                    return _BucketInstances[access.AccessGrant];
+                if (_bucketInstances.ContainsKey(access.AccessGrant))
+                    return _bucketInstances[access.AccessGrant];
 
-                var bucketService = GetBucketService(access);
+                var bucketService = await GetBucketServiceAsync(access);
                 try
                 {
                     var bucket = await bucketService.EnsureBucketAsync(bucketName);
-                    _BucketInstances.Add(access.AccessGrant, bucket);
+                    _bucketInstances.Add(access.AccessGrant, bucket);
 
                     return bucket;
                 }
@@ -204,7 +226,7 @@ namespace Barembo.Services
                     try
                     {
                         var bucket = await bucketService.GetBucketAsync(bucketName);
-                        _BucketInstances.Add(access.AccessGrant, bucket);
+                        _bucketInstances.Add(access.AccessGrant, bucket);
 
                         return bucket;
                     }

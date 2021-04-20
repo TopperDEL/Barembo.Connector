@@ -113,11 +113,11 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public void GetObjectService_DoesNotCrash_IfStoreAccessIsEmpty()
+        public async Task GetObjectService_DoesNotCrash_IfStoreAccessIsEmpty()
         {
             try
             {
-                StoreService.GetObjectService(new StoreAccess());
+                await StoreService.GetObjectServiceAsync(new StoreAccess());
                 Assert.IsTrue(false);
             }
             catch(Exception ex)
@@ -127,11 +127,11 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
-        public void GetBucketService_DoesNotCrash_IfStoreAccessIsEmpty()
+        public async Task GetBucketService_DoesNotCrash_IfStoreAccessIsEmpty()
         {
             try
             {
-                StoreService.GetBucketService(new StoreAccess());
+                await StoreService.GetBucketServiceAsync(new StoreAccess());
                 Assert.IsTrue(false);
             }
             catch (Exception ex)
