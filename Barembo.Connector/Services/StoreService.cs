@@ -11,6 +11,7 @@ using uplink.NET.Services;
 using System.Linq;
 using Barembo.Helper;
 using Barembo.Exceptions;
+using System.Threading;
 
 namespace Barembo.Services
 {
@@ -72,7 +73,7 @@ namespace Barembo.Services
             }
             catch (Exception ex)
             {
-                return new StoreObjectInfo { ObjectExists = false, NotExistsErrorMessage = ex.Message  };
+                return new StoreObjectInfo { ObjectExists = false, NotExistsErrorMessage = ex.Message };
             }
         }
 
@@ -176,35 +177,46 @@ namespace Barembo.Services
             return objectService;
         }
 
+        private static readonly SemaphoreSlim _getBucketAsyncLock = new SemaphoreSlim(1, 1);
+
         internal static async Task<Bucket> GetBucketAsync(string bucketName, StoreAccess access)
         {
-            if (string.IsNullOrEmpty(access.AccessGrant))
-                throw new StoreAccessInvalidException();
+            await _getBucketAsyncLock.WaitAsync();
 
-            if (_BucketInstances.ContainsKey(access.AccessGrant))
-                return _BucketInstances[access.AccessGrant];
-
-            var bucketService = GetBucketService(access);
             try
             {
-                var bucket = await bucketService.EnsureBucketAsync(bucketName);
-                _BucketInstances.Add(access.AccessGrant, bucket);
+                if (string.IsNullOrEmpty(access.AccessGrant))
+                    throw new StoreAccessInvalidException();
 
-                return bucket;
-            }
-            catch
-            {
+                if (_BucketInstances.ContainsKey(access.AccessGrant))
+                    return _BucketInstances[access.AccessGrant];
+
+                var bucketService = GetBucketService(access);
                 try
                 {
-                    var bucket = await bucketService.GetBucketAsync(bucketName);
+                    var bucket = await bucketService.EnsureBucketAsync(bucketName);
                     _BucketInstances.Add(access.AccessGrant, bucket);
 
                     return bucket;
                 }
                 catch
                 {
-                    return null;
+                    try
+                    {
+                        var bucket = await bucketService.GetBucketAsync(bucketName);
+                        _BucketInstances.Add(access.AccessGrant, bucket);
+
+                        return bucket;
+                    }
+                    catch
+                    {
+                        return null;
+                    }
                 }
+            }
+            finally
+            {
+                _getBucketAsyncLock.Release();
             }
         }
     }
