@@ -148,34 +148,56 @@ namespace Barembo.Services
             return upload.Completed;
         }
 
+        private static readonly SemaphoreSlim _getBucketServiceAsyncLock = new SemaphoreSlim(1, 1);
+
         internal static async Task<IBucketService> GetBucketServiceAsync(StoreAccess access)
         {
-            if (string.IsNullOrEmpty(access.AccessGrant))
-                throw new StoreAccessInvalidException();
+            await _getBucketServiceAsyncLock.WaitAsync();
 
-            if (_bucketServiceInstances.ContainsKey(access.AccessGrant))
-                return _bucketServiceInstances[access.AccessGrant];
+            try
+            {
+                if (string.IsNullOrEmpty(access.AccessGrant))
+                    throw new StoreAccessInvalidException();
 
-            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant).ConfigureAwait(false);
-            var bucketService = new BucketService(storjAccess);
-            _bucketServiceInstances.Add(access.AccessGrant, bucketService);
+                if (_bucketServiceInstances.ContainsKey(access.AccessGrant))
+                    return _bucketServiceInstances[access.AccessGrant];
 
-            return bucketService;
+                Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant).ConfigureAwait(false);
+                var bucketService = new BucketService(storjAccess);
+                _bucketServiceInstances.Add(access.AccessGrant, bucketService);
+
+                return bucketService;
+            }
+            finally
+            {
+                _getBucketServiceAsyncLock.Release();
+            }
         }
+
+        private static readonly SemaphoreSlim _getObjectServiceAsyncLock = new SemaphoreSlim(1, 1);
 
         internal static async Task<IObjectService> GetObjectServiceAsync(StoreAccess access)
         {
-            if (string.IsNullOrEmpty(access.AccessGrant))
-                throw new StoreAccessInvalidException();
+            await _getObjectServiceAsyncLock.WaitAsync();
 
-            if (_objectServiceInstances.ContainsKey(access.AccessGrant))
-                return _objectServiceInstances[access.AccessGrant];
+            try
+            {
+                if (string.IsNullOrEmpty(access.AccessGrant))
+                    throw new StoreAccessInvalidException();
 
-            Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant).ConfigureAwait(false);
-            var objectService = new ObjectService(storjAccess);
-            _objectServiceInstances.Add(access.AccessGrant, objectService);
+                if (_objectServiceInstances.ContainsKey(access.AccessGrant))
+                    return _objectServiceInstances[access.AccessGrant];
 
-            return objectService;
+                Access storjAccess = await GetAccessFromAccessGrantAsync(access.AccessGrant).ConfigureAwait(false);
+                var objectService = new ObjectService(storjAccess);
+                _objectServiceInstances.Add(access.AccessGrant, objectService);
+
+                return objectService;
+            }
+            finally
+            {
+                _getObjectServiceAsyncLock.Release();
+            }
         }
 
         private static readonly SemaphoreSlim _getAccessAsyncLock = new SemaphoreSlim(1, 1);
