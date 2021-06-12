@@ -15,7 +15,7 @@
     <PackageReleaseNotes>First version - still WIP</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>    
-    <Version>0.9.50</Version>
+    <Version>0.9.51</Version>
   </PropertyGroup>
   
   <PropertyGroup>
