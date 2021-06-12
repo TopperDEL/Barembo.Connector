@@ -70,7 +70,7 @@ namespace Barembo.Services
             try
             {
                 var objectInfo = await objectService.GetObjectAsync(bucket, storeKey.ToString()).ConfigureAwait(false);
-                return new StoreObjectInfo { ObjectExists = true, Size = objectInfo.SystemMetaData.ContentLength };
+                return new StoreObjectInfo { ObjectExists = true, Size = objectInfo.SystemMetadata.ContentLength };
             }
             catch (Exception ex)
             {
@@ -97,13 +97,13 @@ namespace Barembo.Services
 
             return objects.Items.Select(i =>
             {
-                if (i.CustomMetaData.Entries.Count == 0)
+                if (i.CustomMetadata.Entries.Count == 0)
                 {
                     return new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key), new StoreMetaData());
                 }
                 else
                 {
-                    return new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key), new StoreMetaData(i.CustomMetaData.Entries[0].Key, i.CustomMetaData.Entries[0].Value));
+                    return new StoreObject(i.Key, StoreKeyHelper.GetStoreObjectId(i.Key), new StoreMetaData(i.CustomMetadata.Entries[0].Key, i.CustomMetadata.Entries[0].Value));
                 }
             });
         }

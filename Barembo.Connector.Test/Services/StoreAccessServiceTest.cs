@@ -186,19 +186,13 @@ namespace Barembo.Connector.Test.Services
 
         /// <summary>
         /// As it takes some time for a satellite to register a shared access grant,
-        /// wait until the Bucket gets available with the to-share access.
+        /// wait 30 seconds until the Bucket gets available with the to-share access.
         /// </summary>
         /// <param name="access">The newly created access, that needs finalisation on the satellite</param>
         private async Task EnsureAccessIsInitialisedAsync(StoreAccess access)
         {
-            uplink.NET.Models.Bucket bucket = null;
-            int tryCount = 0;
-            do
-            {
-                await Task.Delay(1000);
-                bucket = await StoreService.GetBucketAsync(_bucket, access);
-                tryCount++;
-            } while (bucket == null || tryCount > 10);
+            await Task.Delay(30000);
+            await StoreService.GetBucketAsync(_bucket, access);
         }
     }
 }
