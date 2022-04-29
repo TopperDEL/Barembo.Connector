@@ -57,7 +57,7 @@ namespace Barembo.Connector.Test.Services
             Entry entry = new Entry();
             var bytes = JSONHelper.SerializeToJSON(entry);
 
-            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueue("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, null)).Verifiable();
+            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueueAsync("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, null)).Verifiable();
             _storeBufferMock.Setup(s => s.PutObjectToBufferAsync<Entry>(_access, _storeKey, entry)).Returns(Task.FromResult(true)).Verifiable();
 
             var result = await _bufferedStoreService.PutObjectAsJsonAsync<Entry>(_access, _storeKey, entry);
@@ -75,7 +75,7 @@ namespace Barembo.Connector.Test.Services
             Entry entry = new Entry();
             var bytes = JSONHelper.SerializeToJSON(entry);
 
-            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueue("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, null)).Throws(new Exception()).Verifiable();
+            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueueAsync("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, null)).Throws(new Exception()).Verifiable();
 
             var result = await _bufferedStoreService.PutObjectAsJsonAsync<Entry>(_access, _storeKey, entry);
 
@@ -92,7 +92,7 @@ namespace Barembo.Connector.Test.Services
             MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes("Barembo rulez"));
             var bytes = stream.ToArray();
 
-            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueue("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, "filePath")).Verifiable();
+            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueueAsync("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, "filePath")).Verifiable();
             _storeBufferMock.Setup(s => s.PutObjectFromStreamToBufferAsync(_access, _storeKey, stream)).Returns(Task.FromResult(true)).Verifiable();
 
             var result = await _bufferedStoreService.PutObjectFromStreamAsync(_access, _storeKey, stream, "filePath");
@@ -110,7 +110,7 @@ namespace Barembo.Connector.Test.Services
             MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes("Barembo rulez"));
             var bytes = stream.ToArray();
 
-            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueue("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, "filePath")).Throws(new Exception()).Verifiable();
+            _uploadQueueServiceMock.Setup(s => s.AddObjectToUploadQueueAsync("barembo", _storeKey.ToString(), _access.AccessGrant, bytes, "filePath")).Throws(new Exception()).Verifiable();
 
             var result = await _bufferedStoreService.PutObjectFromStreamAsync(_access, _storeKey, stream, "filePath");
 
