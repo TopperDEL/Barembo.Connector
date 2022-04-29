@@ -80,7 +80,7 @@ namespace Barembo.Services
             {
                 var JSONBytes = JSONHelper.SerializeToJSON(objectToPut);
 
-                await _uploadQueueService.AddObjectToUploadQueue(_bucketName, storeKey.ToString(), access.AccessGrant, JSONBytes, null);
+                await _uploadQueueService.AddObjectToUploadQueueAsync(_bucketName, storeKey.ToString(), access.AccessGrant, JSONBytes, null);
 
                 await _storeBuffer.PutObjectToBufferAsync<T>(access, storeKey, objectToPut);
 
@@ -107,7 +107,7 @@ namespace Barembo.Services
             try
             {
                 var bytes = ReadFully(objectToPut);
-                await _uploadQueueService.AddObjectToUploadQueue(_bucketName, storeKey.ToString(), access.AccessGrant, bytes, filePath);
+                await _uploadQueueService.AddObjectToUploadQueueAsync(_bucketName, storeKey.ToString(), access.AccessGrant, bytes, filePath);
 
                 await _storeBuffer.PutObjectFromStreamToBufferAsync(access, storeKey, objectToPut);
 
