@@ -124,11 +124,13 @@ namespace Barembo.Services
             byte[] buffer = new byte[16 * 1024];
             using (MemoryStream ms = new MemoryStream())
             {
+                input.Position = 0; //Rewind stream
                 int read;
                 while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     ms.Write(buffer, 0, read);
                 }
+                input.Position = 0; //Rewind stream
                 return ms.ToArray();
             }
         }
