@@ -1,8 +1,5 @@
 ﻿using Barembo.Interfaces;
 using LibVLCSharp.Shared;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
