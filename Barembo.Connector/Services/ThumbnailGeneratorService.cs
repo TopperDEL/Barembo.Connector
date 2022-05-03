@@ -3,6 +3,7 @@ using LibVLCSharp.Shared;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,20 +24,54 @@ namespace Barembo.Services
         public async Task<string> GenerateThumbnailBase64FromImageAsync(Stream imageStream)
         {
             imageStream.Position = 0;
-            using (var image = await SixLabors.ImageSharp.Image.LoadAsync(imageStream))
+            using (var thumbnailStream = GetThumbnail(imageStream, 600, 450))
             {
-                image.Mutate(x => x.Resize(600, 0, KnownResamplers.Lanczos3));
-                using (MemoryStream mstream = new MemoryStream())
+                return Convert.ToBase64String(thumbnailStream.ToArray());
+            }
+        }
+
+        private MemoryStream GetThumbnail(Stream baseImage, int targetWidth, int targetHeight)
+        {
+            using (SKBitmap sourceBitmap = SKBitmap.Decode(baseImage))
+            {
+                SKImageInfo resizeInfo = new SKImageInfo(targetWidth, targetHeight);//, info.ColorType, info.AlphaType, info.ColorSpace);
+
+                // Test whether there is more room in width or height
+                if (Math.Abs(sourceBitmap.Width - targetWidth) <= Math.Abs(sourceBitmap.Height - targetHeight))
                 {
-                    await image.SaveAsync(mstream, new JpegEncoder());
-                    return Convert.ToBase64String(mstream.ToArray());
+                    // More room in width, so leave image width set to canvas width
+                    // and increase/decrease height by same ratio
+                    double widthRatio = (double)targetWidth / (double)sourceBitmap.Width;
+                    int newHeight = (int)Math.Floor(sourceBitmap.Height * widthRatio);
+
+                    resizeInfo.Height = newHeight;
+                }
+                else
+                {
+                    // More room in height, so leave image height set to canvas height
+                    // and increase/decrease width by same ratio                 
+                    double heightRatio = (double)targetHeight / (double)sourceBitmap.Height;
+                    int newWidth = (int)Math.Floor(sourceBitmap.Width * heightRatio);
+
+                    resizeInfo.Width = newWidth;
+                }
+
+                using (SKBitmap scaledBitmap = sourceBitmap.Resize(resizeInfo, SKFilterQuality.High))
+                {
+                    using (SKImage scaledImage = SKImage.FromBitmap(scaledBitmap))
+                    {
+                        using (SKData data = scaledImage.Encode())
+                        {
+                            return new MemoryStream(data.ToArray());
+                        }
+                    }
                 }
             }
         }
 
         public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent, string filePath)
         {
-            if(VideoThumbnailAsyncCallback != null)
+            if (VideoThumbnailAsyncCallback != null)
             {
                 return await VideoThumbnailAsyncCallback(videoStream, positionPercent, filePath).ConfigureAwait(false);
             }
