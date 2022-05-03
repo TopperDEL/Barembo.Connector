@@ -16,10 +16,16 @@ namespace Barembo.Services
             Core.Initialize();
         }
 
+        public static Func<Stream, int, int, Task<string>> ImageThumbnailAsyncCallback { get; set; }
         public static Func<Stream, float, string, Task<string>> VideoThumbnailAsyncCallback { get; set; }
 
         public async Task<string> GenerateThumbnailBase64FromImageAsync(Stream imageStream)
         {
+            if (ImageThumbnailAsyncCallback != null)
+            {
+                return await ImageThumbnailAsyncCallback(imageStream, 600,450).ConfigureAwait(false);
+            }            
+            
             imageStream.Position = 0;
             using (var thumbnailStream = GetThumbnail(imageStream, 600, 450))
             {
