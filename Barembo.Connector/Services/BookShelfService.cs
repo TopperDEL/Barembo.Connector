@@ -114,7 +114,7 @@ namespace Barembo.Services
 
         public async Task<BookShelf> LoadBookShelfAsync(StoreAccess access)
         {
-            return await _bookShelfStoreService.LoadAsync(access);
+            return await _bookShelfStoreService.LoadAsync(access).ConfigureAwait(false);
         }
 
         public async Task RefreshBookAccessAsync(BookReference bookReference)

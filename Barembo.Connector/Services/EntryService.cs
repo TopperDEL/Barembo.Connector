@@ -32,14 +32,14 @@ namespace Barembo.Services
 
         public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
-            var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary, filePath);
+            var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary, filePath).ConfigureAwait(false);
             if (!successAttachment)
             {
                 return false;
             }
 
-            var preview = await _attachmentPreviewGeneratorService.GeneratePreviewAsync(attachment, attachmentBinary, filePath);
-            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview);
+            var preview = await _attachmentPreviewGeneratorService.GeneratePreviewAsync(attachment, attachmentBinary, filePath).ConfigureAwait(false);
+            var successPreview = await _attachmentPreviewStoreService.SaveAsync(entryReference, attachment, preview).ConfigureAwait(false);
             if (!successPreview)
             {
                 return false;
@@ -47,7 +47,7 @@ namespace Barembo.Services
 
             entry.Attachments.Add(attachment);
 
-            var successEntry = await _entryStoreService.SaveAsync(entryReference, entry);
+            var successEntry = await _entryStoreService.SaveAsync(entryReference, entry).ConfigureAwait(false);
             if (successEntry)
             {
                 return true;
@@ -71,7 +71,7 @@ namespace Barembo.Services
             entryReference.EntryId = entry.Id;
             entryReference.EntryKey = StoreKey.Entry(bookReference.BookId, entry.Id, bookReference.ContributorId).ToString();
 
-            var success = await _entryStoreService.SaveAsync(entryReference, entry);
+            var success = await _entryStoreService.SaveAsync(entryReference, entry).ConfigureAwait(false);
 
             if (success)
             {
@@ -99,7 +99,7 @@ namespace Barembo.Services
 
         public async Task<IEnumerable<EntryReference>> ListEntriesAsync(BookReference bookReference)
         {
-            var list = await _entryStoreService.ListAsync(bookReference);
+            var list = await _entryStoreService.ListAsync(bookReference).ConfigureAwait(false);
 
             if (!bookReference.IsOwnBook() && !bookReference.AccessRights.CanReadEntries)
             {
@@ -116,12 +116,12 @@ namespace Barembo.Services
 
         public async Task<Stream> LoadAttachmentAsync(EntryReference entryReference, Attachment attachment)
         {
-            return await _attachmentStoreService.LoadAsStreamAsync(entryReference, attachment);
+            return await _attachmentStoreService.LoadAsStreamAsync(entryReference, attachment).ConfigureAwait(false);
         }
 
         public async Task<AttachmentPreview> LoadAttachmentPreviewAsync(EntryReference entryReference, Attachment attachment)
         {
-            return await _attachmentPreviewStoreService.LoadAsync(entryReference, attachment);
+            return await _attachmentPreviewStoreService.LoadAsync(entryReference, attachment).ConfigureAwait(false);
         }
 
         public async Task<Entry> LoadEntryAsync(EntryReference entryReference)
@@ -135,12 +135,12 @@ namespace Barembo.Services
                 throw new ActionNotAllowedException();
             }
 
-            return await _entryStoreService.LoadAsync(entryReference);
+            return await _entryStoreService.LoadAsync(entryReference).ConfigureAwait(false);
         }
 
         public void LoadEntryAsSoonAsPossible(EntryReference entryReference, ElementLoadedDelegate<Entry> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued)
         {
-            _queuedLoaderService.LoadWithHighPriority(async ()=> await _entryStoreService.LoadAsync(entryReference), elementLoaded, loadingDequeued);
+            _queuedLoaderService.LoadWithHighPriority(async ()=> await _entryStoreService.LoadAsync(entryReference).ConfigureAwait(false), elementLoaded, loadingDequeued);
         }
 
         public async Task<bool> SaveEntryAsync(EntryReference entryReference, Entry entry)
@@ -154,7 +154,7 @@ namespace Barembo.Services
                 throw new ActionNotAllowedException();
             }
 
-            return await _entryStoreService.SaveAsync(entryReference, entry);
+            return await _entryStoreService.SaveAsync(entryReference, entry).ConfigureAwait(false);
         }
 
         public void Dispose()
@@ -173,11 +173,11 @@ namespace Barembo.Services
             string bytesBase64 = string.Empty;
             if (attachment.Type == AttachmentType.Image)
             {
-                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(attachmentBinary);
+                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(attachmentBinary).ConfigureAwait(false);
             }
             else if (attachment.Type == AttachmentType.Video)
             {
-                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0f, filePath);
+                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0f, filePath).ConfigureAwait(false);
             }
             else
             {
@@ -188,7 +188,7 @@ namespace Barembo.Services
             {
                 entry.ThumbnailBase64 = bytesBase64;
 
-                var successEntry = await _entryStoreService.SaveAsync(entryReference, entry);
+                var successEntry = await _entryStoreService.SaveAsync(entryReference, entry).ConfigureAwait(false);
                 if (successEntry)
                 {
                     return true;
