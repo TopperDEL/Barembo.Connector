@@ -37,7 +37,7 @@ namespace Barembo.Services
         {
             using (SKBitmap sourceBitmap = SKBitmap.Decode(baseImage))
             {
-                SKImageInfo resizeInfo = new SKImageInfo(targetWidth, targetHeight);//, info.ColorType, info.AlphaType, info.ColorSpace);
+                SKImageInfo resizeInfo = new SKImageInfo(targetWidth, targetHeight);
 
                 // Test whether there is more room in width or height
                 if (Math.Abs(sourceBitmap.Width - targetWidth) <= Math.Abs(sourceBitmap.Height - targetHeight))
@@ -104,7 +104,7 @@ namespace Barembo.Services
 
                 TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
 
-                mediaPlayer.TimeChanged += (sender, e) =>
+                mediaPlayer.TimeChanged += (_, e) =>
                 {
                     mediaPlayer?.TakeSnapshot(0, tempFile, 600, 0);
                     tcs?.TrySetResult(true);
