@@ -51,6 +51,16 @@ namespace Barembo.Connector.Test.Helper
         }
 
         [TestMethod]
+        public void Convert_EntryReference()
+        {
+            StoreKey key = StoreKey.EntryReference("myBookId/Entries/myContributorId/myEntryId.json");
+
+            var result = StoreKeyHelper.Convert(key);
+
+            Assert.AreEqual("myBookId/Entries/myContributorId/myEntryId.json", result);
+        }
+
+        [TestMethod]
         public void GetId_Entry()
         {
             StoreKey key = StoreKey.Entry("myBookId", "myEntryId", "myContributorId");

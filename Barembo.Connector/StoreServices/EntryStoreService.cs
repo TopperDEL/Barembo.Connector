@@ -38,12 +38,12 @@ namespace Barembo.StoreServices
 
         public async Task<Entry> LoadAsync(EntryReference entryRef)
         {
-            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId));
+            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey));
 
             if (!entryInfo.ObjectExists)
                 throw new EntryNotExistsException();
 
-            return await _storeService.GetObjectFromJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.Entry(entryRef.BookReference.BookId, entryRef.EntryId, entryRef.BookReference.ContributorId));
+            return await _storeService.GetObjectFromJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey));
         }
 
         public async Task<bool> SaveAsync(EntryReference entryRef, Entry entryToSave)

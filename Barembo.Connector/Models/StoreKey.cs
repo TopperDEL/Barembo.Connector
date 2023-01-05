@@ -50,6 +50,10 @@ namespace Barembo.Models
         /// An attachment-preview
         /// </summary>
         AttachmentPreview = 10,
+        /// <summary>
+        /// An EntryReference-based Entry
+        /// </summary>
+        EntryReference = 11,
     }
 
     /// <summary>
@@ -125,6 +129,21 @@ namespace Barembo.Models
             properties.Add(StoreKeyHelper.PROPERTY_CONTRIBUTOR_ID, contributorId);
 
             return new StoreKey(StoreKeyTypes.Entry, properties);
+        }
+
+        /// <summary>
+        /// Return the StoreKey for an EntryReference-based Entry
+        /// </summary>
+        /// <param name="bookId">The Id of a Book</param>
+        /// <param name="entryId">The Id of an Entry</param>
+        /// <param name="contributorId">The Id of a Contributor</param>
+        /// <returns>The StoreKey</returns>
+        public static StoreKey EntryReference(string entryKey)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+            properties.Add(StoreKeyHelper.PROPERTY_ENTRY_KEY, entryKey);
+
+            return new StoreKey(StoreKeyTypes.EntryReference, properties);
         }
 
         /// <summary>

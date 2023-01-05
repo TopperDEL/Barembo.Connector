@@ -73,10 +73,11 @@ namespace Barembo.Connector.Test.StoreServices
             reference.BookReference.BookId = book.Id;
             reference.BookReference.AccessGrant = "use this access";
             reference.EntryId = entryToLoad.Id;
+            reference.EntryKey = "myBookId/Entries/myContributorId/myEntryId.json";
 
-            _storeServiceMock.Setup(s => s.GetObjectInfoAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Entry)))
+            _storeServiceMock.Setup(s => s.GetObjectInfoAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.EntryReference)))
                              .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = true })).Verifiable();
-            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Entry)))
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.EntryReference)))
                              .Returns(Task.FromResult(entryToLoad)).Verifiable();
 
             var result = await _service.LoadAsync(reference);
