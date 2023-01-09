@@ -14,7 +14,7 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.1.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
     <PackageReference Include="uplink.NET.Win" Version="2.9.2958" />
-    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.11" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20230109" />
   </ItemGroup>
 
   <ItemGroup>

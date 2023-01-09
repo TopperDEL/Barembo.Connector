@@ -1,9 +1,11 @@
 ﻿using Barembo.Interfaces;
-using LibVLCSharp.Shared;
+using LibVLCSharp;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,9 +13,11 @@ namespace Barembo.Services
 {
     public class ThumbnailGeneratorService : IThumbnailGeneratorService
     {
+        private static LibVLC _libVlc;
         static ThumbnailGeneratorService()
         {
             Core.Initialize();
+            _libVlc = new LibVLC();
         }
 
         public static Func<Stream, int, int, Task<string>> ImageThumbnailAsyncCallback { get; set; }
@@ -23,9 +27,9 @@ namespace Barembo.Services
         {
             if (ImageThumbnailAsyncCallback != null)
             {
-                return await ImageThumbnailAsyncCallback(imageStream, 600,450).ConfigureAwait(false);
-            }            
-            
+                return await ImageThumbnailAsyncCallback(imageStream, 600, 450).ConfigureAwait(false);
+            }
+
             imageStream.Position = 0;
             using (var thumbnailStream = GetThumbnail(imageStream, 600, 450))
             {
@@ -74,61 +78,14 @@ namespace Barembo.Services
 
         public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent, string filePath)
         {
-            if (VideoThumbnailAsyncCallback != null)
+            using (Media media = new Media(new StreamMediaInput(videoStream)))
             {
-                return await VideoThumbnailAsyncCallback(videoStream, positionPercent, filePath).ConfigureAwait(false);
-            }
-            //Source: https://github.com/ZeBobo5/Vlc.DotNet/blob/develop/src/Samples/Samples.Core.Thumbnailer/Program.cs
-
-            videoStream.Position = 0;
-
-            var tempFile = Path.GetTempFileName();
-
-            var options = new[]
-            {
-                "--intf", "dummy", /* no interface                   */
-                "--vout", "dummy", /* we don't want video output     */
-                "--no-audio", /* we don't want audio decoding   */
-                "--no-video-title-show", /* nor the filename displayed     */
-                "--no-stats", /* no stats */
-                "--no-sub-autodetect-file", /* we don't want subtitles        */
-                "--no-snapshot-preview", /* no blending in dummy vout      */
-            };
-
-            using (var libvlc = new LibVLC(options))
-            {
-                var mediaPlayer = new MediaPlayer(libvlc);
-                Media video = new Media(libvlc, new StreamMediaInput(videoStream));
-                mediaPlayer.Media = video;
-                mediaPlayer.EnableHardwareDecoding = true;
-
-                TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
-
-                mediaPlayer.TimeChanged += (_, e) =>
-                {
-                    mediaPlayer?.TakeSnapshot(0, tempFile, 600, 0);
-                    tcs?.TrySetResult(true);
-                    mediaPlayer?.Stop();
-                    mediaPlayer?.Dispose();
-                };
-                mediaPlayer.Play();
-                mediaPlayer.Position = positionPercent;
-
-                await tcs.Task.ConfigureAwait(false);
-            }
-
-            using (FileStream fstream = new FileStream(tempFile, FileMode.Open))
-            {
-                var bytes = new byte[fstream.Length];
-                var readLength = await fstream.ReadAsync(bytes, 0, (int)fstream.Length).ConfigureAwait(false);
-                if (readLength == fstream.Length)
-                {
-                    return Convert.ToBase64String(bytes);
-                }
-                else
-                {
-                    return null;
-                }
+                var thumbnail = await media.GenerateThumbnailAsync(_libVlc, positionPercent, ThumbnailerSeekSpeed.Fast, 600, 450, true, PictureType.Png);
+                var buffer = thumbnail.Buffer;
+                var size = (uint)buffer.size;
+                byte[] managedArray = new byte[size];
+                Marshal.Copy(buffer.buffer, managedArray, 0, (int)size);
+                return Convert.ToBase64String(managedArray);
             }
         }
     }
