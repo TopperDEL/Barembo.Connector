@@ -14,7 +14,11 @@ namespace Barembo.Services
     public class ThumbnailGeneratorService : IThumbnailGeneratorService
     {
         private static LibVLC _libVlc;
-        static ThumbnailGeneratorService()
+
+        /// <summary>
+        /// Only initialize if LibVlc 4.* native binaries are present
+        /// </summary>
+        public static void InitializeLibVlc()
         {
             Core.Initialize();
             _libVlc = new LibVLC();
