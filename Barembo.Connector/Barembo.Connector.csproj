@@ -15,7 +15,7 @@
     <PackageReleaseNotes>First version - still WIP</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>    
-    <Version>0.9.63</Version>
+    <Version>0.9.64</Version>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -27,7 +27,6 @@
 </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibVLCSharp" Version="4.0.0-alpha-20230109-6415" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
