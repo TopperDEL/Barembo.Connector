@@ -171,13 +171,23 @@ namespace Barembo.Services
         public async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
             string bytesBase64 = string.Empty;
+            Stream streamToUse;
+            try
+            {
+                attachmentBinary.Position = 0;
+                streamToUse = attachmentBinary;
+            }
+            catch
+            {
+                streamToUse = File.OpenRead(filePath);
+            }
             if (attachment.Type == AttachmentType.Image)
             {
-                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(attachmentBinary).ConfigureAwait(false);
+                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromImageAsync(streamToUse).ConfigureAwait(false);
             }
             else if (attachment.Type == AttachmentType.Video)
             {
-                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(attachmentBinary, 0f, filePath).ConfigureAwait(false);
+                bytesBase64 = await _thumbnailGeneratorService.GenerateThumbnailBase64FromVideoAsync(streamToUse, 0f, filePath).ConfigureAwait(false);
             }
             else
             {
