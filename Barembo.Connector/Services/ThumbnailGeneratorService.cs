@@ -1,5 +1,5 @@
 ﻿using Barembo.Interfaces;
-using LibVLCSharp;
+//using LibVLCSharp;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -13,16 +13,16 @@ namespace Barembo.Services
 {
     public class ThumbnailGeneratorService : IThumbnailGeneratorService
     {
-        private static LibVLC _libVlc;
+        //private static LibVLC _libVlc;
 
-        /// <summary>
-        /// Only initialize if LibVlc 4.* native binaries are present
-        /// </summary>
-        public static void InitializeLibVlc()
-        {
-            Core.Initialize();
-            _libVlc = new LibVLC();
-        }
+        ///// <summary>
+        ///// Only initialize if LibVlc 4.* native binaries are present
+        ///// </summary>
+        //public static void InitializeLibVlc()
+        //{
+        //    Core.Initialize();
+        //    _libVlc = new LibVLC();
+        //}
 
         public static Func<Stream, int, int, Task<string>> ImageThumbnailAsyncCallback { get; set; }
         public static Func<Stream, float, string, Task<string>> VideoThumbnailAsyncCallback { get; set; }
@@ -82,15 +82,16 @@ namespace Barembo.Services
 
         public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent, string filePath)
         {
-            using (Media media = new Media(new StreamMediaInput(videoStream)))
-            {
-                var thumbnail = await media.GenerateThumbnailAsync(_libVlc, positionPercent, ThumbnailerSeekSpeed.Fast, 600, 450, true, PictureType.Png);
-                var buffer = thumbnail.Buffer;
-                var size = (uint)buffer.size;
-                byte[] managedArray = new byte[size];
-                Marshal.Copy(buffer.buffer, managedArray, 0, (int)size);
-                return Convert.ToBase64String(managedArray);
-            }
+            throw new NotImplementedException("Would only work with LibVlc 4.* binaries.");
+            //using (Media media = new Media(new StreamMediaInput(videoStream)))
+            //{
+            //    var thumbnail = await media.GenerateThumbnailAsync(_libVlc, positionPercent, ThumbnailerSeekSpeed.Fast, 600, 450, true, PictureType.Png);
+            //    var buffer = thumbnail.Buffer;
+            //    var size = (uint)buffer.size;
+            //    byte[] managedArray = new byte[size];
+            //    Marshal.Copy(buffer.buffer, managedArray, 0, (int)size);
+            //    return Convert.ToBase64String(managedArray);
+            //}
         }
     }
 }
