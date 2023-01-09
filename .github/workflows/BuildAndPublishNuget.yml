@@ -15,6 +15,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.404
+    - name: Add VideoLan-Preview-Nuget-Source
+      run: dotnet nuget add source "https://f.feedz.io/videolan/preview/nuget/index.json"
     - name: Install dependencies
       run: dotnet restore
     - name: Build
