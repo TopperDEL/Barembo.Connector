@@ -32,7 +32,7 @@ namespace Barembo.Services
             _queuedLoaderService = new QueuedPriorityLoaderService<Entry>();
         }
 
-        public virtual async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
+        public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
             var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary, filePath).ConfigureAwait(false);
             if (!successAttachment)
@@ -170,7 +170,7 @@ namespace Barembo.Services
             _queuedLoaderService.StopAllLoading(true);
         }
 
-        public virtual async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
+        public async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
             string bytesBase64 = string.Empty;
             Stream streamToUse;
