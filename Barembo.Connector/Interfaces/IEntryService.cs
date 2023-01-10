@@ -28,5 +28,8 @@ namespace Barembo.Interfaces
 
         Task<Stream> LoadAttachmentAsync(EntryReference entryReference, Attachment attachment);
         Task<AttachmentPreview> LoadAttachmentPreviewAsync(EntryReference entryReference, Attachment attachment);
+
+        Task<bool> AddAttachmentFromBackgroundActionAsync(BackgroundAction backgroundAction);
+        Task<bool> SetThumbnailFromBackgroundActionAsync(BackgroundAction backgroundAction);
     }
 }

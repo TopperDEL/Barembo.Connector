@@ -37,6 +37,7 @@ namespace Barembo.Services
             _dataBase = new SQLiteAsyncConnection(databasePath);
 
             await _dataBase.CreateTableAsync<BufferEntry>();
+            await _dataBase.CreateTableAsync<BackgroundAction>();
 
             _isInitialized = true;
         }
@@ -131,10 +132,34 @@ namespace Barembo.Services
             }
         }
 
+        public async Task AddBackgroundAction(BackgroundAction action)
+        {
+            await InitAsync().ConfigureAwait(false);
+
+            await _dataBase.InsertOrReplaceAsync(action);
+        }
+
+        public async Task<BackgroundAction> GetNextBackgroundAction()
+        {
+            await InitAsync().ConfigureAwait(false);
+
+            var nextOne = await _dataBase.Table<BackgroundAction>().OrderBy(a => a.CreationDate).FirstOrDefaultAsync();
+
+            return nextOne;
+        }
+
+        public async Task RemoveBackgroundAction(BackgroundAction action)
+        {
+            await InitAsync().ConfigureAwait(false);
+
+            await _dataBase.DeleteAsync<BackgroundAction>(action.Id);
+        }
+
         internal async Task RemoveDatabaseAsync()
         {
             await InitAsync().ConfigureAwait(false);
             await _dataBase.DeleteAllAsync<BufferEntry>();
+            await _dataBase.DeleteAllAsync<BackgroundAction>();
         }
     }
 }

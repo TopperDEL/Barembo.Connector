@@ -55,5 +55,25 @@ namespace Barembo.Interfaces
         /// <param name="objectToAdd">The Object-Stream to add</param>
         /// <returns>The task</returns>
         Task PutObjectFromStreamToBufferAsync(StoreAccess access, StoreKey keyToCheck, Stream objectToAdd);
+
+        /// <summary>
+        /// Adds a new BackgroundAction for background processing.
+        /// </summary>
+        /// <param name="action">The action to add</param>
+        /// <returns>The task</returns>
+        Task AddBackgroundAction(BackgroundAction action);
+
+        /// <summary>
+        /// Gets the next undone BackgroundAction.
+        /// </summary>
+        /// <returns>The BackgroundAction</returns>
+        Task<BackgroundAction> GetNextBackgroundAction();
+
+        /// <summary>
+        /// Removes a BackgroundAction from the list of undone BackgroundActions.
+        /// </summary>
+        /// <param name="action">The BackgroundAction to remove</param>
+        /// <returns>The task</returns>
+        Task RemoveBackgroundAction(BackgroundAction action);
     }
 }

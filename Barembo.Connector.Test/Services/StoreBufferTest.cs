@@ -34,10 +34,10 @@ namespace Barembo.Connector.Test.Services
 
             var resultBefore = await _storeBuffer.IsBufferedAsync(_storeAccess, existing);
             await _storeBuffer.RemoveDatabaseAsync();
-            var resultAtfer = await _storeBuffer.IsBufferedAsync(_storeAccess, existing);
+            var resultAfter = await _storeBuffer.IsBufferedAsync(_storeAccess, existing);
 
             Assert.IsTrue(resultBefore);
-            Assert.IsFalse(resultAtfer);
+            Assert.IsFalse(resultAfter);
         }
 
         [TestMethod]
@@ -116,6 +116,82 @@ namespace Barembo.Connector.Test.Services
 
             var streamData = Encoding.UTF8.GetString(mstreamResult.GetBuffer());
             Assert.AreEqual("my stream data", streamData);
+        }
+
+        [TestMethod]
+        public async Task GetNextBackgroundAction_ReturnsNull_IfThereIsNone()
+        {
+            await _storeBuffer.RemoveDatabaseAsync();
+
+            var result = await _storeBuffer.GetNextBackgroundAction();
+
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public async Task GetNextBackgroundAction_ReturnsOnlyOne_IfThereIsOnlyOne()
+        {
+            await _storeBuffer.RemoveDatabaseAsync();
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("FilePath", "value1"); //strings have to be names FilePath
+
+            BackgroundAction action = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters);
+            
+            await _storeBuffer.AddBackgroundAction(action);
+            var result = await _storeBuffer.GetNextBackgroundAction();
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(action.Id, result.Id);
+            Assert.AreEqual(action.ActionType, result.ActionType);
+            Assert.AreEqual(parameters["FilePath"], result.GetParameters()["FilePath"]);
+        }
+
+        [TestMethod]
+        public async Task GetNextBackgroundAction_ReturnsOnlyOneFirstOne_IfThereAreMany()
+        {
+            await _storeBuffer.RemoveDatabaseAsync();
+            
+            Dictionary<string, object> parameters1 = new Dictionary<string, object>();
+            parameters1.Add("FilePath", "value1");
+            BackgroundAction action1 = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters1);
+            action1.Id = "First";
+
+            Dictionary<string, object> parameters2 = new Dictionary<string, object>();
+            parameters2.Add("FilePath", "value2");
+            BackgroundAction action2 = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters2);
+            action2.Id = "Second";
+
+            Dictionary<string, object> parameters3 = new Dictionary<string, object>();
+            parameters3.Add("FilePath", "value3");
+            BackgroundAction action3 = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters3);
+            action3.Id = "Third";
+
+            await _storeBuffer.AddBackgroundAction(action2);
+            await _storeBuffer.AddBackgroundAction(action1);
+            await _storeBuffer.AddBackgroundAction(action3);
+            var result = await _storeBuffer.GetNextBackgroundAction();
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("First", result.Id);
+            Assert.AreEqual(action1.ActionType, result.ActionType);
+            Assert.AreEqual(parameters1["FilePath"], result.GetParameters()["FilePath"]);
+        }
+
+        [TestMethod]
+        public async Task RemoveBackgroundAction_Removes_BackgroundAction()
+        {
+            await _storeBuffer.RemoveDatabaseAsync();
+            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            parameters.Add("param1", "value1");
+
+            BackgroundAction action = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters);
+
+            await _storeBuffer.AddBackgroundAction(action);
+            var result = await _storeBuffer.GetNextBackgroundAction();
+            Assert.IsNotNull(result);
+            await _storeBuffer.RemoveBackgroundAction(result);
+            var result2 = await _storeBuffer.GetNextBackgroundAction();
+            Assert.IsNull(result2);
         }
     }
 }

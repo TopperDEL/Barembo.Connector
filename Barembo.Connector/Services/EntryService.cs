@@ -18,19 +18,21 @@ namespace Barembo.Services
         readonly IAttachmentPreviewGeneratorService _attachmentPreviewGeneratorService;
         readonly IQueuedPriorityLoaderService<Entry> _queuedLoaderService;
         readonly IThumbnailGeneratorService _thumbnailGeneratorService;
+        readonly IFileAccessHelper _fileAccessHelper;
 
-        public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService, IAttachmentPreviewStoreService attachmentPreviewStoreService, IAttachmentPreviewGeneratorService attachmentPreviewGeneratorService, IThumbnailGeneratorService thumbnailGeneratorService)
+        public EntryService(IEntryStoreService entryStoreService, IAttachmentStoreService attachmentStoreService, IAttachmentPreviewStoreService attachmentPreviewStoreService, IAttachmentPreviewGeneratorService attachmentPreviewGeneratorService, IThumbnailGeneratorService thumbnailGeneratorService, IFileAccessHelper fileAccessHelper)
         {
             _entryStoreService = entryStoreService;
             _attachmentStoreService = attachmentStoreService;
             _attachmentPreviewStoreService = attachmentPreviewStoreService;
             _attachmentPreviewGeneratorService = attachmentPreviewGeneratorService;
             _thumbnailGeneratorService = thumbnailGeneratorService;
+            _fileAccessHelper = fileAccessHelper;
 
             _queuedLoaderService = new QueuedPriorityLoaderService<Entry>();
         }
 
-        public async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
+        public virtual async Task<bool> AddAttachmentAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
             var successAttachment = await _attachmentStoreService.SaveFromStreamAsync(entryReference, attachment, attachmentBinary, filePath).ConfigureAwait(false);
             if (!successAttachment)
@@ -140,7 +142,7 @@ namespace Barembo.Services
 
         public void LoadEntryAsSoonAsPossible(EntryReference entryReference, ElementLoadedDelegate<Entry> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued)
         {
-            _queuedLoaderService.LoadWithHighPriority(async ()=> await _entryStoreService.LoadAsync(entryReference).ConfigureAwait(false), elementLoaded, loadingDequeued);
+            _queuedLoaderService.LoadWithHighPriority(async () => await _entryStoreService.LoadAsync(entryReference).ConfigureAwait(false), elementLoaded, loadingDequeued);
         }
 
         public async Task<bool> SaveEntryAsync(EntryReference entryReference, Entry entry)
@@ -168,7 +170,7 @@ namespace Barembo.Services
             _queuedLoaderService.StopAllLoading(true);
         }
 
-        public async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
+        public virtual async Task<bool> SetThumbnailAsync(EntryReference entryReference, Entry entry, Attachment attachment, Stream attachmentBinary, string filePath)
         {
             string bytesBase64 = string.Empty;
             Stream streamToUse;
@@ -179,7 +181,7 @@ namespace Barembo.Services
             }
             catch
             {
-                streamToUse = File.OpenRead(filePath);
+                streamToUse = await _fileAccessHelper.OpenFileAsync(filePath);
             }
             if (attachment.Type == AttachmentType.Image)
             {
@@ -210,6 +212,38 @@ namespace Barembo.Services
             }
             else
                 return false;
+        }
+
+        public async Task<bool> AddAttachmentFromBackgroundActionAsync(BackgroundAction backgroundAction)
+        {
+            var parameters = backgroundAction.GetParameters();
+            EntryReference entryReference = (EntryReference)parameters["EntryReference"];
+            Attachment attachment = (Attachment)parameters["Attachment"];
+            string filePath = (string)parameters["FilePath"];
+
+            //Load the entry
+            var entry = await LoadEntryAsync(entryReference);
+
+            //Get the attachment-stream
+            var stream = await _fileAccessHelper.OpenFileAsync(filePath);
+
+            return await AddAttachmentAsync(entryReference, entry, attachment, stream, filePath);
+        }
+
+        public async Task<bool> SetThumbnailFromBackgroundActionAsync(BackgroundAction backgroundAction)
+        {
+            var parameters = backgroundAction.GetParameters();
+            EntryReference entryReference = (EntryReference)parameters["EntryReference"];
+            Attachment attachment = (Attachment)parameters["Attachment"];
+            string filePath = (string)parameters["FilePath"];
+
+            //Load the entry
+            var entry = await LoadEntryAsync(entryReference);
+
+            //Get the attachment-stream
+            var stream = await _fileAccessHelper.OpenFileAsync(filePath);
+
+            return await SetThumbnailAsync(entryReference, entry, attachment, stream, filePath);
         }
     }
 }

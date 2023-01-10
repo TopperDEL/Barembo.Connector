@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
+using Moq;
 
 namespace Barembo.Connector.Test.Services
 {
@@ -21,6 +22,7 @@ namespace Barembo.Connector.Test.Services
         Moq.Mock<IAttachmentStoreService> _attachmentStoreServiceMock;
         Moq.Mock<IAttachmentPreviewStoreService> _attachmentPreviewStoreServiceMock;
         Moq.Mock<IAttachmentPreviewGeneratorService> _attachmentPreviewGeneratorServiceMock;
+        Moq.Mock<IFileAccessHelper> _fileAccessHelperMock;
 
         [TestInitialize]
         public void Init()
@@ -30,8 +32,9 @@ namespace Barembo.Connector.Test.Services
             _attachmentPreviewStoreServiceMock = new Moq.Mock<IAttachmentPreviewStoreService>();
             _attachmentPreviewGeneratorServiceMock = new Moq.Mock<IAttachmentPreviewGeneratorService>();
             _thumbnailGeneratorService = new Moq.Mock<IThumbnailGeneratorService>();
+            _fileAccessHelperMock = new Moq.Mock<IFileAccessHelper>();
 
-            _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object, _attachmentPreviewStoreServiceMock.Object, _attachmentPreviewGeneratorServiceMock.Object, _thumbnailGeneratorService.Object);
+            _entryService = new EntryService(_entryStoreServiceMock.Object, _attachmentStoreServiceMock.Object, _attachmentPreviewStoreServiceMock.Object, _attachmentPreviewGeneratorServiceMock.Object, _thumbnailGeneratorService.Object, _fileAccessHelperMock.Object);
         }
 
         [TestCleanup]
@@ -692,6 +695,87 @@ namespace Barembo.Connector.Test.Services
             }
 
             _entryStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task AddAttachmentFromBackGroundAction_AddsAndSaves_AttachmentToEntry()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            Stream stream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
+
+            var parameters = new Dictionary<string, object>();
+            parameters.Add("EntryReference", entryReference);
+            parameters.Add("Attachment", attachment);
+            parameters.Add("FilePath", "filepath");
+            BackgroundAction backgroundAction = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters);
+
+            _fileAccessHelperMock.Setup(s => s.OpenFileAsync("filepath")).Returns(Task.FromResult(stream)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(It.IsAny<EntryReference>())).Returns(Task.FromResult(entry)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(It.IsAny<EntryReference>(), Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
+                                  .Returns(Task.FromResult(true)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(It.IsAny<EntryReference>(), It.IsAny<Attachment>(), stream, "filepath")).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.SaveAsync(It.IsAny<EntryReference>(), It.IsAny<Attachment>(), preview)).Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _entryService.AddAttachmentFromBackgroundActionAsync(backgroundAction);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual(entry.Attachments[0].FileName, attachment.FileName);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _fileAccessHelperMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task SetThumbnailFromBackGroundAction_AddsAndSaves_AttachmentToEntry()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            Contributor contributor = new Contributor();
+            Book book = new Book();
+            BookReference bookReference = new BookReference();
+            bookReference.BookId = book.Id;
+            bookReference.ContributorId = contributor.Id;
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = bookReference;
+            entryReference.EntryId = entry.Id;
+            Stream stream = new MemoryStream();
+            AttachmentPreview preview = new AttachmentPreview();
+            Attachment attachment = new Attachment();
+            attachment.Type = AttachmentType.Image;
+            string thumbnail = "ABCDE";
+
+            var parameters = new Dictionary<string, object>();
+            parameters.Add("EntryReference", entryReference);
+            parameters.Add("Attachment", attachment);
+            parameters.Add("FilePath", "filepath");
+            BackgroundAction backgroundAction = new BackgroundAction(BackgroundActionTypes.SetThumbnail, parameters);
+
+            _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromImageAsync(stream)).Returns(Task.FromResult(thumbnail));
+            _fileAccessHelperMock.Setup(s => s.OpenFileAsync("filepath")).Returns(Task.FromResult(stream)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(It.IsAny<EntryReference>())).Returns(Task.FromResult(entry)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(It.IsAny<EntryReference>(), Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 0)))
+                                  .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _entryService.SetThumbnailFromBackgroundActionAsync(backgroundAction);
+
+            Assert.IsTrue(result);
+            Assert.AreEqual("ABCDE", entry.ThumbnailBase64);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _fileAccessHelperMock.Verify();
+            _thumbnailGeneratorService.Verify();
             _attachmentPreviewStoreServiceMock.Verify();
         }
     }
