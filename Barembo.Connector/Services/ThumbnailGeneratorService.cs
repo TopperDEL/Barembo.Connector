@@ -82,6 +82,10 @@ namespace Barembo.Services
 
         public async Task<string> GenerateThumbnailBase64FromVideoAsync(Stream videoStream, float positionPercent, string filePath)
         {
+            if (VideoThumbnailAsyncCallback != null)
+            {
+                return await VideoThumbnailAsyncCallback(videoStream, positionPercent, filePath).ConfigureAwait(false);
+            }
             throw new NotImplementedException("Would only work with LibVlc 4.* binaries.");
             //using (Media media = new Media(new StreamMediaInput(videoStream)))
             //{
