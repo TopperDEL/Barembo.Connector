@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using Barembo.Models;
 
 namespace Barembo.Services
 {
@@ -80,6 +81,52 @@ namespace Barembo.Services
             catch
             {
                 //That's ok, simply quit. The next run should fix it.
+            }
+        }
+
+        public async Task<bool> AddAttachmentInBackgroundAsync(EntryReference entryReference, Attachment attachment, string filePath)
+        {
+            try
+            {
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+                {
+                    { "EntryReference", entryReference },
+                    { "Attachment", attachment },
+                    { "FilePath", filePath }
+                };
+
+                BackgroundAction addAttachmentAction = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters);
+
+                await _storeBuffer.AddBackgroundAction(addAttachmentAction);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> SetThumbnailInBackgroundAsync(EntryReference entryReference, Attachment attachment, string filePath)
+        {
+            try
+            {
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+                {
+                    { "EntryReference", entryReference },
+                    { "Attachment", attachment },
+                    { "FilePath", filePath }
+                };
+
+                BackgroundAction addAttachmentAction = new BackgroundAction(BackgroundActionTypes.SetThumbnail, parameters);
+
+                await _storeBuffer.AddBackgroundAction(addAttachmentAction);
+
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

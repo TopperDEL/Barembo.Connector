@@ -2,8 +2,10 @@
 using Barembo.Models;
 using Barembo.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,6 +61,40 @@ namespace Barembo.Connector.Test.Services
 
             _storeBufferMock.Verify();
             _entryServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task AddAttachment_Creates_BackgroundAction()
+        {
+            EntryReference entryReference = new EntryReference();
+            entryReference.EntryId = "myEntry";
+            Attachment attachment = new Attachment();
+            attachment.FileName = "myPic.jpg";
+
+            _storeBufferMock.Setup(s => s.AddBackgroundAction(It.Is<BackgroundAction>(b=>b.ActionType == BackgroundActionTypes.AddAttachment &&
+                                                                                         b.ParameterDictionaryAsJson != null
+                                                                                         ))).Verifiable();
+            var result = await _backgroundActionService.AddAttachmentInBackgroundAsync(entryReference, attachment, "filepath");
+
+            Assert.IsTrue(result);
+            _storeBufferMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task SetThumbnail_SetsThumbnailForImage_AndSavesEntry()
+        {
+            EntryReference entryReference = new EntryReference();
+            entryReference.EntryId = "myEntry";
+            Attachment attachment = new Attachment();
+            attachment.FileName = "myPic.jpg";
+
+            _storeBufferMock.Setup(s => s.AddBackgroundAction(It.Is<BackgroundAction>(b => b.ActionType == BackgroundActionTypes.SetThumbnail &&
+                                                                                         b.ParameterDictionaryAsJson != null
+                                                                                         ))).Verifiable();
+            var result = await _backgroundActionService.SetThumbnailInBackgroundAsync(entryReference, attachment, "filepath");
+
+            Assert.IsTrue(result);
+            _storeBufferMock.Verify();
         }
     }
 }
