@@ -721,7 +721,7 @@ namespace Barembo.Connector.Test.Services
             BackgroundAction backgroundAction = new BackgroundAction(BackgroundActionTypes.AddAttachment, parameters);
 
             _fileAccessHelperMock.Setup(s => s.OpenFileAsync("filepath")).Returns(Task.FromResult(stream)).Verifiable();
-            _entryStoreServiceMock.Setup(s => s.LoadAsync(It.IsAny<EntryReference>())).Returns(Task.FromResult(entry)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(It.IsAny<EntryReference>(), true)).Returns(Task.FromResult(entry)).Verifiable();
             _entryStoreServiceMock.Setup(s => s.SaveAsync(It.IsAny<EntryReference>(), Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
                                   .Returns(Task.FromResult(true)).Verifiable();
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(It.IsAny<EntryReference>(), It.IsAny<Attachment>(), stream, "filepath")).Returns(Task.FromResult(true)).Verifiable();
@@ -763,7 +763,7 @@ namespace Barembo.Connector.Test.Services
 
             _thumbnailGeneratorService.Setup(s => s.GenerateThumbnailBase64FromImageAsync(stream)).Returns(Task.FromResult(thumbnail));
             _fileAccessHelperMock.Setup(s => s.OpenFileAsync("filepath")).Returns(Task.FromResult(stream)).Verifiable();
-            _entryStoreServiceMock.Setup(s => s.LoadAsync(It.IsAny<EntryReference>())).Returns(Task.FromResult(entry)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(It.IsAny<EntryReference>(), true)).Returns(Task.FromResult(entry)).Verifiable();
             _entryStoreServiceMock.Setup(s => s.SaveAsync(It.IsAny<EntryReference>(), Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 0)))
                                   .Returns(Task.FromResult(true)).Verifiable();
 

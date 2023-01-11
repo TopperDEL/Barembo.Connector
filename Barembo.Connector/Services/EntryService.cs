@@ -236,7 +236,7 @@ namespace Barembo.Services
             string filePath = (string)parameters["FilePath"];
 
             //Load the entry
-            var entry = await LoadEntryAsync(entryReference);
+            var entry = await LoadEntryAsync(entryReference, true);
 
             //Get the attachment-stream
             var stream = await _fileAccessHelper.OpenFileAsync(filePath);
@@ -252,7 +252,7 @@ namespace Barembo.Services
             string filePath = (string)parameters["FilePath"];
 
             //Load the entry
-            var entry = await LoadEntryAsync(entryReference);
+            var entry = await LoadEntryAsync(entryReference, true);
 
             //Get the attachment-stream
             var stream = await _fileAccessHelper.OpenFileAsync(filePath);
