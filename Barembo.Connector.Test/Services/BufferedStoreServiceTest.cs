@@ -152,6 +152,22 @@ namespace Barembo.Connector.Test.Services
         }
 
         [TestMethod]
+        public async Task GetObjectAsJson_GetsFromStore_IfBufferShouldBeIgnored()
+        {
+            Entry entry = new Entry();
+
+            _storeServiceMock.Setup(s => s.GetObjectFromJsonAsync<Entry>(_access, _storeKey)).Returns(Task.FromResult(entry)).Verifiable();
+            _storeBufferMock.Setup(s => s.PutObjectToBufferAsync<Entry>(_access, _storeKey, entry)).Verifiable();
+
+            var result = await _bufferedStoreService.GetObjectFromJsonAsync<Entry>(_access, _storeKey, true);
+
+            Assert.AreEqual(entry, result);
+
+            _storeBufferMock.Verify();
+            _storeServiceMock.Verify();
+        }
+
+        [TestMethod]
         public async Task GetObjectAsJson_GetsFromBufferForStruc()
         {
             AttachmentPreview preview = new AttachmentPreview();

@@ -61,6 +61,20 @@ namespace Barembo.Services
             }
         }
 
+        public async Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey, bool ignoreBuffer)
+        {
+            if(ignoreBuffer)
+            {
+                var result = await _storeService.GetObjectFromJsonAsync<T>(access, storeKey).ConfigureAwait(false);
+                await _storeBuffer.PutObjectToBufferAsync(access, storeKey, result).ConfigureAwait(false);
+                return result;
+            }
+            else
+            {
+                return await GetObjectFromJsonAsync<T>(access, storeKey);
+            }
+        }
+
         public async Task<StoreObjectInfo> GetObjectInfoAsync(StoreAccess access, StoreKey storeKey)
         {
             return await _storeService.GetObjectInfoAsync(access, storeKey).ConfigureAwait(false);

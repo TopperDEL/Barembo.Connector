@@ -30,6 +30,16 @@ namespace Barembo.Interfaces
         Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey);
 
         /// <summary>
+        /// Returns the object of the given StoreKey by converting from Json. 
+        /// </summary>
+        /// <typeparam name="T">The type to convert the json to</typeparam>
+        /// <param name="access">The access to use</param>
+        /// <param name="storeKey">The StoreKey of that object</param>
+        /// <param name="ignoreBuffer">Ignore any buffering</param>
+        /// <returns>The object if the conversion threw no error and the object exists and is accessable</returns>
+        Task<T> GetObjectFromJsonAsync<T>(StoreAccess access, StoreKey storeKey, bool ignoreBuffer);
+
+        /// <summary>
         /// Returns the stream to an object of the given StoreKey. 
         /// </summary>
         /// <param name="access">The access to use</param>

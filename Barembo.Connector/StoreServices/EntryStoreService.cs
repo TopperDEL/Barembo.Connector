@@ -46,6 +46,16 @@ namespace Barembo.StoreServices
             return await _storeService.GetObjectFromJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey));
         }
 
+        public async Task<Entry> LoadAsync(EntryReference entryRef, bool ignoreBuffer)
+        {
+            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey));
+
+            if (!entryInfo.ObjectExists)
+                throw new EntryNotExistsException();
+
+            return await _storeService.GetObjectFromJsonAsync<Entry>(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey), ignoreBuffer);
+        }
+
         public async Task<bool> SaveAsync(EntryReference entryRef, Entry entryToSave)
         {
             DateTimeOffset dToffset = new DateTimeOffset(entryToSave.CreationDate);

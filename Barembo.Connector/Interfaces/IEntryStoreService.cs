@@ -19,6 +19,14 @@ namespace Barembo.Interfaces
         Task<Entry> LoadAsync(EntryReference entryRef);
 
         /// <summary>
+        /// Loads an Entry.
+        /// </summary>
+        /// <param name="entryRef">The EntryReference of an Entry to load</param>
+        /// <param name="ignoreBuffer">Ignore the buffer</param>
+        /// <returns>The Entry if it exists, otherwise throws a EntryNotExistsException</returns>
+        Task<Entry> LoadAsync(EntryReference entryRef, bool ignoreBuffer);
+
+        /// <summary>
         /// Saves an Entry using an EntryReference.
         /// </summary>
         /// <param name="entryRef">The EntryReference of an Entry to save</param>

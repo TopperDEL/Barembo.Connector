@@ -140,6 +140,20 @@ namespace Barembo.Services
             return await _entryStoreService.LoadAsync(entryReference).ConfigureAwait(false);
         }
 
+        public async Task<Entry> LoadEntryAsync(EntryReference entryReference, bool ignoreBuffer)
+        {
+            if (!entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanReadEntries)
+            {
+                throw new ActionNotAllowedException();
+            }
+            if (!entryReference.BookReference.IsOwnBook() && !entryReference.BookReference.AccessRights.CanReadForeignEntries)
+            {
+                throw new ActionNotAllowedException();
+            }
+
+            return await _entryStoreService.LoadAsync(entryReference, ignoreBuffer).ConfigureAwait(false);
+        }
+
         public void LoadEntryAsSoonAsPossible(EntryReference entryReference, ElementLoadedDelegate<Entry> elementLoaded, ElementLoadingDequeuedDelegate loadingDequeued)
         {
             _queuedLoaderService.LoadWithHighPriority(async () => await _entryStoreService.LoadAsync(entryReference).ConfigureAwait(false), elementLoaded, loadingDequeued);
