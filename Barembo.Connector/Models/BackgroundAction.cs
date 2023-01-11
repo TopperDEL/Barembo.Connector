@@ -82,6 +82,10 @@ namespace Barembo.Models
                 {
                     parameters.Add(param.Key, Deserialize<Attachment>(param.Value));
                 }
+                else
+                {
+                    throw new NotImplementedException("unknown parameter " + param.Key);
+                }
             }
             return parameters;
         }
