@@ -8,7 +8,7 @@ using Barembo.Models;
 
 namespace Barembo.Services
 {
-    public class BackgroundActionService : IBackgroundActionService
+    public class BackgroundActionService : IBackgroundActionService, IDisposable
     {
         CancellationTokenSource _source;
         Task _uploadTask;
@@ -70,6 +70,8 @@ namespace Barembo.Services
                         case Models.BackgroundActionTypes.SetThumbnail:
                             success = await _entryService.SetThumbnailFromBackgroundActionAsync(actionToDo);
                             break;
+                        default:
+                            throw new NotImplementedException("Unknown action-type: " + actionToDo.ActionType.ToString());
                     }
 
                     if (success)
@@ -128,6 +130,18 @@ namespace Barembo.Services
             {
                 return false;
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            StopProcessingInBackground();
+            _source.Dispose();
         }
     }
 }
