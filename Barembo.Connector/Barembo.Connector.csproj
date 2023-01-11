@@ -33,7 +33,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
-    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp" Version="2.88.3" />
     <PackageReference Include="sqlite-net-pcl" Version="1.7.335" />
     <PackageReference Include="uplink.NET" Version="2.9.2958" />
     <PackageReference Include="uplink.NET.Win" Version="2.9.2958" />
