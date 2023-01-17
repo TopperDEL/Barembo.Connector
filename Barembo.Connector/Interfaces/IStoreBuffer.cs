@@ -57,6 +57,14 @@ namespace Barembo.Interfaces
         Task PutObjectFromStreamToBufferAsync(StoreAccess access, StoreKey keyToCheck, Stream objectToAdd);
 
         /// <summary>
+        /// Deletes an object from the buffer
+        /// </summary>
+        /// <param name="access">The access to use</param>
+        /// <param name="keyToDelete">The StoreKey to delete</param>
+        /// <returns></returns>
+        Task DeleteObjectAsync(StoreAccess access, StoreKey keyToDelete);
+
+        /// <summary>
         /// Adds a new BackgroundAction for background processing.
         /// </summary>
         /// <param name="action">The action to add</param>

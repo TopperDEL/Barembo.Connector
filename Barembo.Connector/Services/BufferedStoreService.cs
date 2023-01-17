@@ -150,5 +150,12 @@ namespace Barembo.Services
                 return ms.ToArray();
             }
         }
+
+        public async Task<bool> DeleteObjectAsync(StoreAccess access, StoreKey storeKey)
+        {
+            await _storeBuffer.DeleteObjectAsync(access, storeKey).ConfigureAwait(false);
+
+            return await _storeService.DeleteObjectAsync(access, storeKey).ConfigureAwait(false);
+        }
     }
 }

@@ -161,5 +161,11 @@ namespace Barembo.Services
             await _dataBase.DeleteAllAsync<BufferEntry>();
             await _dataBase.DeleteAllAsync<BackgroundAction>();
         }
+
+        public async Task DeleteObjectAsync(StoreAccess access, StoreKey keyToDelete)
+        {
+            await InitAsync().ConfigureAwait(false);
+            await _dataBase.DeleteAsync<BufferEntry>(keyToDelete.ToString());
+        }
     }
 }

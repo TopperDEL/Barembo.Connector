@@ -18,6 +18,16 @@ namespace Barembo.StoreServices
             _storeService = storeService;
         }
 
+        public async Task<bool> DeleteAsync(EntryReference entryRef)
+        {
+            var entryInfo = await _storeService.GetObjectInfoAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey));
+
+            if (!entryInfo.ObjectExists)
+                throw new EntryNotExistsException();
+
+            return await _storeService.DeleteObjectAsync(new StoreAccess(entryRef.BookReference.AccessGrant), StoreKey.EntryReference(entryRef.EntryKey));
+        }
+
         public async Task<IEnumerable<EntryReference>> ListAsync(BookReference bookRef)
         {
             var entries = await _storeService.ListObjectsAsync(new StoreAccess(bookRef.AccessGrant), StoreKey.Entries(bookRef.BookId), true);

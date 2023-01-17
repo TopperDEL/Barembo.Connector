@@ -40,5 +40,12 @@ namespace Barembo.Interfaces
         /// <param name="bookRef">The BookReference where the entries should be listed from</param>
         /// <returns>The list of entries</returns>
         Task<IEnumerable<EntryReference>> ListAsync(BookReference bookRef);
+
+        /// <summary>
+        /// Deletes an Entry using an EntryReference
+        /// </summary>
+        /// <param name="entryRef">The EntryReference of an Entry to delete</param>
+        /// <returns>true, if the entry could be deleted; false if not</returns>
+        Task<bool> DeleteAsync(EntryReference entryRef);
     }
 }

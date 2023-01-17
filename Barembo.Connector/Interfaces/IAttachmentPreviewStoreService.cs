@@ -23,10 +23,18 @@ namespace Barembo.Interfaces
         /// <summary>
         /// Saves an Attachment-Preview using an EntryReference and the binary data as stream.
         /// </summary>
-        /// <param name="entryRef">The EntryReference of an Entry to save</param>
+        /// <param name="entryRef">The EntryReference of an Entry</param>
         /// <param name="attachmentToSave">The Attachment-Preview-Metadata to save</param>
         /// <param name="attachmentPreview">The attachment-preview to save</param>
         /// <returns>true, if the Attachment-preview could be saved</returns>
         Task<bool> SaveAsync(EntryReference entryRef, Attachment attachmentToSave, AttachmentPreview attachmentPreview);
+
+        /// <summary>
+        /// Deletes an Attachment-Preview using an EntryReference
+        /// </summary>
+        /// <param name="entryRef">The EntryReference of an Entry</param>
+        /// <param name="attachmentToDelete">The attachment to delete</param>
+        /// <returns>true, if the Attachment-preview could be deleted; false if not</returns>
+        Task<bool> DeleteAsync(EntryReference entryRef, Attachment attachmentToDelete);
     }
 }

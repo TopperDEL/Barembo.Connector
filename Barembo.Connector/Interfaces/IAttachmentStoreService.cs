@@ -29,5 +29,13 @@ namespace Barembo.Interfaces
         /// <param name="filePath">The path to the file on the device</param>
         /// <returns>true, if the Attachment could be saved</returns>
         Task<bool> SaveFromStreamAsync(EntryReference entryRef, Attachment attachmentToSave, Stream attachmentBinary, string filePath);
+
+        /// <summary>
+        /// Deletes an attachment using an EntryReference
+        /// </summary>
+        /// <param name="entryRef">The reference to the entry where this attachment belongs to</param>
+        /// <param name="attachment">The attachment to delete</param>
+        /// <returns>True, if the attachment could be deleted; false if not</returns>
+        Task<bool> DeleteAsync(EntryReference entryRef, Attachment attachment);
     }
 }

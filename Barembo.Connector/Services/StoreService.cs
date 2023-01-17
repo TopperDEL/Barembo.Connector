@@ -12,6 +12,7 @@ using System.Linq;
 using Barembo.Helper;
 using Barembo.Exceptions;
 using System.Threading;
+using System.Runtime.CompilerServices;
 
 namespace Barembo.Services
 {
@@ -152,6 +153,23 @@ namespace Barembo.Services
             await upload.StartUploadAsync();
 
             return upload.Completed;
+        }
+
+        public async Task<bool> DeleteObjectAsync(StoreAccess access, StoreKey storeKey)
+        {
+            try
+            {
+                var objectService = await GetObjectServiceAsync(access).ConfigureAwait(false);
+                var bucket = await GetBucketAsync(_bucketName, access).ConfigureAwait(false);
+
+                await objectService.DeleteObjectAsync(bucket, storeKey.ToString()).ConfigureAwait(false);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static readonly SemaphoreSlim _getBucketServiceAsyncLock = new SemaphoreSlim(1, 1);

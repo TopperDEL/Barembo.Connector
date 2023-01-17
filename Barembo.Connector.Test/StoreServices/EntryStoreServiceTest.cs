@@ -87,6 +87,29 @@ namespace Barembo.Connector.Test.StoreServices
         }
 
         [TestMethod]
+        public async Task DeleteEntry_Deletes_ExistingEntry()
+        {
+            Book book = new Book();
+            Entry entryToLoad = new Entry();
+            EntryReference reference = new EntryReference();
+            reference.BookReference = new BookReference();
+            reference.BookReference.BookId = book.Id;
+            reference.BookReference.AccessGrant = "use this access";
+            reference.EntryId = entryToLoad.Id;
+            reference.EntryKey = "myBookId/Entries/myContributorId/myEntryId.json";
+
+            _storeServiceMock.Setup(s => s.GetObjectInfoAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.EntryReference)))
+                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = true })).Verifiable();
+            _storeServiceMock.Setup(s => s.DeleteObjectAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.EntryReference)))
+                             .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _service.DeleteAsync(reference);
+
+            Assert.IsTrue(result);
+            _storeServiceMock.Verify();
+        }
+
+        [TestMethod]
         public async Task List_Lists_AllEntriesWithMetadataAndSorted()
         {
             Book book = new Book();

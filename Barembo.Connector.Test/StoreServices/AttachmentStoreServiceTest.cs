@@ -71,5 +71,30 @@ namespace Barembo.Connector.Test.StoreServices
             Assert.IsTrue(result);
             _storeServiceMock.Verify();
         }
+
+        [TestMethod]
+        public async Task Delete_Deletes_Object()
+        {
+            Book book = new Book();
+            Entry entry = new Entry();
+            EntryReference reference = new EntryReference();
+            reference.BookReference = new BookReference();
+            reference.BookReference.BookId = book.Id;
+            reference.BookReference.AccessGrant = "use this access";
+            reference.EntryId = entry.Id;
+            Attachment attachment = new Attachment();
+            MemoryStream saveStream = new MemoryStream();
+
+            _storeServiceMock.Setup(s => s.GetObjectInfoAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant), Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Attachment)))
+                             .Returns(Task.FromResult(new StoreObjectInfo() { ObjectExists = true })).Verifiable();
+            _storeServiceMock.Setup(s => s.DeleteObjectAsync(Moq.It.Is<StoreAccess>(s => s.AccessGrant == reference.BookReference.AccessGrant),
+                                                                    Moq.It.Is<StoreKey>(s => s.StoreKeyType == StoreKeyTypes.Attachment)))
+                             .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _service.DeleteAsync(reference, attachment);
+
+            Assert.IsTrue(result);
+            _storeServiceMock.Verify();
+        }
     }
 }

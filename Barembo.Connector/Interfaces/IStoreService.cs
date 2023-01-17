@@ -94,5 +94,13 @@ namespace Barembo.Interfaces
         /// <param name="withMetaData">True if the metadata should be read, too - false if not</param>
         /// <returns>An enumerable of StoreObjects</returns>
         Task<IEnumerable<StoreObject>> ListObjectsAsync(StoreAccess access, StoreKey storeKey, bool withMetaData);
+
+        /// <summary>
+        /// Deletes an object using the given StoreAccess
+        /// </summary>
+        /// <param name="access">The StoreAccess to the object</param>
+        /// <param name="storeKey">The StoreKey ob the object to delete</param>
+        /// <returns>True, if the object could be deleted; false if not</returns>
+        Task<bool> DeleteObjectAsync(StoreAccess access, StoreKey storeKey);
     }
 }

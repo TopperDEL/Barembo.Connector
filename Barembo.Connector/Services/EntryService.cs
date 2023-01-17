@@ -259,5 +259,22 @@ namespace Barembo.Services
 
             return await SetThumbnailAsync(entryReference, entry, attachment, stream, filePath);
         }
+
+        public async Task<bool> DeleteEntryAsync(EntryReference entryReference)
+        {
+            var entry = await LoadEntryAsync(entryReference);
+
+            foreach (var attachment in entry.Attachments)
+            {
+                var attachmentDeleted = await _attachmentStoreService.DeleteAsync(entryReference, attachment);
+                if (!attachmentDeleted)
+                    return false;
+
+                var attachmentPreviewDeleted = await _attachmentPreviewStoreService.DeleteAsync(entryReference, attachment);
+                if (!attachmentPreviewDeleted)
+                    return false;
+            }
+            return await _entryStoreService.DeleteAsync(entryReference);
+        }
     }
 }

@@ -180,7 +180,7 @@ namespace Barembo.Connector.Test.Services
                 await _entryService.SaveEntryAsync(entryReference, entry);
                 Assert.IsTrue(false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
             }
@@ -208,6 +208,154 @@ namespace Barembo.Connector.Test.Services
             }
 
             _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task DeleteEntry_Deletes_Entry()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.DeleteAsync(entryReference))
+                                  .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _entryService.DeleteEntryAsync(entryReference);
+
+            Assert.IsTrue(result);
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task DeleteEntry_ReturnsFalse_IfEntryCouldNotBeDeleted()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.DeleteAsync(entryReference))
+                                  .Returns(Task.FromResult(false)).Verifiable();
+
+            var result = await _entryService.DeleteEntryAsync(entryReference);
+
+            Assert.IsFalse(result);
+
+            _entryStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task DeleteEntry_Deletes_EntryWithSingleAttachment()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            var attachment = new Attachment { Id = "attachment1" };
+            entry.Attachments.Add(attachment);
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment)).Returns(Task.FromResult(true)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.DeleteAsync(entryReference))
+                                  .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _entryService.DeleteEntryAsync(entryReference);
+
+            Assert.IsTrue(result);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task DeleteEntry_Deletes_EntryWithMultipleAttachment()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            var attachment1 = new Attachment { Id = "attachment1" };
+            var attachment2 = new Attachment { Id = "attachment2" };
+            entry.Attachments.Add(attachment1);
+            entry.Attachments.Add(attachment2);
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment1)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment1)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment2)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment2)).Returns(Task.FromResult(true)).Verifiable();
+            _entryStoreServiceMock.Setup(s => s.DeleteAsync(entryReference))
+                                  .Returns(Task.FromResult(true)).Verifiable();
+
+            var result = await _entryService.DeleteEntryAsync(entryReference);
+
+            Assert.IsTrue(result);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
+        }
+
+        [TestMethod]
+        public async Task DeleteEntry_ReturnsFalse_IfAttachmentCouldNotBeDeleted()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            var attachment1 = new Attachment { Id = "attachment1" };
+            var attachment2 = new Attachment { Id = "attachment2" };
+            entry.Attachments.Add(attachment1);
+            entry.Attachments.Add(attachment2);
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment1)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment1)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment2)).Returns(Task.FromResult(false)).Verifiable();
+            
+            var result = await _entryService.DeleteEntryAsync(entryReference);
+
+            Assert.IsFalse(result);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.VerifyNoOtherCalls();
+            _entryStoreServiceMock.VerifyNoOtherCalls();
+        }
+
+        [TestMethod]
+        public async Task DeleteEntry_ReturnsFalse_IfAttachmentPreviewCouldNotBeDeleted()
+        {
+            Entry entry = _entryService.CreateEntry("test");
+            var attachment1 = new Attachment { Id = "attachment1" };
+            var attachment2 = new Attachment { Id = "attachment2" };
+            entry.Attachments.Add(attachment1);
+            entry.Attachments.Add(attachment2);
+            EntryReference entryReference = new EntryReference();
+            entryReference.BookReference = new BookReference();
+
+            _entryStoreServiceMock.Setup(s => s.LoadAsync(entryReference))
+                                  .Returns(Task.FromResult(entry)).Verifiable();
+            _attachmentStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment1)).Returns(Task.FromResult(true)).Verifiable();
+            _attachmentPreviewStoreServiceMock.Setup(s => s.DeleteAsync(entryReference, attachment1)).Returns(Task.FromResult(false)).Verifiable();
+
+            var result = await _entryService.DeleteEntryAsync(entryReference);
+
+            Assert.IsFalse(result);
+
+            _entryStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.Verify();
+            _attachmentStoreServiceMock.VerifyNoOtherCalls();
+            _attachmentPreviewStoreServiceMock.Verify();
+            _attachmentPreviewStoreServiceMock.VerifyNoOtherCalls();
+            _entryStoreServiceMock.VerifyNoOtherCalls();
         }
 
         [TestMethod]
@@ -267,7 +415,7 @@ namespace Barembo.Connector.Test.Services
                 var result = await _entryService.LoadEntryAsync(entryReference);
                 Assert.IsTrue(false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsInstanceOfType(ex, typeof(EntryNotExistsException));
             }
@@ -372,7 +520,7 @@ namespace Barembo.Connector.Test.Services
                 await _entryService.ListEntriesAsync(bookReference);
                 Assert.IsTrue(false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsInstanceOfType(ex, typeof(ActionNotAllowedException));
             }
@@ -396,7 +544,7 @@ namespace Barembo.Connector.Test.Services
             MemoryStream stream = new MemoryStream();
             AttachmentPreview preview = new AttachmentPreview();
 
-            _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e=>e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
+            _entryStoreServiceMock.Setup(s => s.SaveAsync(entryReference, Moq.It.Is<Entry>(e => e.Id == entry.Id && e.Attachments.Count == 1))) //Attachment has to be added before save
                                   .Returns(Task.FromResult(true)).Verifiable();
             _attachmentStoreServiceMock.Setup(s => s.SaveFromStreamAsync(entryReference, attachment, stream, "filepath")).Returns(Task.FromResult(true)).Verifiable();
             _attachmentPreviewStoreServiceMock.Setup(s => s.SaveAsync(entryReference, attachment, preview)).Returns(Task.FromResult(true)).Verifiable();
@@ -634,7 +782,7 @@ namespace Barembo.Connector.Test.Services
                 var result = await _entryService.LoadAttachmentAsync(entryReference, attachment);
                 Assert.IsTrue(false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Assert.IsInstanceOfType(ex, typeof(AttachmentNotExistsException));
             }

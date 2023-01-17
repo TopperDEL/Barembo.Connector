@@ -33,5 +33,7 @@ namespace Barembo.Interfaces
 
         Task<bool> AddAttachmentFromBackgroundActionAsync(BackgroundAction backgroundAction);
         Task<bool> SetThumbnailFromBackgroundActionAsync(BackgroundAction backgroundAction);
+
+        Task<bool> DeleteEntryAsync(EntryReference entryReference);
     }
 }
