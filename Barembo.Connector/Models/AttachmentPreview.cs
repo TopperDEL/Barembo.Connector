@@ -17,7 +17,7 @@ namespace Barembo.Models
 
         public bool Equals(AttachmentPreview other)
         {
-            return false;
+            return other.Type == Type && other.PreviewPartsBase64 == PreviewPartsBase64;
         }
     }
 }

@@ -26,7 +26,14 @@ namespace Barembo.Models
 
         public bool Equals(StoreObjectInfo other)
         {
-            throw new NotImplementedException();
+            if (other.NotExistsErrorMessage == NotExistsErrorMessage &&
+               other.Size == Size &&
+               other.ObjectExists == ObjectExists)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
