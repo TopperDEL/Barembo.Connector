@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>Barembo</RootNamespace>
     <Authors>Tim Parth</Authors>
     <Company>Tim Parth</Company>
@@ -14,18 +13,16 @@
     <PackageTags>barembo storj tardigrade eternity diary</PackageTags>
     <PackageReleaseNotes>First version - still WIP</PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>    
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <Version>0.9.71</Version>
   </PropertyGroup>
-  
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-</PropertyGroup>
-<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
-  <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-</PropertyGroup>
-
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
@@ -33,17 +30,16 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
     <PackageReference Include="QRCoder" Version="1.4.3" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-    <PackageReference Include="uplink.NET" Version="2.9.2958" />
-    <PackageReference Include="uplink.NET.Win" Version="2.9.2958" />
+    <PackageReference Include="uplink.NET" Version="2.10.3175" />
+    <PackageReference Include="uplink.NET.Win" Version="2.10.3175" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="..\BaremboLogo.png">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath>
+      </PackagePath>
     </None>
   </ItemGroup>
-
 </Project>
