@@ -32,7 +32,7 @@
     <PackageReference Include="QRCoder" Version="1.4.3" />
     <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-    <PackageReference Include="uplink.NET" Version="2.10.3175" />
+    <PackageReference Include="uplink.NET" Version="2.11.3221" />
     <PackageReference Include="uplink.NET.Win" Version="2.10.3175" />
   </ItemGroup>
   <ItemGroup>
