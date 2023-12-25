@@ -33,7 +33,7 @@
     <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
     <PackageReference Include="uplink.NET" Version="2.10.3175" />
-    <PackageReference Include="uplink.NET.Win" Version="2.10.3175" />
+    <PackageReference Include="uplink.NET.Win" Version="2.12.3328" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\BaremboLogo.png">
